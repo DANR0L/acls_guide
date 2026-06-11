@@ -1,4 +1,4 @@
-import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -11,7 +11,7 @@ import '../../models/algorithm_node.dart';
 import '../../providers/algorithm_provider.dart';
 import '../widgets/drug_card.dart';
 import '../widgets/timer_widget.dart';
-import '../widgets/node_action_card.dart';
+
 
 class AlgorithmScreen extends ConsumerStatefulWidget {
   final String algorithmId;
@@ -22,20 +22,6 @@ class AlgorithmScreen extends ConsumerStatefulWidget {
 }
 
 class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
-  Timer? _cprTicker;
-
-  @override
-  void dispose() {
-    _cprTicker?.cancel();
-    super.dispose();
-  }
-
-  void _startCprTicker() {
-    _cprTicker?.cancel();
-    _cprTicker = Timer.periodic(const Duration(seconds: 1), (_) {
-      ref.read(cprTimerProvider.notifier).tick();
-    });
-  }
 
   void _handleOption(String nextNodeId) {
     HapticFeedback.lightImpact();
@@ -54,16 +40,6 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
     }
 
     ref.read(algorithmSessionProvider.notifier).goToNode(nextNodeId);
-
-    // Se next node é timer E não está em modo estudo: iniciar automático
-    final isStudyMode = ref.read(studyModeProvider);
-    final algo = allAlgorithms[widget.algorithmId];
-    final nextNode = algo?.nodes[nextNodeId];
-    if (nextNode?.type == NodeType.timer && !isStudyMode) {
-      final seconds = nextNode!.timerSeconds ?? 120;
-      ref.read(cprTimerProvider.notifier).start(seconds);
-      _startCprTicker();
-    }
   }
 
   @override
@@ -211,10 +187,6 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
             if (isStudyMode)
               _StudyModeTimerCard(
                 seconds: node.timerSeconds ?? 120,
-                onStart: () {
-                  ref.read(cprTimerProvider.notifier).start(node.timerSeconds ?? 120);
-                  _startCprTicker();
-                },
                 onSkip: () {
                   if (node.nextNodeId != null) {
                     _handleOption(node.nextNodeId!);
@@ -571,16 +543,12 @@ class _OptionButton extends StatelessWidget {
 }
 
 // ── Study Mode Timer Card ─────────────────────────────────────
-// Exibido no lugar do timer quando o app está em Modo Estudo.
-// Permite iniciar o timer opcional ou pular direto para o próximo passo.
 class _StudyModeTimerCard extends StatefulWidget {
   final int seconds;
-  final VoidCallback onStart;
   final VoidCallback onSkip;
 
   const _StudyModeTimerCard({
     required this.seconds,
-    required this.onStart,
     required this.onSkip,
   });
 
@@ -666,10 +634,7 @@ class _StudyModeTimerCardState extends State<_StudyModeTimerCard> {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() => _timerStarted = true);
-                      widget.onStart();
-                    },
+                    onTap: () => setState(() => _timerStarted = true),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       decoration: BoxDecoration(
@@ -731,8 +696,11 @@ class _StudyModeTimerCardState extends State<_StudyModeTimerCard> {
               ],
             ),
           ] else ...[
-            // Timer iniciado — mostrar widget completo
-            const _StudyTimerRunning(),
+            // Timer iniciado — TimerWidget gerencia seu próprio ticker
+            TimerWidget(
+              seconds: widget.seconds,
+              onComplete: widget.onSkip,
+            ),
             const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
@@ -768,34 +736,6 @@ class _StudyModeTimerCardState extends State<_StudyModeTimerCard> {
           ],
         ],
       ),
-    );
-  }
-}
-
-// Mini display do timer quando iniciado manualmente no modo estudo
-class _StudyTimerRunning extends ConsumerWidget {
-  const _StudyTimerRunning();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final timer = ref.watch(cprTimerProvider);
-    final mins = timer.secondsRemaining ~/ 60;
-    final secs = timer.secondsRemaining % 60;
-    final isUrgent = timer.secondsRemaining <= 10;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
-          style: GoogleFonts.inter(
-            fontSize: 48,
-            fontWeight: FontWeight.w900,
-            color: isUrgent ? AppColors.danger : AppColors.info,
-            letterSpacing: -2,
-          ),
-        ),
-      ],
     );
   }
 }
