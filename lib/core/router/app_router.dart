@@ -3,6 +3,7 @@ import '../../ui/screens/home_screen.dart';
 import '../../ui/screens/algorithm_screen.dart';
 import '../../ui/screens/drugs_screen.dart';
 import '../../ui/screens/about_screen.dart';
+import '../../ui/screens/pals_calculator_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -26,6 +27,10 @@ class AppRouter {
       GoRoute(
         path: '/about',
         builder: (context, state) => const AboutScreen(),
+      ),
+      GoRoute(
+        path: '/pals',
+        builder: (context, state) => const PalsCalculatorScreen(),
       ),
     ],
   );

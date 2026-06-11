@@ -13,6 +13,7 @@ class AppColors {
   static const primaryLight = Color(0xFFFFB570);
   static const secondary = Color(0xFF22C55E);    // Verde estável
   static const secondaryDark = Color(0xFF16A34A);
+  static const success = Color(0xFF22C55E);      // Alias verde
 
   // States
   static const danger = Color(0xFFEF4444);       // Vermelho instável/chocável

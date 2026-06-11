@@ -190,6 +190,9 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
+                    // ── PALS Calculator ─────────────────────────────
+                    _PalsButton(onTap: () => context.push('/pals')),
                   ],
                 ),
               ),
@@ -560,5 +563,72 @@ class _QuickTimerSheetState extends ConsumerState<_QuickTimerSheet> {
         ],
       ),
     );
+  }
+}
+
+// ── PALS Calculator Button ────────────────────────────────────────────────────
+
+class _PalsButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _PalsButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.success.withValues(alpha: 0.18),
+              AppColors.success.withValues(alpha: 0.08),
+            ],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.success.withValues(alpha: 0.40)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text('👶', style: TextStyle(fontSize: 22)),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Calculadora PALS',
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.success,
+                    ),
+                  ),
+                  Text(
+                    'Doses pediátricas por peso · Desfibrilação · TOT',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded,
+                color: AppColors.success.withValues(alpha: 0.7), size: 24),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(delay: 300.ms, duration: 400.ms).slideY(begin: 0.1, end: 0);
   }
 }
