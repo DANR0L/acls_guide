@@ -10,6 +10,7 @@ import '../../data/algorithms.dart';
 import '../../models/algorithm_node.dart';
 import '../../providers/algorithm_provider.dart';
 import '../widgets/drug_card.dart';
+import '../widgets/ecg_card.dart';
 import '../widgets/timer_widget.dart';
 
 
@@ -203,6 +204,14 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                 },
               ).animate().fadeIn(duration: 400.ms),
           ],
+
+          // ── ECG Card ────────────────────────────────────
+          if (node.ecgImageAsset != null)
+            EcgCard(
+              imageAsset: node.ecgImageAsset!,
+              title: node.ecgTitle ?? 'Padrão ECG',
+              findings: node.ecgFindings,
+            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
 
           // ── Drug card ────────────────────────────────────────
           if (node.drug != null) ...[

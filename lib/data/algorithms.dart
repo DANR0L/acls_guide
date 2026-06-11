@@ -91,6 +91,14 @@ final cardiacArrestAlgorithm = Algorithm(
       type: NodeType.question,
       title: 'Verificar Ritmo Cardíaco',
       subtitle: 'Pausar CPR brevemente (< 10 seg) para checar ritmo',
+      ecgImageAsset: 'assets/images/ecg/vf.png',
+      ecgTitle: 'Ritmo Chocável — Fibrilação Ventricular',
+      ecgFindings: [
+        'Ondas caóticas sem P, QRS ou T reconhecíveis',
+        'Amplitude e frequência variáveis e irregulares',
+        'Ritmo único que exige desfibrilação imediata',
+        'VF grosseira (amplitude >1mm) — melhor resposta ao choque',
+      ],
       options: [
         AlgorithmOption(
           label: '⚡ Chocável — VF / pVT',
@@ -320,6 +328,15 @@ final cardiacArrestAlgorithm = Algorithm(
       type: NodeType.action,
       title: 'Assistolia — Protocolo',
       alertLevel: 'danger',
+      ecgImageAsset: 'assets/images/ecg/asystole.png',
+      ecgTitle: 'Assistolia — Linha Isoelétrica',
+      ecgFindings: [
+        'Linha completamente plana ou com artefatos mínimos',
+        'Ausência de qualquer atividade elétrica organizada',
+        'CONFIRMAR: checar cabos, derivações e contato dos eletrodos',
+        'Verificar em DUAS derivações antes de confirmar assistolia',
+        'Não desfibrilar — não é ritmo chocável',
+      ],
       bullets: [
         'Confirmar: verificar cabos e eletrodos',
         'CPR contínua de alta qualidade',
@@ -427,6 +444,15 @@ final cardiacArrestAlgorithm = Algorithm(
       type: NodeType.action,
       title: 'AESP — Atividade Elétrica Sem Pulso',
       alertLevel: 'danger',
+      ecgImageAsset: 'assets/images/ecg/bradycardia.png',
+      ecgTitle: 'AESP — Ritmo Organizado Sem Pulso',
+      ecgFindings: [
+        'Qualquer ritmo organizado no monitor SEM pulso palpável',
+        'Geralmente ritmo sinusal, bradicardia ou idioventricular lento',
+        'QRS estreito → pensar tamponamento, embolia pulmonar, hipovolemia',
+        'QRS largo → pensar hipercalemia, toxinas, IAM extenso',
+        'Não confundir com fibrilação ventricular fina',
+      ],
       bullets: [
         'CPR de alta qualidade contínua',
         '💊 Epinefrina 1 mg IV/IO — O MAIS RÁPIDO POSSÍVEL',
@@ -876,6 +902,15 @@ final bradycardiaAlgorithm = Algorithm(
       type: NodeType.info,
       title: 'BAV 2º Grau — Mobitz I (Wenckebach)',
       alertLevel: 'info',
+      ecgImageAsset: 'assets/images/ecg/wenckebach.png',
+      ecgTitle: 'Wenckebach — BAV Mobitz I',
+      ecgFindings: [
+        'PR progressivamente maior a cada batimento',
+        'Até que uma onda P é bloqueada (sem QRS)',
+        'Após o bloqueio, o ciclo recomeça com PR curto',
+        'QRS geralmente estreito (bloqueio nodal)',
+        'Ritmo ventricular irregular (pausa após bloqueio)',
+      ],
       bullets: [
         'Bloqueio nodal (suprahissiano) — geralmente benigno',
         'Causas comuns: IAM inferior, miocardite, drogas',
@@ -890,6 +925,15 @@ final bradycardiaAlgorithm = Algorithm(
       type: NodeType.info,
       title: 'BAV 2º Grau — Mobitz II ⚠️',
       alertLevel: 'warning',
+      ecgImageAsset: 'assets/images/ecg/mobitz2.png',
+      ecgTitle: 'Mobitz II — Bloqueio Infranodal',
+      ecgFindings: [
+        'PR CONSTANTE (não alonga) em todos os batimentos conduzidos',
+        'Bloqueio súbito de uma onda P sem aviso prévio',
+        'QRS geralmente LARGO (BRE ou BRD — bloqueio distal)',
+        'Alto risco de progressão para BAVT e assistolia',
+        'Atropina INEFICAZ — bloqueio abaixo do nó AV',
+      ],
       bullets: [
         'Bloqueio infranodal (infrahissiano) — instável',
         'Alto risco de progressão para BAVT',
@@ -905,6 +949,16 @@ final bradycardiaAlgorithm = Algorithm(
       type: NodeType.action,
       title: 'BAV Total (BAVT) — Conduta',
       alertLevel: 'danger',
+      ecgImageAsset: 'assets/images/ecg/avb3.png',
+      ecgTitle: 'BAV 3º Grau — Dissociação AV Completa',
+      ecgFindings: [
+        'Ondas P regulares (ritmo atrial ~60–80 bpm)',
+        'QRS regulares MAS com frequência MUITO mais lenta (~30–45 bpm)',
+        'NENHUMA relação entre ondas P e complexos QRS',
+        'QRS largo → escape ventricular (mais grave)',
+        'QRS estreito → escape juncional (nó AV, mais estável)',
+        'P pode cair dentro do QRS ou da onda T',
+      ],
       bullets: [
         'Dissociação AV completa — bloqueio mais grave',
         'Se instável: MCP TRANSCUTÂNEO IMEDIATO',
@@ -920,8 +974,17 @@ final bradycardiaAlgorithm = Algorithm(
       type: NodeType.info,
       title: 'Bradicardia Sinusal',
       alertLevel: 'info',
+      ecgImageAsset: 'assets/images/ecg/bradycardia.png',
+      ecgTitle: 'Bradicardia Sinusal',
+      ecgFindings: [
+        'FC < 60 bpm (significativa < 50 bpm)',
+        'Onda P positiva antes de cada QRS (P sinusal)',
+        'PR normal (120–200 ms)',
+        'QRS estreito (normal) — complexo normal preservado',
+        'Ritmo regular com intervalos RR prolongados',
+      ],
       bullets: [
-        'Comum em atletas, vagotônicos, durante sono',
+        'Comum em atletas, vagotonicos, durante sono',
         'Causas patológicas: hipotireoidismo, doença do nó sinusal, IAM inferior, drogas (betabloqueador, BCC, digoxina)',
         'Tratar se sintomática: Atropina 1mg IV',
         'Investigar e tratar causa de base',
@@ -1069,6 +1132,15 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'narrow_regular',
       type: NodeType.question,
       title: 'TSV — Ritmo Regular ou Irregular?',
+      ecgImageAsset: 'assets/images/ecg/svt.png',
+      ecgTitle: 'Taquicardia Supraventricular (TSV)',
+      ecgFindings: [
+        'QRS ESTREITO < 120 ms (origem supraventricular)',
+        'FC geralmente 150–250 bpm (regular)',
+        'Ondas P canónicas ausentes ou após o QRS',
+        'Início e término abruptos (paroxística)',
+        'Responde a manobras vagais ou adenosina',
+      ],
       options: [
         AlgorithmOption(
           label: '📏 Regular',
@@ -1212,6 +1284,15 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.question,
       title: 'FA — Estratégia de Tratamento',
       subtitle: 'Duração da FA é crucial para decisão',
+      ecgImageAsset: 'assets/images/ecg/af.png',
+      ecgTitle: 'Fibrilação Atrial (FA)',
+      ecgFindings: [
+        'Linha de base irregularmente irregular (ondas fibrilatórias)',
+        'Ausência de ondas P distintas',
+        'Intervalos RR completamente irregulares',
+        'QRS estreito (< 120ms) salvo aberrância ou WPW',
+        'FC ventricular variável (100–170 bpm em FA não controlada)',
+      ],
       options: [
         AlgorithmOption(
           label: '⏱️ FA < 48h — Controle de ritmo',
@@ -1317,6 +1398,16 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.action,
       title: 'TV Monomórfica Estável — Cardioversão ou Droga',
       alertLevel: 'warning',
+      ecgImageAsset: 'assets/images/ecg/vt.png',
+      ecgTitle: 'TV Monomórfica — QRS Largo Regular',
+      ecgFindings: [
+        'QRS LARGO ≥ 120 ms com morfologia consistente',
+        'FC 100–250 bpm, ritmo regular',
+        'Dissociação AV: ondas P independentes do QRS',
+        'Batimentos de fusão e captura (patognomônicos de TV)',
+        'RBBB ou LBBB atípicos → favorecem TV',
+        'Eixo extremo no plano frontal → forte sinal de TV',
+      ],
       bullets: [
         'Cardioversão sincronizada: 100 J (1ª escolha)',
         'ou Antiarrítmico:',
@@ -1349,6 +1440,16 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.action,
       title: 'Torsades de Pointes',
       alertLevel: 'danger',
+      ecgImageAsset: 'assets/images/ecg/torsades.png',
+      ecgTitle: 'Torsades de Pointes — TV Polimórfica',
+      ecgFindings: [
+        'QRS largo com amplitude que OSCILA em padrão sinusoidal',
+        'Eixo elétrico vai rodando progressivamente ("torsion")',
+        'FC 200–250 bpm, polimórfico (complexos mudam de forma)',
+        'Iniciada por pausa + extrassístole (pausa-dependente)',
+        'QTc prolongado no ritmo sinusal precede o episódio',
+        'Confundir com FV — mas tem padrão típico de torsão',
+      ],
       bullets: [
         '💊 Sulfato de Magnésio 2 g IV em 1–2 min — AGORA',
         'Corrigir hipocalemia (K⁺ > 4,5 mEq/L)',

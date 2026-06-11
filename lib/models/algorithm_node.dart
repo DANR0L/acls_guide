@@ -36,6 +36,11 @@ class AlgorithmNode {
   final String? alertLevel;       // 'danger' | 'warning' | 'info' | 'success'
   final List<String>? bullets;    // Lista de pontos de ação
 
+  // ── ECG Pattern ──────────────────────────────────────────────
+  final String? ecgImageAsset;    // ex: 'assets/images/ecg/vf.png'
+  final String? ecgTitle;         // ex: 'Fibrilação Ventricular'
+  final List<String>? ecgFindings; // achados diagnósticos do ECG
+
   const AlgorithmNode({
     required this.id,
     required this.type,
@@ -48,6 +53,9 @@ class AlgorithmNode {
     this.timerSeconds,
     this.alertLevel,
     this.bullets,
+    this.ecgImageAsset,
+    this.ecgTitle,
+    this.ecgFindings,
   });
 }
 
