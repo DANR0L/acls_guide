@@ -208,7 +208,7 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
           // ── ECG Card ────────────────────────────────────
           if (node.ecgImageAsset != null)
             EcgCard(
-              imageAsset: node.ecgImageAsset!,
+              ecgTypeId: node.ecgImageAsset!,
               title: node.ecgTitle ?? 'Padrão ECG',
               findings: node.ecgFindings,
             ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
