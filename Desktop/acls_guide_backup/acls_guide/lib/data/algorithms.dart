@@ -1840,6 +1840,753 @@ final scaAlgorithm = Algorithm(
 );
 
 // ═══════════════════════════════════════════════════════════════
+//  ALGORITMO AVC — Acidente Vascular Cerebral (AHA/ASA 2025)
+//  Inclui: NIHSS passo a passo, Alteplase, Trombectomia
+// ═══════════════════════════════════════════════════════════════
+
+final strokeAlgorithm = Algorithm(
+  id: 'stroke',
+  title: 'AVC — Acidente Vascular Cerebral',
+  subtitle: 'Isquêmico · Hemorrágico · NIHSS',
+  iconEmoji: '🧠',
+  color: '#8B5CF6',
+  startNodeId: 'stroke_start',
+  nodes: {
+
+    // ── RECONHECIMENTO ───────────────────────────────────────
+    'stroke_start': const AlgorithmNode(
+      id: 'stroke_start',
+      type: NodeType.question,
+      title: 'Suspeita de AVC — Reconhecimento FAST',
+      subtitle: 'Aplique os 4 critérios FAST imediatamente',
+      bullets: [
+        '🗣️ Face: desvio facial — peça para sorrir (assimétrico?)',
+        '💪 Arms: fraqueza de braço — elevar ambos por 10 seg (queda?)',
+        '🗨️ Speech: fala arrastada ou incompreensível?',
+        '⏰ Time: anotar HORA EXATA do início dos sintomas',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '🧠 AVC suspeito — prosseguir protocolo',
+          nextNodeId: 'stroke_activate_team',
+        ),
+        AlgorithmOption(
+          label: '❌ Diagnóstico improvável — outro quadro',
+          nextNodeId: 'stroke_not_avc',
+        ),
+      ],
+    ),
+
+    'stroke_not_avc': const AlgorithmNode(
+      id: 'stroke_not_avc',
+      type: NodeType.end,
+      title: 'AVC Descartado',
+      body: 'Considere diagnósticos diferenciais: hipoglicemia, epilepsia (paralisia de Todd), enxaqueca hemiplégica, encefalopatia metabólica, intoxicação.',
+      alertLevel: 'info',
+    ),
+
+    // ── ATIVAR EQUIPE ─────────────────────────────────────────
+    'stroke_activate_team': const AlgorithmNode(
+      id: 'stroke_activate_team',
+      type: NodeType.action,
+      title: 'Ativar Código AVC',
+      alertLevel: 'danger',
+      bullets: [
+        '📞 Acionar neurologista de plantão IMEDIATAMENTE',
+        '🖥️ Notificar TC: porta-TC ≤ 25 minutos',
+        '⏰ Anotar hora de chegada (Door Time)',
+        '🩺 Meta porta-agulha (alteplase): ≤ 60 minutos',
+        '💉 Acesso venoso periférico (2 vias calibrosas)',
+        '📊 Monitorização: ECG contínuo, SpO₂, PA, temperatura',
+        '🧪 Coletas: glicemia capilar, hemograma, coagulação, função renal',
+      ],
+      nextNodeId: 'stroke_glucose',
+    ),
+
+    // ── GLICEMIA ──────────────────────────────────────────────
+    'stroke_glucose': const AlgorithmNode(
+      id: 'stroke_glucose',
+      type: NodeType.question,
+      title: 'Glicemia Capilar Imediata',
+      subtitle: 'Hipoglicemia pode mimetizar AVC com fidelidade total',
+      options: [
+        AlgorithmOption(
+          label: '✅ Normal (≥ 70 mg/dL) — prosseguir',
+          nextNodeId: 'stroke_time_onset',
+        ),
+        AlgorithmOption(
+          label: '🔴 Hipoglicemia (< 70 mg/dL)',
+          sublabel: 'Tratar antes de prosseguir',
+          nextNodeId: 'stroke_hypoglycemia',
+        ),
+      ],
+    ),
+
+    'stroke_hypoglycemia': const AlgorithmNode(
+      id: 'stroke_hypoglycemia',
+      type: NodeType.action,
+      title: 'Tratar Hipoglicemia',
+      alertLevel: 'warning',
+      bullets: [
+        'Glicose 50% — 25–50 mL IV push',
+        'Se sem acesso: Glucagon 1 mg IM',
+        'Reavalie sintomas após 10–15 minutos',
+        'Glicemia normal + sintomas resolvidos = AVC descartado',
+        'Glicemia normal + sintomas persistentes = prosseguir AVC',
+      ],
+      nextNodeId: 'stroke_hypoglycemia_reassess',
+    ),
+
+    'stroke_hypoglycemia_reassess': const AlgorithmNode(
+      id: 'stroke_hypoglycemia_reassess',
+      type: NodeType.question,
+      title: 'Reavaliação Pós-Correção da Glicemia',
+      options: [
+        AlgorithmOption(
+          label: '✅ Sintomas resolvidos — hipoglicemia era a causa',
+          nextNodeId: 'stroke_hypoglycemia_resolved',
+        ),
+        AlgorithmOption(
+          label: '⚠️ Sintomas persistem — prosseguir protocolo AVC',
+          nextNodeId: 'stroke_time_onset',
+        ),
+      ],
+    ),
+
+    'stroke_hypoglycemia_resolved': const AlgorithmNode(
+      id: 'stroke_hypoglycemia_resolved',
+      type: NodeType.end,
+      title: 'Hipoglicemia Resolvida — AVC Descartado',
+      body: 'Monitorar glicemia seriada. Investigar causa da hipoglicemia (insulina, sulfonilureia, jejum prolongado). Acompanhamento ambulatorial.',
+      alertLevel: 'info',
+    ),
+
+    // ── TEMPO DE INÍCIO ───────────────────────────────────────
+    'stroke_time_onset': const AlgorithmNode(
+      id: 'stroke_time_onset',
+      type: NodeType.question,
+      title: 'Tempo desde o Início dos Sintomas',
+      subtitle: 'Use o ÚLTIMO momento em que o paciente estava sem sintomas',
+      bullets: [
+        '⚠️ Acordou com sintomas: use a hora que dormiu',
+        '👁️ Última vez visto bem = hora de início para fins de protocolo',
+        '📱 Câmeras, celulares e testemunhas ajudam a precisar o horário',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '⏰ ≤ 4,5 horas',
+          sublabel: 'Janela para alteplase IV — avaliar NIHSS',
+          nextNodeId: 'nihss_intro',
+        ),
+        AlgorithmOption(
+          label: '⏰ 4,5h a 24h ou desconhecido',
+          sublabel: 'Fora da janela da alteplase — avaliar trombectomia',
+          nextNodeId: 'stroke_late_window',
+        ),
+        AlgorithmOption(
+          label: '⏰ > 24 horas',
+          sublabel: 'Fora de todas as janelas terapêuticas',
+          nextNodeId: 'stroke_out_of_window',
+        ),
+      ],
+    ),
+
+    // ════════════════════════════════════════════════════════════
+    //  NIHSS — ESCALA NEUROLÓGICA PASSO A PASSO
+    // ════════════════════════════════════════════════════════════
+
+    'nihss_intro': const AlgorithmNode(
+      id: 'nihss_intro',
+      type: NodeType.info,
+      title: 'Avaliação NIHSS — NIH Stroke Scale',
+      subtitle: '15 subitens · Pontuação 0–42',
+      alertLevel: 'info',
+      bullets: [
+        '📋 Pontue o que VOCÊ OBSERVA — não o que o paciente relata',
+        '🚫 Não treine o paciente antes de aplicar',
+        '⏱️ Meta: completar em < 10 minutos',
+        '✍️ Anote cada subitem separadamente para somar ao final',
+      ],
+      nextNodeId: 'nihss_1',
+    ),
+
+    // 1a — Nível de Consciência
+    'nihss_1': const AlgorithmNode(
+      id: 'nihss_1',
+      type: NodeType.info,
+      title: 'NIHSS 1a — Nível de Consciência (LOC)',
+      subtitle: 'Observe a responsividade geral — pontuação 0 a 3',
+      bullets: [
+        '0 — Alerta; vivo e responsivo',
+        '1 — Não alerta, desperta a estímulo mínimo (voz ou toque leve)',
+        '2 — Não alerta; requer estímulo repetido ou doloroso',
+        '3 — Sem resposta ou apenas reflexos estereotipados (coma)',
+      ],
+      nextNodeId: 'nihss_2',
+    ),
+
+    // 1b — Perguntas de orientação
+    'nihss_2': const AlgorithmNode(
+      id: 'nihss_2',
+      type: NodeType.info,
+      title: 'NIHSS 1b — Perguntas de Orientação',
+      subtitle: 'Pergunte: "Que mês é este?" e "Quantos anos você tem?"',
+      bullets: [
+        '0 — Responde AMBAS corretamente',
+        '1 — Responde UMA corretamente',
+        '2 — Nenhuma correta (ou afásico, intubado, estupor)',
+        '',
+        '⚠️ Aceite apenas a PRIMEIRA resposta. Não forneça pistas.',
+        '⚠️ Aproximações NÃO contam (ex: "acho que tenho 60" = errado).',
+      ],
+      nextNodeId: 'nihss_3',
+    ),
+
+    // 1c — Obedece a comandos
+    'nihss_3': const AlgorithmNode(
+      id: 'nihss_3',
+      type: NodeType.info,
+      title: 'NIHSS 1c — Obedece a Comandos',
+      subtitle: 'Peça: "Abra e feche os olhos" e "Abra e feche a mão" (mão não parética)',
+      bullets: [
+        '0 — Realiza AMBOS os comandos corretamente',
+        '1 — Realiza APENAS UM comando',
+        '2 — Não realiza nenhum',
+        '',
+        '⚠️ Gestos e mímicas são aceitáveis como resposta.',
+        '⚠️ Se mão parética: substitua por "wiggle fingers" (mexer dedos).',
+      ],
+      nextNodeId: 'nihss_4',
+    ),
+
+    // 2 — Olhar conjugado
+    'nihss_4': const AlgorithmNode(
+      id: 'nihss_4',
+      type: NodeType.info,
+      title: 'NIHSS 2 — Olhar Conjugado Horizontal',
+      subtitle: 'Observe os movimentos oculares horizontais voluntários',
+      bullets: [
+        '0 — Normal',
+        '1 — Paresia parcial do olhar (pode ser vencida pela manobra oculocefálica)',
+        '2 — Desvio forçado do olhar, NÃO vencível pela manobra',
+        '',
+        '⚠️ Teste apenas movimentos HORIZONTAIS.',
+        '⚠️ Nistagmo puro = 0. Paralisia isolada de nervo craniano = 1.',
+      ],
+      nextNodeId: 'nihss_5',
+    ),
+
+    // 3 — Campos visuais
+    'nihss_5': const AlgorithmNode(
+      id: 'nihss_5',
+      type: NodeType.info,
+      title: 'NIHSS 3 — Campos Visuais',
+      subtitle: 'Confrontação — dedos nos quadrantes superiores e inferiores de cada olho',
+      bullets: [
+        '0 — Sem perda visual',
+        '1 — Hemianopsia parcial (quadrantanopsia ou extinção visual)',
+        '2 — Hemianopsia completa',
+        '3 — Hemianopsia bilateral (cegueira cortical bilateral)',
+        '',
+        '⚠️ Se visão monocular: pontue campo como possível.',
+        '⚠️ Extinção visual simultânea bilateral = 1.',
+      ],
+      nextNodeId: 'nihss_6',
+    ),
+
+    // 4 — Paresia facial
+    'nihss_6': const AlgorithmNode(
+      id: 'nihss_6',
+      type: NodeType.info,
+      title: 'NIHSS 4 — Paresia Facial',
+      subtitle: 'Peça para mostrar os dentes, levantar sobrancelhas e fechar os olhos com força',
+      bullets: [
+        '0 — Movimentos normais e simétricos',
+        '1 — Paresia leve (apagamento do sulco nasolabial, sorriso assimétrico)',
+        '2 — Paralisia parcial — porção inferior apenas (total ou quase)',
+        '3 — Paralisia completa — superior + inferior (sem movimento facial)',
+        '',
+        '⚠️ Em pacientes intubados ou em coma: observe grimaça à dor.',
+      ],
+      nextNodeId: 'nihss_7',
+    ),
+
+    // 5a — Motor braço direito
+    'nihss_7': const AlgorithmNode(
+      id: 'nihss_7',
+      type: NodeType.info,
+      title: 'NIHSS 5a — Motor Braço Direito (MSD)',
+      subtitle: 'Elevar MSD a 90° (sentado) ou 45° (deitado) — manter por 10 segundos',
+      bullets: [
+        '0 — Sem queda em 10 seg',
+        '1 — Queda antes de 10 seg, mas NÃO toca a cama',
+        '2 — Algum esforço anti-gravitacional, mas toca a cama',
+        '3 — Sem esforço contra a gravidade (cai imediatamente)',
+        '4 — Sem movimento algum',
+        'UN — Amputação ou fusão articular (não pontuável)',
+      ],
+      nextNodeId: 'nihss_8',
+    ),
+
+    // 5b — Motor braço esquerdo
+    'nihss_8': const AlgorithmNode(
+      id: 'nihss_8',
+      type: NodeType.info,
+      title: 'NIHSS 5b — Motor Braço Esquerdo (MSE)',
+      subtitle: 'Elevar MSE a 90° (sentado) ou 45° (deitado) — manter por 10 segundos',
+      bullets: [
+        '0 — Sem queda em 10 seg',
+        '1 — Queda antes de 10 seg, mas NÃO toca a cama',
+        '2 — Algum esforço anti-gravitacional, mas toca a cama',
+        '3 — Sem esforço contra a gravidade',
+        '4 — Sem movimento algum',
+        'UN — Amputação ou fusão articular',
+      ],
+      nextNodeId: 'nihss_9',
+    ),
+
+    // 6a — Motor perna direita
+    'nihss_9': const AlgorithmNode(
+      id: 'nihss_9',
+      type: NodeType.info,
+      title: 'NIHSS 6a — Motor Perna Direita (MID)',
+      subtitle: 'Paciente deitado: elevar MID a 30° — manter por 5 segundos',
+      bullets: [
+        '0 — Sem queda em 5 seg',
+        '1 — Queda antes de 5 seg, mas NÃO toca a cama',
+        '2 — Algum esforço contra a gravidade, mas toca a cama',
+        '3 — Sem esforço contra a gravidade',
+        '4 — Sem movimento algum',
+        'UN — Amputação ou fusão articular',
+      ],
+      nextNodeId: 'nihss_10',
+    ),
+
+    // 6b — Motor perna esquerda
+    'nihss_10': const AlgorithmNode(
+      id: 'nihss_10',
+      type: NodeType.info,
+      title: 'NIHSS 6b — Motor Perna Esquerda (MIE)',
+      subtitle: 'Paciente deitado: elevar MIE a 30° — manter por 5 segundos',
+      bullets: [
+        '0 — Sem queda em 5 seg',
+        '1 — Queda antes de 5 seg, mas NÃO toca a cama',
+        '2 — Algum esforço contra a gravidade, mas toca a cama',
+        '3 — Sem esforço contra a gravidade',
+        '4 — Sem movimento algum',
+        'UN — Amputação ou fusão articular',
+      ],
+      nextNodeId: 'nihss_11',
+    ),
+
+    // 7 — Ataxia de membros
+    'nihss_11': const AlgorithmNode(
+      id: 'nihss_11',
+      type: NodeType.info,
+      title: 'NIHSS 7 — Ataxia de Membros',
+      subtitle: 'Teste índex-nariz e calcanhar-joelho (olhos fechados)',
+      bullets: [
+        '0 — Ausente',
+        '1 — Presente em 1 membro',
+        '2 — Presente em 2 ou mais membros',
+        '',
+        '⚠️ Pontue ZERO se paresia impede a realização do teste.',
+        '⚠️ Pontue ZERO em pacientes em coma.',
+        '⚠️ Diferencia ataxia cerebelar de fraqueza pura.',
+      ],
+      nextNodeId: 'nihss_12',
+    ),
+
+    // 8 — Sensibilidade
+    'nihss_12': const AlgorithmNode(
+      id: 'nihss_12',
+      type: NodeType.info,
+      title: 'NIHSS 8 — Sensibilidade',
+      subtitle: 'Estimulação com alfinete ou beliscão — compare hemicorpos',
+      bullets: [
+        '0 — Normal — sem perda sensorial',
+        '1 — Perda leve a moderada (menos aguçado, mas sente o toque)',
+        '2 — Perda grave ou total (sem sensação no rosto/membro/tronco)',
+        '',
+        '⚠️ Pontue 2 apenas se há perda bilateral confirmada.',
+        '⚠️ Em comatosos sem reação: pontue 2.',
+        '⚠️ Avalie face, braços e pernas (cada hemicorpo).',
+      ],
+      nextNodeId: 'nihss_13',
+    ),
+
+    // 9 — Linguagem / Afasia
+    'nihss_13': const AlgorithmNode(
+      id: 'nihss_13',
+      type: NodeType.info,
+      title: 'NIHSS 9 — Linguagem (Afasia)',
+      subtitle: 'Nomeação de objetos + leitura de frases + descrição de figura padrão',
+      bullets: [
+        '0 — Normal',
+        '1 — Afasia leve a moderada (alguma perda de fluência, nomeação ou compreensão)',
+        '2 — Afasia grave (fragmentada, requer inferência do examinador)',
+        '3 — Mutismo ou afasia global (sem linguagem funcional)',
+        '',
+        '⚠️ Intubados: peça para escrever ou gesticular.',
+        '⚠️ Avalie nomeação de objetos comuns (caneta, relógio, chave).',
+      ],
+      nextNodeId: 'nihss_14',
+    ),
+
+    // 10 — Disartria
+    'nihss_14': const AlgorithmNode(
+      id: 'nihss_14',
+      type: NodeType.info,
+      title: 'NIHSS 10 — Disartria',
+      subtitle: 'Peça para repetir palavras da lista padrão (mamã, rede, etc.)',
+      bullets: [
+        '0 — Normal',
+        '1 — Leve a moderada: fala arrastada, compreensível com esforço',
+        '2 — Grave: fala ininteligível ou anártrico (sem afasia)',
+        'UN — Intubado ou outra barreira física para fala',
+        '',
+        '⚠️ Não pontue deficiência de linguagem aqui — apenas articulação.',
+        '⚠️ Mesmo sem afasia, pode haver disartria grave (p. ex. cerebelar).',
+      ],
+      nextNodeId: 'nihss_15',
+    ),
+
+    // 11 — Extinção / Negligência
+    'nihss_15': const AlgorithmNode(
+      id: 'nihss_15',
+      type: NodeType.info,
+      title: 'NIHSS 11 — Extinção e Negligência (Heminegligência)',
+      subtitle: 'Estimulação simultânea bilateral — visual, cutânea e auditiva',
+      bullets: [
+        '0 — Sem anormalidade',
+        '1 — Extinção a estimulação simultânea bilateral em 1 modalidade',
+        '2 — Heminegligência grave ou anosognosia bilateral',
+        '',
+        '⚠️ Se déficit visual impede teste visual: usar estimulação cutânea.',
+        '⚠️ Toque simultâneo: mão direita e esquerda — qual ele sente?',
+        '⚠️ Neglect visual: dois dedos simultaneamente em cada campo.',
+      ],
+      nextNodeId: 'nihss_score',
+    ),
+
+    // Pontuação total NIHSS
+    'nihss_score': const AlgorithmNode(
+      id: 'nihss_score',
+      type: NodeType.question,
+      title: 'Pontuação Total NIHSS',
+      subtitle: 'Some todos os subitens avaliados (máximo 42 pontos)',
+      bullets: [
+        '0 — Sem déficit / TIA possível',
+        '1–4 — AVC leve',
+        '5–15 — AVC moderado',
+        '16–20 — AVC moderado-grave',
+        '21–42 — AVC grave',
+      ],
+      options: [
+        AlgorithmOption(label: '0 — Sem déficit / TIA', nextNodeId: 'stroke_ct_scan'),
+        AlgorithmOption(label: '1–4 — Leve', nextNodeId: 'stroke_ct_scan'),
+        AlgorithmOption(label: '5–15 — Moderado', nextNodeId: 'stroke_ct_scan'),
+        AlgorithmOption(label: '16–20 — Moderado-grave', nextNodeId: 'stroke_ct_scan'),
+        AlgorithmOption(label: '21–42 — Grave', nextNodeId: 'stroke_ct_scan'),
+      ],
+    ),
+
+    // ── TC DE CRÂNIO ──────────────────────────────────────────
+    'stroke_ct_scan': const AlgorithmNode(
+      id: 'stroke_ct_scan',
+      type: NodeType.action,
+      title: 'TC de Crânio Sem Contraste — URGENTE',
+      alertLevel: 'danger',
+      bullets: [
+        '🎯 Meta porta-TC: ≤ 25 minutos',
+        '🖥️ TC sem contraste é suficiente para excluir hemorragia',
+        '🔬 Se candidato a trombectomia: adicionar angiotomografia',
+        '⚡ NÃO atrasar TC para aguardar exames laboratoriais',
+        '📋 Resultado interpretado em < 45 min do início',
+      ],
+      nextNodeId: 'stroke_ct_result',
+    ),
+
+    'stroke_ct_result': const AlgorithmNode(
+      id: 'stroke_ct_result',
+      type: NodeType.question,
+      title: 'Resultado da TC de Crânio',
+      options: [
+        AlgorithmOption(
+          label: '✅ Sem hemorragia — provável isquêmico',
+          sublabel: 'TC normal ou hipodensidade precoce',
+          nextNodeId: 'stroke_alteplase_criteria',
+        ),
+        AlgorithmOption(
+          label: '🔴 Hemorragia intracraniana',
+          sublabel: 'AVC hemorrágico confirmado',
+          nextNodeId: 'stroke_hemorrhagic',
+        ),
+      ],
+    ),
+
+    // ── HEMORRÁGICO — NÓ DE ENCERRAMENTO ─────────────────────
+    'stroke_hemorrhagic': const AlgorithmNode(
+      id: 'stroke_hemorrhagic',
+      type: NodeType.end,
+      title: 'AVC Hemorrágico — Acionar Neurocirurgia',
+      alertLevel: 'danger',
+      bullets: [
+        '🚫 CONTRAINDICADO: Alteplase, anticoagulantes, antiagregantes',
+        '📞 Acionar Neurocirurgia IMEDIATAMENTE',
+        '💉 Reversão de anticoagulação se em uso:',
+        '   • Heparina → Protamina',
+        '   • Warfarina → Vitamina K + CCP (Octaplex)',
+        '   • DOAC → Andexanet alfa / Idarucizumabe',
+        '📈 Alvo de PA: sistólica < 140 mmHg (AHA 2022)',
+        '🛏️ UTI ou unidade de AVC imediatamente',
+        '🧠 Critérios cirúrgicos: hematoma > 30 mL, deterioração, hidrocefalia',
+        '🌡️ Controle de temperatura, glicemia e convulsões',
+      ],
+    ),
+
+    // ── CRITÉRIOS ALTEPLASE ───────────────────────────────────
+    'stroke_alteplase_criteria': const AlgorithmNode(
+      id: 'stroke_alteplase_criteria',
+      type: NodeType.info,
+      title: 'Critérios de Elegibilidade — Alteplase IV',
+      alertLevel: 'warning',
+      bullets: [
+        '✅ INCLUSÃO:',
+        '  • AVC isquêmico com déficit neurológico mensurável',
+        '  • Início dos sintomas ≤ 4,5 horas',
+        '  • Idade ≥ 18 anos',
+        '',
+        '🚫 EXCLUSÃO ABSOLUTA:',
+        '  • TC com hemorragia intracraniana',
+        '  • PA > 185/110 mmHg não controlada',
+        '  • Glicemia < 50 ou > 400 mg/dL',
+        '  • AVC isquêmico ou TCE grave < 3 meses',
+        '  • Sangramento interno ativo',
+        '  • Plaquetas < 100.000 | INR > 1,7 | TTPA > 40 s',
+        '  • Anticoagulante oral sem reversão confirmada',
+        '',
+        '⚠️ EXCLUSÃO RELATIVA (risco/benefício individual):',
+        '  • Cirurgia de grande porte < 14 dias',
+        '  • NIHSS 0–1 ou melhora rápida',
+        '  • Convulsão no início (se déficit residual: tratar)',
+        '  • Gravidez (risco/benefício materno-fetal)',
+      ],
+      nextNodeId: 'stroke_alteplase_eligible',
+    ),
+
+    'stroke_alteplase_eligible': const AlgorithmNode(
+      id: 'stroke_alteplase_eligible',
+      type: NodeType.question,
+      title: 'Paciente Elegível para Alteplase?',
+      options: [
+        AlgorithmOption(
+          label: '✅ Elegível — sem contraindicações',
+          nextNodeId: 'stroke_bp_control',
+        ),
+        AlgorithmOption(
+          label: '🚫 Contraindicado — não administrar',
+          nextNodeId: 'stroke_no_alteplase',
+        ),
+      ],
+    ),
+
+    // Controle de PA pré-alteplase
+    'stroke_bp_control': const AlgorithmNode(
+      id: 'stroke_bp_control',
+      type: NodeType.question,
+      title: 'Pressão Arterial Pré-Alteplase',
+      subtitle: 'Deve estar ≤ 185/110 mmHg para iniciar a infusão',
+      options: [
+        AlgorithmOption(
+          label: '✅ PA ≤ 185/110 mmHg — pronto para alteplase',
+          nextNodeId: 'stroke_give_alteplase',
+        ),
+        AlgorithmOption(
+          label: '⚠️ PA > 185/110 mmHg — controlar primeiro',
+          nextNodeId: 'stroke_bp_treatment',
+        ),
+      ],
+    ),
+
+    'stroke_bp_treatment': const AlgorithmNode(
+      id: 'stroke_bp_treatment',
+      type: NodeType.action,
+      title: 'Controle de PA Pré-Alteplase',
+      alertLevel: 'warning',
+      bullets: [
+        'Labetalol 10–20 mg IV em 1–2 min (repetir 1x se necessário)',
+        'Nicardipina 5 mg/h IV — titular 2,5 mg/h a cada 5 min (máx 15 mg/h)',
+        'Clevidipina 1,25 mg/h IV — titular (máx 21 mg/h)',
+        'Meta: PA ≤ 185/110 mmHg antes de iniciar',
+        '⚠️ Se PA não controlável: NÃO administrar alteplase',
+      ],
+      nextNodeId: 'stroke_bp_achieved',
+    ),
+
+    'stroke_bp_achieved': const AlgorithmNode(
+      id: 'stroke_bp_achieved',
+      type: NodeType.question,
+      title: 'PA Controlada?',
+      options: [
+        AlgorithmOption(
+          label: '✅ PA ≤ 185/110 mmHg atingida',
+          nextNodeId: 'stroke_give_alteplase',
+        ),
+        AlgorithmOption(
+          label: '🚫 PA não controlável — alteplase contraindicada',
+          nextNodeId: 'stroke_no_alteplase',
+        ),
+      ],
+    ),
+
+    // ── ADMINISTRAR ALTEPLASE ─────────────────────────────────
+    'stroke_give_alteplase': const AlgorithmNode(
+      id: 'stroke_give_alteplase',
+      type: NodeType.drug,
+      title: 'Administrar Alteplase IV — AGORA',
+      alertLevel: 'danger',
+      drug: DrugInfo(
+        name: 'Alteplase (rt-PA) — AVC Isquêmico',
+        dose: '0,9 mg/kg (máx 90 mg total)\n• 10% do total: bolus IV em 1 min\n• 90% restantes: infusão IV em 60 min',
+        route: 'IV — bolus + infusão contínua',
+        notes: 'Meta porta-agulha: ≤ 60 min. PA alvo durante e após: < 180/105 mmHg. Monitorização neurológica contínua.',
+        color: '#F97316',
+      ),
+      nextNodeId: 'stroke_post_alteplase',
+    ),
+
+    'stroke_post_alteplase': const AlgorithmNode(
+      id: 'stroke_post_alteplase',
+      type: NodeType.action,
+      title: 'Monitorização Pós-Alteplase',
+      alertLevel: 'warning',
+      bullets: [
+        '🧠 Neurológico: a cada 15 min durante infusão, a cada 30 min × 6h',
+        '📊 PA: a cada 15 min × 2h → a cada 30 min × 6h → a cada 60 min × 16h',
+        '🎯 Meta de PA pós-alteplase: < 180/105 mmHg',
+        '🚫 NÃO iniciar anticoagulantes ou antiagregantes nas primeiras 24h',
+        '🚫 NÃO inserir cateter urinário, SNG ou acesso arterial por ≥ 30 min',
+        '⚠️ Piora neurológica durante infusão = parar alteplase + TC urgente',
+      ],
+      nextNodeId: 'stroke_thrombectomy_check',
+    ),
+
+    // Sem alteplase
+    'stroke_no_alteplase': const AlgorithmNode(
+      id: 'stroke_no_alteplase',
+      type: NodeType.info,
+      title: 'Alteplase Contraindicada — Manejo Alternativo',
+      alertLevel: 'warning',
+      bullets: [
+        'AAS 300 mg VO — iniciar em 24–48h (se não trombólise)',
+        'Avaliar trombectomia mecânica se oclusão de grande vaso',
+        'Suporte clínico: hidratação SF 0,9%, controle glicêmico, temperatura',
+        'Monitorização: ECG contínuo (rastrear FA)',
+        'Internação em unidade de AVC',
+      ],
+      nextNodeId: 'stroke_thrombectomy_check',
+    ),
+
+    // ── TROMBECTOMIA ──────────────────────────────────────────
+    'stroke_thrombectomy_check': const AlgorithmNode(
+      id: 'stroke_thrombectomy_check',
+      type: NodeType.question,
+      title: 'Indicação de Trombectomia Mecânica?',
+      subtitle: 'Avalie oclusão de grande vaso (OGV) por imagem',
+      bullets: [
+        'Angiotomografia ou RM-angio para identificar OGV',
+        'NIHSS ≥ 6 com OGV confirmada = candidato preferencial',
+        'Janela ≤ 6h (circulação anterior) ou 6–24h (DAWN/DEFUSE)',
+        'Alteplase NÃO é contraindicação — fazer as duas se elegível',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '✅ Indicada — OGV confirmada, janela adequada',
+          nextNodeId: 'stroke_thrombectomy_info',
+        ),
+        AlgorithmOption(
+          label: '❌ Não indicada ou fora da janela',
+          nextNodeId: 'stroke_post_care',
+        ),
+      ],
+    ),
+
+    'stroke_thrombectomy_info': const AlgorithmNode(
+      id: 'stroke_thrombectomy_info',
+      type: NodeType.action,
+      title: 'Trombectomia Mecânica — Acionar Hemodinâmica',
+      alertLevel: 'danger',
+      bullets: [
+        '📞 Ativar neurorradiologia intervencionista IMEDIATAMENTE',
+        '🎯 Meta porta-punção: ≤ 90 min (idealmente < 60 min)',
+        '🖼️ Angiotomografia crânio + pescoço se não realizada',
+        '📊 Core isquêmico < 70 mL = critério favorável',
+        '🔬 Critérios DAWN/DEFUSE para janela 6–24h',
+        '💉 Alteplase + trombectomia: fazer as duas se elegível',
+      ],
+      nextNodeId: 'stroke_post_care',
+    ),
+
+    // ── JANELA TARDIA ─────────────────────────────────────────
+    'stroke_late_window': const AlgorithmNode(
+      id: 'stroke_late_window',
+      type: NodeType.action,
+      title: 'Janela Tardia (4,5h–24h) — Avaliação por Imagem',
+      alertLevel: 'warning',
+      bullets: [
+        '🚫 Alteplase IV NÃO indicada (fora da janela de 4,5h)',
+        '🖥️ Solicitar TC + Angiotomografia ou RM de difusão',
+        '🔬 Avaliar trombectomia (critérios DAWN / DEFUSE 3):',
+        '   • NIHSS ≥ 6 + OGV confirmada em circulação anterior',
+        '   • Core isquêmico pequeno vs. grande penumbra viável',
+        '   • Janela até 24h para casos selecionados',
+        '🛏️ Internação em unidade de AVC',
+      ],
+      nextNodeId: 'stroke_thrombectomy_check',
+    ),
+
+    'stroke_out_of_window': const AlgorithmNode(
+      id: 'stroke_out_of_window',
+      type: NodeType.info,
+      title: 'Fora das Janelas Terapêuticas (> 24h)',
+      alertLevel: 'info',
+      bullets: [
+        '🚫 Alteplase e trombectomia não indicadas de rotina',
+        '💊 Antiagregação: AAS 300 mg VO (iniciar nas primeiras 24–48h)',
+        '💊 AVC leve/TIA: dupla antiagregação AAS + Clopidogrel × 21 dias',
+        '📈 PA inicial: não tratar se < 220/120 mmHg (manter perfusão)',
+        '🧪 Investigação etiológica: ECG, Holter, ecocardiograma',
+        '🛏️ Internação em unidade de AVC ou UTI',
+      ],
+      nextNodeId: 'stroke_post_care',
+    ),
+
+    // ── CUIDADOS PÓS-AVC ──────────────────────────────────────
+    'stroke_post_care': const AlgorithmNode(
+      id: 'stroke_post_care',
+      type: NodeType.end,
+      title: 'Cuidados Pós-AVC — Unidade de AVC / UTI',
+      alertLevel: 'info',
+      bullets: [
+        '📊 Monitorização contínua: ECG, SpO₂, PA, temperatura',
+        '🌡️ Temperatura: tratar febre (meta < 37,5°C)',
+        '🍬 Glicemia: manter 140–180 mg/dL (evitar hipoglicemia)',
+        '📈 PA pós-trombólise: < 180/105 mmHg',
+        '📈 PA sem trombólise: < 220/120 nas primeiras 24h',
+        '🛏️ Decúbito: cabeceira 0–30° (primeiras 24h — fluxo colateral)',
+        '💧 Hidratação: SF 0,9% (evitar SG — piora edema cerebral)',
+        '🗣️ Fonoaudiologia: avaliar deglutição antes de qualquer via oral',
+        '🧠 RM de difusão: confirmar topografia e extensão do infarto',
+        '❤️ Holter 24h: rastrear FA paroxística (causa em 25% dos AVC)',
+        '💊 Estatina de alta intensidade: iniciar precocemente',
+        '🩺 Investigação etiológica TOAST completa',
+      ],
+    ),
+  },
+);
+
+// ═══════════════════════════════════════════════════════════════
 //  REGISTRO DE TODOS OS ALGORITMOS
 // ═══════════════════════════════════════════════════════════════
 
@@ -1849,4 +2596,6 @@ final allAlgorithms = <String, Algorithm>{
   tachycardiaAlgorithm.id: tachycardiaAlgorithm,
   postRoscAlgorithm.id: postRoscAlgorithm,
   scaAlgorithm.id: scaAlgorithm,
+  strokeAlgorithm.id: strokeAlgorithm,
 };
+
