@@ -324,6 +324,15 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                     _showTachycardiaModal(context, notifier);
                   },
                 ),
+                _ActionBtn(
+                  label: '🔍 Causas (5H/5T)',
+                  icon: Icons.search_rounded,
+                  color: AppColors.primary,
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    _show5Hs5TsModal(context);
+                  },
+                ),
               ],
             ),
           ),
@@ -597,6 +606,66 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _show5Hs5TsModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            top: 24,
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(ctx).padding.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Causas Reversíveis (5H / 5T)',
+                    style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text('🅗 Hipovolemia → SF/RL IV rápido', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅗 Hipóxia → Ventilar, IOT, O₂ 100%', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅗 Hidrogênio (acidose) → Bicarbonato se pH < 7,1', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅗 Hipo/Hipercalemia → ECG, corrigir K⁺', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅗 Hipotermia → Reaquecimento ativo', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅣 Tensão (pneumotórax) → Descompressão agulha', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅣 Tamponamento → Pericardiocentese', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅣 Toxinas → Naloxona, flumazenil, etc', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅣 Trombose coronária (IAM) → ICP emergência', style: GoogleFonts.inter(fontSize: 14)),
+              const Divider(),
+              Text('🅣 Trombose pulmonar (TEP) → Trombólise', style: GoogleFonts.inter(fontSize: 14)),
+            ],
+          ),
+        );
+      },
     );
   }
 
