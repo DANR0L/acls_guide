@@ -167,28 +167,12 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: '💊',
-                            label: 'Fármacos',
-                            sublabel: 'Doses e vias',
-                            color: AppColors.purple,
-                            onTap: () => context.push('/drugs'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _QuickActionCard(
-                            icon: '⏱️',
-                            label: 'Timer CPR',
-                            sublabel: '2 min / ciclo',
-                            color: AppColors.primary,
-                            onTap: () => _showQuickTimer(context, ref),
-                          ),
-                        ),
-                      ],
+                    _QuickActionCard(
+                      icon: '💊',
+                      label: 'Fármacos',
+                      sublabel: 'Doses e vias',
+                      color: AppColors.purple,
+                      onTap: () => context.push('/drugs'),
                     ),
                   ],
                 ),
@@ -198,21 +182,6 @@ class HomeScreen extends ConsumerWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 40)),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showQuickTimer(BuildContext context, WidgetRef ref) {
-    ref.read(cprTimerProvider.notifier).start(120);
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => ProviderScope(
-        parent: ProviderScope.containerOf(context),
-        child: const _QuickTimerSheet(),
       ),
     );
   }
@@ -226,28 +195,33 @@ class _ModeToggle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isStudy = ref.watch(studyModeProvider);
 
-    return GestureDetector(
-      onTap: () => ref.read(studyModeProvider.notifier).state = !isStudy,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceVariant,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Row(
-          children: [
-            // Emergência
-            Expanded(
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          // Iniciar Código (PCR)
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                ref.read(studyModeProvider.notifier).state = false;
+                
+                // Set the session target to cardiac_arrest
+                final targetAlgo = allAlgorithms['cardiac_arrest'];
+                if (targetAlgo != null) {
+                  ref.read(algorithmSessionProvider.notifier).startSession(targetAlgo);
+                  context.push('/algorithm/cardiac_arrest');
+                }
+              },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: !isStudy
-                      ? AppColors.danger
-                      : Colors.transparent,
+                  color: !isStudy ? AppColors.danger : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -255,36 +229,33 @@ class _ModeToggle extends ConsumerWidget {
                   children: [
                     Text(
                       '🚨',
-                      style: TextStyle(
-                        fontSize: !isStudy ? 16 : 13,
-                      ),
+                      style: TextStyle(fontSize: !isStudy ? 16 : 13),
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Emergência',
+                      'Iniciar Código',
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        fontWeight: !isStudy
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                        color: !isStudy
-                            ? Colors.white
-                            : AppColors.textSecondary,
+                        fontWeight: !isStudy ? FontWeight.w800 : FontWeight.w600,
+                        color: !isStudy ? Colors.white : AppColors.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            // Estudo
-            Expanded(
+          ),
+          // Estudo
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                ref.read(studyModeProvider.notifier).state = true;
+              },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: isStudy
-                      ? AppColors.info
-                      : Colors.transparent,
+                  color: isStudy ? AppColors.info : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -292,29 +263,23 @@ class _ModeToggle extends ConsumerWidget {
                   children: [
                     Text(
                       '📖',
-                      style: TextStyle(
-                        fontSize: isStudy ? 16 : 13,
-                      ),
+                      style: TextStyle(fontSize: isStudy ? 16 : 13),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'Estudo',
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        fontWeight: isStudy
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                        color: isStudy
-                            ? Colors.white
-                            : AppColors.textSecondary,
+                        fontWeight: isStudy ? FontWeight.w800 : FontWeight.w600,
+                        color: isStudy ? Colors.white : AppColors.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -458,107 +423,4 @@ class _QuickActionCard extends StatelessWidget {
   }
 }
 
-// ── Quick Timer Sheet ─────────────────────────────────────────
-class _QuickTimerSheet extends ConsumerStatefulWidget {
-  const _QuickTimerSheet();
 
-  @override
-  ConsumerState<_QuickTimerSheet> createState() => _QuickTimerSheetState();
-}
-
-class _QuickTimerSheetState extends ConsumerState<_QuickTimerSheet> {
-  @override
-  void initState() {
-    super.initState();
-    _startTicking();
-  }
-
-  void _startTicking() async {
-    while (mounted) {
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        ref.read(cprTimerProvider.notifier).tick();
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final timer = ref.watch(cprTimerProvider);
-    final mins = timer.secondsRemaining ~/ 60;
-    final secs = timer.secondsRemaining % 60;
-
-    return Padding(
-      padding: const EdgeInsets.all(28),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.border,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text('⏱️ Timer CPR',
-              style: GoogleFonts.inter(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary)),
-          const SizedBox(height: 24),
-          Text(
-            '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
-            style: GoogleFonts.inter(
-              fontSize: 72,
-              fontWeight: FontWeight.w800,
-              color: timer.secondsRemaining < 20
-                  ? AppColors.danger
-                  : AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: timer.progress,
-            backgroundColor: AppColors.border,
-            valueColor:
-                AlwaysStoppedAnimation<Color>(timer.secondsRemaining < 20
-                    ? AppColors.danger
-                    : AppColors.primary),
-            minHeight: 8,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () =>
-                      ref.read(cprTimerProvider.notifier).reset(),
-                  child: const Text('Reiniciar'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (timer.isRunning) {
-                      ref.read(cprTimerProvider.notifier).pause();
-                    } else {
-                      ref.read(cprTimerProvider.notifier).start(
-                          timer.secondsRemaining > 0
-                              ? timer.secondsRemaining
-                              : 120);
-                    }
-                  },
-                  child: Text(timer.isRunning ? 'Pausar' : 'Iniciar'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}

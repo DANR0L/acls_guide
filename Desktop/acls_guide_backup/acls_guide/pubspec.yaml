@@ -25,6 +25,10 @@ dependencies:
   # Shared Preferences (settings)
   shared_preferences: ^2.3.2
 
+  # PDF Export
+  pdf: ^3.11.1
+  printing: ^5.13.0
+
   # Icons extras
   cupertino_icons: ^1.0.8
 

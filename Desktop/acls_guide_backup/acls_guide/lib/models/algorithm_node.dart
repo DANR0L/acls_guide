@@ -9,6 +9,7 @@ enum NodeType {
   end,        // Fim do algoritmo (ROSC / TOR)
   loop,       // Retorno a ponto anterior (ciclos CPR)
   timer,      // Iniciar/parar cronômetro
+  nihss,      // Escala NIHSS interativa com cálculo automático
 }
 
 class AlgorithmOption {
@@ -35,6 +36,7 @@ class AlgorithmNode {
   final int? timerSeconds;        // Para type == timer
   final String? alertLevel;       // 'danger' | 'warning' | 'info' | 'success'
   final List<String>? bullets;    // Lista de pontos de ação
+  final bool isShockNode;
 
   const AlgorithmNode({
     required this.id,
@@ -48,6 +50,7 @@ class AlgorithmNode {
     this.timerSeconds,
     this.alertLevel,
     this.bullets,
+    this.isShockNode = false,
   });
 }
 

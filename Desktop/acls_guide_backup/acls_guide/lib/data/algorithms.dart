@@ -2,13 +2,13 @@ import '../models/algorithm_node.dart';
 
 // ═══════════════════════════════════════════════════════════════
 //  ALGORITMO PCR — Parada Cardiorrespiratória (AHA 2025)
-//  Inclui: VF/pVT (chocável) e Assistolia/AESP (não chocável)
+//  Inclui: VF/pVT (chocável) e Assistolia/PEA (não chocável)
 // ═══════════════════════════════════════════════════════════════
 
 final cardiacArrestAlgorithm = Algorithm(
   id: 'cardiac_arrest',
   title: 'PCR — Parada Cardiorrespiratória',
-  subtitle: 'VF · pVT · Assistolia · AESP',
+  subtitle: 'VF · pVT · Assistolia · PEA',
   iconEmoji: '🫀',
   color: '#EF4444',
   startNodeId: 'start',
@@ -103,8 +103,8 @@ final cardiacArrestAlgorithm = Algorithm(
           nextNodeId: 'asystole_path',
         ),
         AlgorithmOption(
-          label: '🔲 Não Chocável — AESP',
-          sublabel: 'Atividade Elétrica Sem Pulso',
+          label: '🔲 Não Chocável — PEA',
+          sublabel: 'Atividade Elétrica Sem Pulso (PEA)',
           nextNodeId: 'pea_path',
         ),
         AlgorithmOption(
@@ -121,9 +121,10 @@ final cardiacArrestAlgorithm = Algorithm(
     'shock_1': const AlgorithmNode(
       id: 'shock_1',
       type: NodeType.action,
-      title: '⚡ DESFIBRILAR AGORA',
+      title: '⚡ 1º Choque — Desfibrilar',
       subtitle: 'Ritmo chocável identificado — VF / pVT',
       alertLevel: 'danger',
+      isShockNode: true,
       bullets: [
         'Bifásico: 200 J (ou máximo do equipamento)',
         'Monofásico: 360 J',
@@ -141,7 +142,7 @@ final cardiacArrestAlgorithm = Algorithm(
       bullets: [
         'Reiniciar CPR imediatamente (2 min)',
         'Acesso IV ou IO — estabelecer AGORA',
-        'Considerar via aérea avançada (IOT ou supraglótico)',
+        'Intubar ou usar máscara laríngea após 1–2 min de CPR, se possível',
         'Monitorizar ETCO₂ se disponível',
       ],
       nextNodeId: 'start_timer_2min_2',
@@ -181,6 +182,7 @@ final cardiacArrestAlgorithm = Algorithm(
       type: NodeType.action,
       title: '⚡ 2º Choque + Epinefrina',
       alertLevel: 'danger',
+      isShockNode: true,
       bullets: [
         'Desfibrilar: 200–360 J',
         'Retomar CPR imediatamente',
@@ -239,6 +241,7 @@ final cardiacArrestAlgorithm = Algorithm(
       type: NodeType.action,
       title: '⚡ 3º Choque + Antiarrítmico',
       alertLevel: 'danger',
+      isShockNode: true,
       bullets: [
         'Desfibrilar: 200–360 J',
         'Retomar CPR imediatamente',
@@ -269,47 +272,241 @@ final cardiacArrestAlgorithm = Algorithm(
     'amiodarone_drug': const AlgorithmNode(
       id: 'amiodarone_drug',
       type: NodeType.drug,
-      title: 'Amiodarona — PCR',
+      title: 'Amiodarona — 1ª Dose',
       drug: DrugInfo(
         name: 'Amiodarona',
-        dose: '300 mg (1ª dose) → 150 mg (2ª dose)',
+        dose: '300 mg (1ª dose)',
         route: 'IV / IO push',
-        frequency: '1ª dose: após 3º choque. 2ª dose: após 5º choque',
+        frequency: '1ª dose: após 3º choque.',
         notes: 'Diluir em 20 mL de SG5% ou SF. Infundir em bolus rápido durante PCR.',
         color: '#A855F7',
       ),
-      nextNodeId: 'continue_vf_cycles',
+      nextNodeId: 'start_timer_2min_4',
     ),
 
     'lidocaine_drug': const AlgorithmNode(
       id: 'lidocaine_drug',
       type: NodeType.drug,
-      title: 'Lidocaína — PCR',
+      title: 'Lidocaína — 1ª Dose',
       drug: DrugInfo(
         name: 'Lidocaína',
-        dose: '1–1,5 mg/kg (1ª dose) → 0,5–0,75 mg/kg (2ª dose)',
+        dose: '1–1,5 mg/kg (1ª dose)',
         route: 'IV / IO push',
-        frequency: '2ª dose após 5–10 min se necessário',
+        frequency: '1ª dose: após 3º choque.',
         maxDose: 'Máx 3 mg/kg total',
         notes: 'Alternativa à Amiodarona em VF/pVT refratária.',
         color: '#A855F7',
       ),
-      nextNodeId: 'continue_vf_cycles',
+      nextNodeId: 'start_timer_2min_4',
     ),
 
-    'continue_vf_cycles': const AlgorithmNode(
-      id: 'continue_vf_cycles',
-      type: NodeType.action,
-      title: 'Continuar Ciclos de CPR + Choque',
-      subtitle: 'VF/pVT refratária — protocolo contínuo',
-      alertLevel: 'warning',
-      bullets: [
-        'Manter ciclos de 2 min CPR → choque → checagem',
-        'Epinefrina 1mg IV/IO a cada 3–5 minutos',
-        'Investigar e tratar causas reversíveis (5H5T)',
-        'Considerar ECMO-CPR se disponível e indicado',
+    'start_timer_2min_4': const AlgorithmNode(
+      id: 'start_timer_2min_4',
+      type: NodeType.timer,
+      title: 'Ciclo CPR — 2 minutos',
+      timerSeconds: 120,
+      nextNodeId: 'rhythm_check_4',
+    ),
+
+    'rhythm_check_4': const AlgorithmNode(
+      id: 'rhythm_check_4',
+      type: NodeType.question,
+      title: 'Verificar Ritmo (4ª checagem)',
+      options: [
+        AlgorithmOption(
+          label: '⚡ Chocável — VF / pVT persiste',
+          nextNodeId: 'shock_4',
+        ),
+        AlgorithmOption(
+          label: '⚡ Chocável refratária — DSD (Dupla Desfibrilação)',
+          nextNodeId: 'dsd_shock',
+        ),
+        AlgorithmOption(
+          label: '📉 Não Chocável',
+          nextNodeId: 'pea_asystole_mid',
+        ),
+        AlgorithmOption(
+          label: '✅ ROSC',
+          nextNodeId: 'rosc_detected',
+        ),
       ],
-      nextNodeId: 'hs_ts',
+    ),
+
+    'dsd_shock': const AlgorithmNode(
+      id: 'dsd_shock',
+      type: NodeType.action,
+      title: '⚡ Choque Sequencial Duplo (DSD)',
+      alertLevel: 'danger',
+      isShockNode: true,
+      bullets: [
+        'Aplicar 2 DEAs simultaneamente (cargas máximas)',
+        'Retomar CPR imediatamente',
+        '💊 Epinefrina 1 mg IV/IO — AGORA',
+      ],
+      nextNodeId: 'epi_2',
+    ),
+
+    'shock_4': const AlgorithmNode(
+      id: 'shock_4',
+      type: NodeType.action,
+      title: '⚡ 4º Choque + Epinefrina',
+      alertLevel: 'danger',
+      isShockNode: true,
+      bullets: [
+        'Desfibrilar: 200–360 J',
+        'Retomar CPR imediatamente',
+        '💊 Epinefrina 1 mg IV/IO — AGORA',
+      ],
+      nextNodeId: 'epi_2',
+    ),
+
+    'epi_2': const AlgorithmNode(
+      id: 'epi_2',
+      type: NodeType.drug,
+      title: 'Epinefrina',
+      drug: DrugInfo(
+        name: 'Epinefrina (Adrenalina)',
+        dose: '1 mg',
+        route: 'IV / IO',
+        frequency: 'A cada 3–5 minutos',
+        notes: 'Dose sequencial (4º choque). Flush com 20 mL SF após.',
+        color: '#EF4444',
+      ),
+      nextNodeId: 'start_timer_2min_5',
+    ),
+
+    'start_timer_2min_5': const AlgorithmNode(
+      id: 'start_timer_2min_5',
+      type: NodeType.timer,
+      title: 'Ciclo CPR — 2 minutos',
+      timerSeconds: 120,
+      nextNodeId: 'rhythm_check_5',
+    ),
+
+    'rhythm_check_5': const AlgorithmNode(
+      id: 'rhythm_check_5',
+      type: NodeType.question,
+      title: 'Verificar Ritmo (5ª checagem)',
+      options: [
+        AlgorithmOption(
+          label: '⚡ Chocável — VF / pVT persiste',
+          nextNodeId: 'shock_5_antiarritmico',
+        ),
+        AlgorithmOption(
+          label: '📉 Não Chocável',
+          nextNodeId: 'pea_asystole_mid',
+        ),
+        AlgorithmOption(
+          label: '✅ ROSC',
+          nextNodeId: 'rosc_detected',
+        ),
+      ],
+    ),
+
+    'shock_5_antiarritmico': const AlgorithmNode(
+      id: 'shock_5_antiarritmico',
+      type: NodeType.action,
+      title: '⚡ 5º Choque + Antiarrítmico (2ª Dose)',
+      alertLevel: 'danger',
+      isShockNode: true,
+      bullets: [
+        'Desfibrilar: 200–360 J',
+        'Retomar CPR imediatamente',
+        '💊 Antiarrítmico (2ª dose) — AGORA',
+      ],
+      nextNodeId: 'antiarrhythmic_choice_2',
+    ),
+
+    'antiarrhythmic_choice_2': const AlgorithmNode(
+      id: 'antiarrhythmic_choice_2',
+      type: NodeType.question,
+      title: 'Escolha da 2ª Dose do Antiarrítmico',
+      subtitle: 'Use o mesmo fármaco da 1ª dose, com posologia reduzida',
+      options: [
+        AlgorithmOption(
+          label: '💊 Amiodarona (150 mg)',
+          nextNodeId: 'amiodarone_drug_2',
+        ),
+        AlgorithmOption(
+          label: '💊 Lidocaína (0,5 a 0,75 mg/kg)',
+          nextNodeId: 'lidocaine_drug_2',
+        ),
+      ],
+    ),
+
+    'amiodarone_drug_2': const AlgorithmNode(
+      id: 'amiodarone_drug_2',
+      type: NodeType.drug,
+      title: 'Amiodarona — 2ª Dose',
+      drug: DrugInfo(
+        name: 'Amiodarona',
+        dose: '150 mg',
+        route: 'IV / IO push',
+        frequency: '2ª dose: após 5º choque',
+        notes: 'Diluir em SG5% ou SF. Infundir em bolus. Após a 2ª dose, iniciar infusão contínua 150 mg em 10 min.',
+        color: '#A855F7',
+      ),
+      nextNodeId: 'vf_continuous_timer',
+    ),
+
+    'lidocaine_drug_2': const AlgorithmNode(
+      id: 'lidocaine_drug_2',
+      type: NodeType.drug,
+      title: 'Lidocaína — 2ª Dose',
+      drug: DrugInfo(
+        name: 'Lidocaína',
+        dose: '0,5 – 0,75 mg/kg',
+        route: 'IV / IO push',
+        frequency: '2ª dose: após 5º choque',
+        maxDose: 'Máx 3 mg/kg total',
+        notes: 'Metade da dose inicial.',
+        color: '#A855F7',
+      ),
+      nextNodeId: 'vf_continuous_timer',
+    ),
+
+    'vf_continuous_timer': const AlgorithmNode(
+      id: 'vf_continuous_timer',
+      type: NodeType.timer,
+      title: 'Ciclo CPR — 2 minutos',
+      timerSeconds: 120,
+      nextNodeId: 'vf_continuous_check',
+    ),
+
+    'vf_continuous_check': const AlgorithmNode(
+      id: 'vf_continuous_check',
+      type: NodeType.question,
+      title: 'Verificar Ritmo (Ciclos Contínuos)',
+      options: [
+        AlgorithmOption(
+          label: '⚡ Chocável — VF / pVT',
+          nextNodeId: 'shock_continuous',
+        ),
+        AlgorithmOption(
+          label: '📉 Não Chocável (Assistolia/PEA)',
+          nextNodeId: 'pea_asystole_mid',
+        ),
+        AlgorithmOption(
+          label: '✅ ROSC (Pulso Detectado)',
+          nextNodeId: 'rosc_detected',
+        ),
+      ],
+    ),
+
+    'shock_continuous': const AlgorithmNode(
+      id: 'shock_continuous',
+      type: NodeType.action,
+      title: '⚡ Choque + Fármacos (Protocolo Contínuo)',
+      alertLevel: 'danger',
+      isShockNode: true,
+      bullets: [
+        'Desfibrilar (carga máxima)',
+        'Retomar CPR imediatamente (2 min)',
+        'Epinefrina 1 mg a cada 3–5 min',
+        'Considere 2ª dose de Amiodarona (150 mg) se não feita',
+        'Tratar causas reversíveis (5H5T)',
+      ],
+      nextNodeId: 'vf_continuous_timer',
     ),
 
     // ══════════════════════════════════════════════════════════
@@ -333,13 +530,13 @@ final cardiacArrestAlgorithm = Algorithm(
     'epi_asystole': const AlgorithmNode(
       id: 'epi_asystole',
       type: NodeType.drug,
-      title: 'Epinefrina — Assistolia/AESP',
+      title: 'Epinefrina — Assistolia/PEA',
       drug: DrugInfo(
         name: 'Epinefrina (Adrenalina)',
         dose: '1 mg',
         route: 'IV / IO',
         frequency: 'A cada 3–5 minutos',
-        notes: 'Administrar o mais precocemente possível. Flush 20 mL SF após cada dose.',
+        notes: 'Administrar o mais precocemente possível (inclusive antes da 1ª checagem). Flush 20 mL SF após cada dose.',
         color: '#EF4444',
       ),
       nextNodeId: 'hs_ts_asystole',
@@ -354,7 +551,7 @@ final cardiacArrestAlgorithm = Algorithm(
       bullets: [
         '🅗 Hipovolemia → reposição volêmica',
         '🅗 Hipóxia → otimizar ventilação/oxigenação',
-        '🅗 Hidrogênio (acidose) → bicarbonato se pH < 7,1',
+        '🅗 Hidrogênio (acidose) → Bicarbonato apenas se pH < 7,1 ou hipercalemia persistente',
         '🅗 Hipo/Hipercalemia → corrigir eletrólitos',
         '🅗 Hipotermia → aquecer paciente',
         '🅣 Tensão pneumotórax → descompressão imediata',
@@ -402,7 +599,7 @@ final cardiacArrestAlgorithm = Algorithm(
       alertLevel: 'info',
       bullets: [
         'Duração da ressuscitação',
-        'ETCO₂ < 10 mmHg após 20 min (fator isolado não suficiente)',
+        'ETCO₂ > 10 mmHg após 20 min sugere ROSC; < 10 mmHg diminui a probabilidade, mas não é definitivo',
         'Causas reversíveis identificadas e tratadas?',
         'Desejo do paciente (diretivas antecipadas)',
         'Condição clínica prévia',
@@ -420,19 +617,19 @@ final cardiacArrestAlgorithm = Algorithm(
     ),
 
     // ══════════════════════════════════════════════════════════
-    //  BRAÇO NÃO CHOCÁVEL — AESP
+    //  BRAÇO NÃO CHOCÁVEL — PEA
     // ══════════════════════════════════════════════════════════
     'pea_path': const AlgorithmNode(
       id: 'pea_path',
       type: NodeType.action,
-      title: 'AESP — Atividade Elétrica Sem Pulso',
+      title: 'PEA — Atividade Elétrica Sem Pulso',
       alertLevel: 'danger',
       bullets: [
         'CPR de alta qualidade contínua',
         '💊 Epinefrina 1 mg IV/IO — O MAIS RÁPIDO POSSÍVEL',
         'Investigar causas reversíveis URGENTE (5H5T)',
-        'AESP de complexo estreito → pensar em tamponamento',
-        'AESP de complexo largo → pensar hipercalemia/toxinas',
+        'PEA de complexo estreito → pensar em tamponamento',
+        'PEA de complexo largo → pensar hipercalemia/toxinas',
       ],
       nextNodeId: 'epi_pea',
     ),
@@ -440,13 +637,13 @@ final cardiacArrestAlgorithm = Algorithm(
     'epi_pea': const AlgorithmNode(
       id: 'epi_pea',
       type: NodeType.drug,
-      title: 'Epinefrina — AESP',
+      title: 'Epinefrina — PEA',
       drug: DrugInfo(
         name: 'Epinefrina (Adrenalina)',
         dose: '1 mg',
         route: 'IV / IO',
         frequency: 'A cada 3–5 minutos',
-        notes: 'Administrar o mais precocemente possível. Flush 20 mL SF após cada dose.',
+        notes: 'Administrar o mais precocemente possível (inclusive antes da 1ª checagem). Flush 20 mL SF após cada dose.',
         color: '#EF4444',
       ),
       nextNodeId: 'pea_ultrasound',
@@ -579,7 +776,7 @@ final cardiacArrestAlgorithm = Algorithm(
       bullets: [
         '🅗 Hipovolemia → SF/RL IV rápido',
         '🅗 Hipóxia → Ventilar, IOT, O₂ 100%',
-        '🅗 Hidrogênio (acidose) → Bicarbonato de Na 1–2 mEq/kg se pH<7,1',
+        '🅗 Hidrogênio (acidose) → Bicarbonato apenas se pH < 7,1 ou hipercalemia resistente',
         '🅗 Hipo/Hipercalemia → ECG, corrigir K⁺',
         '🅗 Hipotermia → Reaquecimento ativo',
         '🅣 Tensão (pneumotórax) → Descompressão agulha',
@@ -615,11 +812,31 @@ final cardiacArrestAlgorithm = Algorithm(
         'Confirmar: pulso central palpável + PA mensurável',
         'Checar SpO₂, ETCO₂ (aumento súbito > 40 mmHg sugere ROSC)',
         'Suspender compressões',
-        'Avançar para algoritmo Pós-PCR',
       ],
       options: [
         AlgorithmOption(
           label: '🟢 Ir para Cuidados Pós-PCR',
+          nextNodeId: 'post_rosc_care',
+        ),
+      ],
+    ),
+
+    'post_rosc_care': const AlgorithmNode(
+      id: 'post_rosc_care',
+      type: NodeType.end,
+      title: 'Cuidados Pós-PCR',
+      alertLevel: 'info',
+      bullets: [
+        'Controle de temperatura alvo (32–36 °C por 24h)',
+        'Evitar e tratar hipotensão (PAS < 90 mmHg)',
+        'Otimizar ventilação/oxigenação (SpO₂ 92–98%)',
+        'Realizar ECG 12 derivações (buscar supra de ST)',
+        'Avaliação neurológica e cuidados de neuroproteção',
+        'Avançar para algoritmo Pós-PCR completo',
+      ],
+      options: [
+        AlgorithmOption(
+          label: 'Ir para Algoritmo Pós-PCR',
           nextNodeId: '__goto_post_rosc',
         ),
       ],
@@ -1698,12 +1915,12 @@ final scaAlgorithm = Algorithm(
       alertLevel: 'danger',
       bullets: [
         '⏱️ TEMPO É MÚSCULO — iniciar tratamento EM PARALELO',
-        'AAS 300 mg VO (mascar) — AGORA',
-        'Ticagrelor 180 mg VO (preferencial) ou Clopidogrel 600 mg',
-        'Heparina não fracionada: bólus 70–100 UI/kg IV',
-        'O₂ apenas se SpO₂ < 90%',
-        'Morfina 2–4 mg IV se dor intensa (usar com cautela)',
-        'Nitroglicerina SL se PA > 90 mmHg (CI: uso de PDE5i)',
+        '💊 AAS 300 mg VO (mascar) — AGORA',
+        '💊 Ticagrelor 180 mg VO ou Clopidogrel 600 mg VO',
+        '💉 HNF: bólus 70–100 UI/kg IV (máx 4000 UI)',
+        '💨 O₂ apenas se SpO₂ < 90% (cateter 2–4 L/min)',
+        '💉 Morfina 2–4 mg IV se dor intensa (usar com cautela)',
+        '💊 Nitroglicerina 0,4 mg SL a cada 5 min (máx 3x) se PA > 90 mmHg (CI: Infarto VD ou PDE5i)',
       ],
       nextNodeId: 'reperfusion_strategy',
     ),
@@ -1812,14 +2029,14 @@ final scaAlgorithm = Algorithm(
       title: 'IAMSST / Angina Instável — Conduta',
       alertLevel: 'warning',
       bullets: [
-        'AAS 300 mg VO',
-        'Ticagrelor 180 mg VO (preferencial)',
-        'Anticoagulação: Enoxaparina 1 mg/kg SC 12/12h',
-        'Betabloqueador oral (se sem CI)',
-        'Nitrato SL / IV se dor persistente',
-        'Estatina de alta intensidade: Atorvastatina 80 mg',
-        'Estratificação de risco: escore GRACE/TIMI',
-        'Coronariografia: timing por risco (precoce < 24h se alto risco)',
+        '💊 AAS 300 mg VO',
+        '💊 Inibidor P2Y12 (Ticagrelor/Clopidogrel) — discutir timing com hemodinâmica',
+        '💉 Anticoagulação: Enoxaparina 1 mg/kg SC 12/12h (ajustar se ClCr < 30)',
+        '💊 Betabloqueador: Metoprolol 25–50 mg VO 12/12h (se sem CI)',
+        '💊 Nitroglicerina 0,4 mg SL a cada 5 min (máx 3x) se PA > 90 mmHg (CI: VD ou PDE5i)',
+        '💊 Estatina de alta intensidade: Atorvastatina 80 mg VO ou Rosuvastatina 40 mg VO',
+        '📊 Estratificação de risco: escore GRACE / TIMI',
+        '🏥 Coronariografia: timing por risco (precoce < 24h se alto risco)',
       ],
     ),
 
@@ -1895,7 +2112,7 @@ final strokeAlgorithm = Algorithm(
         '📞 Acionar neurologista de plantão IMEDIATAMENTE',
         '🖥️ Notificar TC: porta-TC ≤ 25 minutos',
         '⏰ Anotar hora de chegada (Door Time)',
-        '🩺 Meta porta-agulha (alteplase): ≤ 60 minutos',
+        '🩺 Meta porta-agulha (Trombolítico): ≤ 45–60 minutos',
         '💉 Acesso venoso periférico (2 vias calibrosas)',
         '📊 Monitorização: ECG contínuo, SpO₂, PA, temperatura',
         '🧪 Coletas: glicemia capilar, hemograma, coagulação, função renal',
@@ -1975,8 +2192,8 @@ final strokeAlgorithm = Algorithm(
       options: [
         AlgorithmOption(
           label: '⏰ ≤ 4,5 horas',
-          sublabel: 'Janela para alteplase IV — avaliar NIHSS',
-          nextNodeId: 'nihss_intro',
+          sublabel: 'Janela para trombolítico IV — avaliar NIHSS',
+          nextNodeId: 'nihss_score',
         ),
         AlgorithmOption(
           label: '⏰ 4,5h a 24h ou desconhecido',
@@ -1992,304 +2209,15 @@ final strokeAlgorithm = Algorithm(
     ),
 
     // ════════════════════════════════════════════════════════════
-    //  NIHSS — ESCALA NEUROLÓGICA PASSO A PASSO
+    //  NIHSS — ESCALA NEUROLÓGICA (Interativa)
     // ════════════════════════════════════════════════════════════
-
-    'nihss_intro': const AlgorithmNode(
-      id: 'nihss_intro',
-      type: NodeType.info,
-      title: 'Avaliação NIHSS — NIH Stroke Scale',
-      subtitle: '15 subitens · Pontuação 0–42',
-      alertLevel: 'info',
-      bullets: [
-        '📋 Pontue o que VOCÊ OBSERVA — não o que o paciente relata',
-        '🚫 Não treine o paciente antes de aplicar',
-        '⏱️ Meta: completar em < 10 minutos',
-        '✍️ Anote cada subitem separadamente para somar ao final',
-      ],
-      nextNodeId: 'nihss_1',
-    ),
-
-    // 1a — Nível de Consciência
-    'nihss_1': const AlgorithmNode(
-      id: 'nihss_1',
-      type: NodeType.info,
-      title: 'NIHSS 1a — Nível de Consciência (LOC)',
-      subtitle: 'Observe a responsividade geral — pontuação 0 a 3',
-      bullets: [
-        '0 — Alerta; vivo e responsivo',
-        '1 — Não alerta, desperta a estímulo mínimo (voz ou toque leve)',
-        '2 — Não alerta; requer estímulo repetido ou doloroso',
-        '3 — Sem resposta ou apenas reflexos estereotipados (coma)',
-      ],
-      nextNodeId: 'nihss_2',
-    ),
-
-    // 1b — Perguntas de orientação
-    'nihss_2': const AlgorithmNode(
-      id: 'nihss_2',
-      type: NodeType.info,
-      title: 'NIHSS 1b — Perguntas de Orientação',
-      subtitle: 'Pergunte: "Que mês é este?" e "Quantos anos você tem?"',
-      bullets: [
-        '0 — Responde AMBAS corretamente',
-        '1 — Responde UMA corretamente',
-        '2 — Nenhuma correta (ou afásico, intubado, estupor)',
-        '',
-        '⚠️ Aceite apenas a PRIMEIRA resposta. Não forneça pistas.',
-        '⚠️ Aproximações NÃO contam (ex: "acho que tenho 60" = errado).',
-      ],
-      nextNodeId: 'nihss_3',
-    ),
-
-    // 1c — Obedece a comandos
-    'nihss_3': const AlgorithmNode(
-      id: 'nihss_3',
-      type: NodeType.info,
-      title: 'NIHSS 1c — Obedece a Comandos',
-      subtitle: 'Peça: "Abra e feche os olhos" e "Abra e feche a mão" (mão não parética)',
-      bullets: [
-        '0 — Realiza AMBOS os comandos corretamente',
-        '1 — Realiza APENAS UM comando',
-        '2 — Não realiza nenhum',
-        '',
-        '⚠️ Gestos e mímicas são aceitáveis como resposta.',
-        '⚠️ Se mão parética: substitua por "wiggle fingers" (mexer dedos).',
-      ],
-      nextNodeId: 'nihss_4',
-    ),
-
-    // 2 — Olhar conjugado
-    'nihss_4': const AlgorithmNode(
-      id: 'nihss_4',
-      type: NodeType.info,
-      title: 'NIHSS 2 — Olhar Conjugado Horizontal',
-      subtitle: 'Observe os movimentos oculares horizontais voluntários',
-      bullets: [
-        '0 — Normal',
-        '1 — Paresia parcial do olhar (pode ser vencida pela manobra oculocefálica)',
-        '2 — Desvio forçado do olhar, NÃO vencível pela manobra',
-        '',
-        '⚠️ Teste apenas movimentos HORIZONTAIS.',
-        '⚠️ Nistagmo puro = 0. Paralisia isolada de nervo craniano = 1.',
-      ],
-      nextNodeId: 'nihss_5',
-    ),
-
-    // 3 — Campos visuais
-    'nihss_5': const AlgorithmNode(
-      id: 'nihss_5',
-      type: NodeType.info,
-      title: 'NIHSS 3 — Campos Visuais',
-      subtitle: 'Confrontação — dedos nos quadrantes superiores e inferiores de cada olho',
-      bullets: [
-        '0 — Sem perda visual',
-        '1 — Hemianopsia parcial (quadrantanopsia ou extinção visual)',
-        '2 — Hemianopsia completa',
-        '3 — Hemianopsia bilateral (cegueira cortical bilateral)',
-        '',
-        '⚠️ Se visão monocular: pontue campo como possível.',
-        '⚠️ Extinção visual simultânea bilateral = 1.',
-      ],
-      nextNodeId: 'nihss_6',
-    ),
-
-    // 4 — Paresia facial
-    'nihss_6': const AlgorithmNode(
-      id: 'nihss_6',
-      type: NodeType.info,
-      title: 'NIHSS 4 — Paresia Facial',
-      subtitle: 'Peça para mostrar os dentes, levantar sobrancelhas e fechar os olhos com força',
-      bullets: [
-        '0 — Movimentos normais e simétricos',
-        '1 — Paresia leve (apagamento do sulco nasolabial, sorriso assimétrico)',
-        '2 — Paralisia parcial — porção inferior apenas (total ou quase)',
-        '3 — Paralisia completa — superior + inferior (sem movimento facial)',
-        '',
-        '⚠️ Em pacientes intubados ou em coma: observe grimaça à dor.',
-      ],
-      nextNodeId: 'nihss_7',
-    ),
-
-    // 5a — Motor braço direito
-    'nihss_7': const AlgorithmNode(
-      id: 'nihss_7',
-      type: NodeType.info,
-      title: 'NIHSS 5a — Motor Braço Direito (MSD)',
-      subtitle: 'Elevar MSD a 90° (sentado) ou 45° (deitado) — manter por 10 segundos',
-      bullets: [
-        '0 — Sem queda em 10 seg',
-        '1 — Queda antes de 10 seg, mas NÃO toca a cama',
-        '2 — Algum esforço anti-gravitacional, mas toca a cama',
-        '3 — Sem esforço contra a gravidade (cai imediatamente)',
-        '4 — Sem movimento algum',
-        'UN — Amputação ou fusão articular (não pontuável)',
-      ],
-      nextNodeId: 'nihss_8',
-    ),
-
-    // 5b — Motor braço esquerdo
-    'nihss_8': const AlgorithmNode(
-      id: 'nihss_8',
-      type: NodeType.info,
-      title: 'NIHSS 5b — Motor Braço Esquerdo (MSE)',
-      subtitle: 'Elevar MSE a 90° (sentado) ou 45° (deitado) — manter por 10 segundos',
-      bullets: [
-        '0 — Sem queda em 10 seg',
-        '1 — Queda antes de 10 seg, mas NÃO toca a cama',
-        '2 — Algum esforço anti-gravitacional, mas toca a cama',
-        '3 — Sem esforço contra a gravidade',
-        '4 — Sem movimento algum',
-        'UN — Amputação ou fusão articular',
-      ],
-      nextNodeId: 'nihss_9',
-    ),
-
-    // 6a — Motor perna direita
-    'nihss_9': const AlgorithmNode(
-      id: 'nihss_9',
-      type: NodeType.info,
-      title: 'NIHSS 6a — Motor Perna Direita (MID)',
-      subtitle: 'Paciente deitado: elevar MID a 30° — manter por 5 segundos',
-      bullets: [
-        '0 — Sem queda em 5 seg',
-        '1 — Queda antes de 5 seg, mas NÃO toca a cama',
-        '2 — Algum esforço contra a gravidade, mas toca a cama',
-        '3 — Sem esforço contra a gravidade',
-        '4 — Sem movimento algum',
-        'UN — Amputação ou fusão articular',
-      ],
-      nextNodeId: 'nihss_10',
-    ),
-
-    // 6b — Motor perna esquerda
-    'nihss_10': const AlgorithmNode(
-      id: 'nihss_10',
-      type: NodeType.info,
-      title: 'NIHSS 6b — Motor Perna Esquerda (MIE)',
-      subtitle: 'Paciente deitado: elevar MIE a 30° — manter por 5 segundos',
-      bullets: [
-        '0 — Sem queda em 5 seg',
-        '1 — Queda antes de 5 seg, mas NÃO toca a cama',
-        '2 — Algum esforço contra a gravidade, mas toca a cama',
-        '3 — Sem esforço contra a gravidade',
-        '4 — Sem movimento algum',
-        'UN — Amputação ou fusão articular',
-      ],
-      nextNodeId: 'nihss_11',
-    ),
-
-    // 7 — Ataxia de membros
-    'nihss_11': const AlgorithmNode(
-      id: 'nihss_11',
-      type: NodeType.info,
-      title: 'NIHSS 7 — Ataxia de Membros',
-      subtitle: 'Teste índex-nariz e calcanhar-joelho (olhos fechados)',
-      bullets: [
-        '0 — Ausente',
-        '1 — Presente em 1 membro',
-        '2 — Presente em 2 ou mais membros',
-        '',
-        '⚠️ Pontue ZERO se paresia impede a realização do teste.',
-        '⚠️ Pontue ZERO em pacientes em coma.',
-        '⚠️ Diferencia ataxia cerebelar de fraqueza pura.',
-      ],
-      nextNodeId: 'nihss_12',
-    ),
-
-    // 8 — Sensibilidade
-    'nihss_12': const AlgorithmNode(
-      id: 'nihss_12',
-      type: NodeType.info,
-      title: 'NIHSS 8 — Sensibilidade',
-      subtitle: 'Estimulação com alfinete ou beliscão — compare hemicorpos',
-      bullets: [
-        '0 — Normal — sem perda sensorial',
-        '1 — Perda leve a moderada (menos aguçado, mas sente o toque)',
-        '2 — Perda grave ou total (sem sensação no rosto/membro/tronco)',
-        '',
-        '⚠️ Pontue 2 apenas se há perda bilateral confirmada.',
-        '⚠️ Em comatosos sem reação: pontue 2.',
-        '⚠️ Avalie face, braços e pernas (cada hemicorpo).',
-      ],
-      nextNodeId: 'nihss_13',
-    ),
-
-    // 9 — Linguagem / Afasia
-    'nihss_13': const AlgorithmNode(
-      id: 'nihss_13',
-      type: NodeType.info,
-      title: 'NIHSS 9 — Linguagem (Afasia)',
-      subtitle: 'Nomeação de objetos + leitura de frases + descrição de figura padrão',
-      bullets: [
-        '0 — Normal',
-        '1 — Afasia leve a moderada (alguma perda de fluência, nomeação ou compreensão)',
-        '2 — Afasia grave (fragmentada, requer inferência do examinador)',
-        '3 — Mutismo ou afasia global (sem linguagem funcional)',
-        '',
-        '⚠️ Intubados: peça para escrever ou gesticular.',
-        '⚠️ Avalie nomeação de objetos comuns (caneta, relógio, chave).',
-      ],
-      nextNodeId: 'nihss_14',
-    ),
-
-    // 10 — Disartria
-    'nihss_14': const AlgorithmNode(
-      id: 'nihss_14',
-      type: NodeType.info,
-      title: 'NIHSS 10 — Disartria',
-      subtitle: 'Peça para repetir palavras da lista padrão (mamã, rede, etc.)',
-      bullets: [
-        '0 — Normal',
-        '1 — Leve a moderada: fala arrastada, compreensível com esforço',
-        '2 — Grave: fala ininteligível ou anártrico (sem afasia)',
-        'UN — Intubado ou outra barreira física para fala',
-        '',
-        '⚠️ Não pontue deficiência de linguagem aqui — apenas articulação.',
-        '⚠️ Mesmo sem afasia, pode haver disartria grave (p. ex. cerebelar).',
-      ],
-      nextNodeId: 'nihss_15',
-    ),
-
-    // 11 — Extinção / Negligência
-    'nihss_15': const AlgorithmNode(
-      id: 'nihss_15',
-      type: NodeType.info,
-      title: 'NIHSS 11 — Extinção e Negligência (Heminegligência)',
-      subtitle: 'Estimulação simultânea bilateral — visual, cutânea e auditiva',
-      bullets: [
-        '0 — Sem anormalidade',
-        '1 — Extinção a estimulação simultânea bilateral em 1 modalidade',
-        '2 — Heminegligência grave ou anosognosia bilateral',
-        '',
-        '⚠️ Se déficit visual impede teste visual: usar estimulação cutânea.',
-        '⚠️ Toque simultâneo: mão direita e esquerda — qual ele sente?',
-        '⚠️ Neglect visual: dois dedos simultaneamente em cada campo.',
-      ],
-      nextNodeId: 'nihss_score',
-    ),
-
-    // Pontuação total NIHSS
     'nihss_score': const AlgorithmNode(
       id: 'nihss_score',
-      type: NodeType.question,
-      title: 'Pontuação Total NIHSS',
-      subtitle: 'Some todos os subitens avaliados (máximo 42 pontos)',
-      bullets: [
-        '0 — Sem déficit / TIA possível',
-        '1–4 — AVC leve',
-        '5–15 — AVC moderado',
-        '16–20 — AVC moderado-grave',
-        '21–42 — AVC grave',
-      ],
-      options: [
-        AlgorithmOption(label: '0 — Sem déficit / TIA', nextNodeId: 'stroke_ct_scan'),
-        AlgorithmOption(label: '1–4 — Leve', nextNodeId: 'stroke_ct_scan'),
-        AlgorithmOption(label: '5–15 — Moderado', nextNodeId: 'stroke_ct_scan'),
-        AlgorithmOption(label: '16–20 — Moderado-grave', nextNodeId: 'stroke_ct_scan'),
-        AlgorithmOption(label: '21–42 — Grave', nextNodeId: 'stroke_ct_scan'),
-      ],
+      type: NodeType.nihss,
+      title: 'Avaliação NIHSS',
+      nextNodeId: 'stroke_ct_scan',
     ),
+
 
     // ── TC DE CRÂNIO ──────────────────────────────────────────
     'stroke_ct_scan': const AlgorithmNode(
@@ -2349,7 +2277,7 @@ final strokeAlgorithm = Algorithm(
     'stroke_alteplase_criteria': const AlgorithmNode(
       id: 'stroke_alteplase_criteria',
       type: NodeType.info,
-      title: 'Critérios de Elegibilidade — Alteplase IV',
+      title: 'Critérios de Elegibilidade — Trombolítico (Alteplase / TNK)',
       alertLevel: 'warning',
       bullets: [
         '✅ INCLUSÃO:',
@@ -2378,7 +2306,7 @@ final strokeAlgorithm = Algorithm(
     'stroke_alteplase_eligible': const AlgorithmNode(
       id: 'stroke_alteplase_eligible',
       type: NodeType.question,
-      title: 'Paciente Elegível para Alteplase?',
+      title: 'Paciente Elegível para Trombolítico?',
       options: [
         AlgorithmOption(
           label: '✅ Elegível — sem contraindicações',
@@ -2395,11 +2323,11 @@ final strokeAlgorithm = Algorithm(
     'stroke_bp_control': const AlgorithmNode(
       id: 'stroke_bp_control',
       type: NodeType.question,
-      title: 'Pressão Arterial Pré-Alteplase',
-      subtitle: 'Deve estar ≤ 185/110 mmHg para iniciar a infusão',
+      title: 'Pressão Arterial Pré-Trombolítico',
+      subtitle: 'Deve estar ≤ 185/110 mmHg para iniciar o trombolítico',
       options: [
         AlgorithmOption(
-          label: '✅ PA ≤ 185/110 mmHg — pronto para alteplase',
+          label: '✅ PA ≤ 185/110 mmHg — pronto para trombolítico',
           nextNodeId: 'stroke_give_alteplase',
         ),
         AlgorithmOption(
@@ -2412,14 +2340,14 @@ final strokeAlgorithm = Algorithm(
     'stroke_bp_treatment': const AlgorithmNode(
       id: 'stroke_bp_treatment',
       type: NodeType.action,
-      title: 'Controle de PA Pré-Alteplase',
+      title: 'Controle de PA Pré-Trombolítico',
       alertLevel: 'warning',
       bullets: [
         'Labetalol 10–20 mg IV em 1–2 min (repetir 1x se necessário)',
         'Nicardipina 5 mg/h IV — titular 2,5 mg/h a cada 5 min (máx 15 mg/h)',
         'Clevidipina 1,25 mg/h IV — titular (máx 21 mg/h)',
         'Meta: PA ≤ 185/110 mmHg antes de iniciar',
-        '⚠️ Se PA não controlável: NÃO administrar alteplase',
+        '⚠️ Se PA não controlável: NÃO administrar trombolítico',
       ],
       nextNodeId: 'stroke_bp_achieved',
     ),
@@ -2434,7 +2362,7 @@ final strokeAlgorithm = Algorithm(
           nextNodeId: 'stroke_give_alteplase',
         ),
         AlgorithmOption(
-          label: '🚫 PA não controlável — alteplase contraindicada',
+          label: '🚫 PA não controlável — trombolítico contraindicado',
           nextNodeId: 'stroke_no_alteplase',
         ),
       ],
@@ -2444,13 +2372,13 @@ final strokeAlgorithm = Algorithm(
     'stroke_give_alteplase': const AlgorithmNode(
       id: 'stroke_give_alteplase',
       type: NodeType.drug,
-      title: 'Administrar Alteplase IV — AGORA',
+      title: 'Administrar Trombolítico IV — AGORA',
       alertLevel: 'danger',
       drug: DrugInfo(
-        name: 'Alteplase (rt-PA) — AVC Isquêmico',
-        dose: '0,9 mg/kg (máx 90 mg total)\n• 10% do total: bolus IV em 1 min\n• 90% restantes: infusão IV em 60 min',
-        route: 'IV — bolus + infusão contínua',
-        notes: 'Meta porta-agulha: ≤ 60 min. PA alvo durante e após: < 180/105 mmHg. Monitorização neurológica contínua.',
+        name: 'Tenecteplase (TNK) OU Alteplase (rt-PA)',
+        dose: 'TNK: 0,25 mg/kg IV (máx 25 mg) bolus único\nOU\nAlteplase: 0,9 mg/kg (máx 90 mg) → 10% bolus + 90% infusão',
+        route: 'IV (bolus único para TNK, infusão para rt-PA)',
+        notes: 'Meta porta-agulha: ≤ 45–60 min. PA alvo durante e após: < 180/105 mmHg. TNK é preferível se for para trombectomia.',
         color: '#F97316',
       ),
       nextNodeId: 'stroke_post_alteplase',
@@ -2459,15 +2387,15 @@ final strokeAlgorithm = Algorithm(
     'stroke_post_alteplase': const AlgorithmNode(
       id: 'stroke_post_alteplase',
       type: NodeType.action,
-      title: 'Monitorização Pós-Alteplase',
+      title: 'Monitorização Pós-Trombolítico',
       alertLevel: 'warning',
       bullets: [
-        '🧠 Neurológico: a cada 15 min durante infusão, a cada 30 min × 6h',
+        '🧠 Neurológico: a cada 15 min nas primeiras 2h, a cada 30 min × 6h',
         '📊 PA: a cada 15 min × 2h → a cada 30 min × 6h → a cada 60 min × 16h',
-        '🎯 Meta de PA pós-alteplase: < 180/105 mmHg',
+        '🎯 Meta de PA pós-trombolítico: < 180/105 mmHg',
         '🚫 NÃO iniciar anticoagulantes ou antiagregantes nas primeiras 24h',
         '🚫 NÃO inserir cateter urinário, SNG ou acesso arterial por ≥ 30 min',
-        '⚠️ Piora neurológica durante infusão = parar alteplase + TC urgente',
+        '⚠️ Piora neurológica severa = reverter trombolítico + TC urgente',
       ],
       nextNodeId: 'stroke_thrombectomy_check',
     ),
@@ -2476,7 +2404,7 @@ final strokeAlgorithm = Algorithm(
     'stroke_no_alteplase': const AlgorithmNode(
       id: 'stroke_no_alteplase',
       type: NodeType.info,
-      title: 'Alteplase Contraindicada — Manejo Alternativo',
+      title: 'Trombolítico Contraindicado — Manejo Alternativo',
       alertLevel: 'warning',
       bullets: [
         'AAS 300 mg VO — iniciar em 24–48h (se não trombólise)',
@@ -2498,7 +2426,7 @@ final strokeAlgorithm = Algorithm(
         'Angiotomografia ou RM-angio para identificar OGV',
         'NIHSS ≥ 6 com OGV confirmada = candidato preferencial',
         'Janela ≤ 6h (circulação anterior) ou 6–24h (DAWN/DEFUSE)',
-        'Alteplase NÃO é contraindicação — fazer as duas se elegível',
+        'Trombolítico NÃO é contraindicação — fazer os dois se elegível',
       ],
       options: [
         AlgorithmOption(
@@ -2523,7 +2451,7 @@ final strokeAlgorithm = Algorithm(
         '🖼️ Angiotomografia crânio + pescoço se não realizada',
         '📊 Core isquêmico < 70 mL = critério favorável',
         '🔬 Critérios DAWN/DEFUSE para janela 6–24h',
-        '💉 Alteplase + trombectomia: fazer as duas se elegível',
+        '💉 TNK/Alteplase + trombectomia: fazer os dois se elegível',
       ],
       nextNodeId: 'stroke_post_care',
     ),
@@ -2535,7 +2463,7 @@ final strokeAlgorithm = Algorithm(
       title: 'Janela Tardia (4,5h–24h) — Avaliação por Imagem',
       alertLevel: 'warning',
       bullets: [
-        '🚫 Alteplase IV NÃO indicada (fora da janela de 4,5h)',
+        '🚫 Trombolítico IV NÃO indicado (fora da janela de 4,5h)',
         '🖥️ Solicitar TC + Angiotomografia ou RM de difusão',
         '🔬 Avaliar trombectomia (critérios DAWN / DEFUSE 3):',
         '   • NIHSS ≥ 6 + OGV confirmada em circulação anterior',
@@ -2552,7 +2480,7 @@ final strokeAlgorithm = Algorithm(
       title: 'Fora das Janelas Terapêuticas (> 24h)',
       alertLevel: 'info',
       bullets: [
-        '🚫 Alteplase e trombectomia não indicadas de rotina',
+        '🚫 Trombolítico e trombectomia não indicados de rotina',
         '💊 Antiagregação: AAS 300 mg VO (iniciar nas primeiras 24–48h)',
         '💊 AVC leve/TIA: dupla antiagregação AAS + Clopidogrel × 21 dias',
         '📈 PA inicial: não tratar se < 220/120 mmHg (manter perfusão)',

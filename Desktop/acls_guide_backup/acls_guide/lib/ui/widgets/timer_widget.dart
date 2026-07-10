@@ -154,6 +154,7 @@ class _TimerWidgetState extends ConsumerState<TimerWidget>
                       ref.read(cprTimerProvider.notifier).pause();
                     } else {
                       _startTicker();
+                      ref.read(cprTimerProvider.notifier).resume();
                     }
                   },
                 ),

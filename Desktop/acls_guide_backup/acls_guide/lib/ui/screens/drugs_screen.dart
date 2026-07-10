@@ -8,12 +8,14 @@ import '../../models/algorithm_node.dart';
 // ── Categorias disponíveis ─────────────────────────────────────────────
 const _categories = [
   'Todos',
-  'Vasopressores',
+  'Vasopressores/Inotrópicos',
   'Antiarrítmicos',
   'Anticoagulantes',
   'Trombolíticos',
   'Eletrólitos',
   'Reversores',
+  'Sedativos/Analgésicos',
+  'Anti-hipertensivos',
 ];
 
 // ── Banco completo de fármacos ACLS (AHA 2025) ────────────────────────
@@ -24,11 +26,11 @@ const _allDrugs = [
   // ──────────────────────────────────────────────────────
   DrugInfo(
     name: 'Epinefrina (Adrenalina)',
-    category: 'Vasopressores',
-    dose: '1 mg IV/IO',
-    route: 'IV / IO push',
-    frequency: 'A cada 3–5 minutos durante PCR',
-    notes: 'Preparo: 1 mg em 10 mL SF. Flush 20 mL após. Sem dose máxima em PCR.',
+    category: 'Vasopressores/Inotrópicos',
+    dose: 'PCR: 1 mg IV/IO bolus\nBradicardia/Choque: infusão 2–10 mcg/min',
+    route: 'IV push (PCR) / Infusão contínua',
+    frequency: 'PCR: a cada 3–5 minutos. Infusão: titular para efeito.',
+    notes: 'PCR: preparar 1 mg em 10 mL SF. Flush 20 mL após. Sem dose máxima.',
     color: '#EF4444',
     indications: [
       'PCR (VF, pVT, Assistolia, AESP) — 1ª linha',
@@ -40,7 +42,7 @@ const _allDrugs = [
   ),
   DrugInfo(
     name: 'Vasopressina',
-    category: 'Vasopressores',
+    category: 'Vasopressores/Inotrópicos',
     dose: '40 UI IV/IO (dose única)',
     route: 'IV / IO push',
     frequency: 'Dose única — pode substituir a 1ª ou 2ª dose de Epinefrina',
@@ -56,7 +58,7 @@ const _allDrugs = [
   ),
   DrugInfo(
     name: 'Norepinefrina',
-    category: 'Vasopressores',
+    category: 'Vasopressores/Inotrópicos',
     dose: '0,1–1 mcg/kg/min (titular)',
     route: 'Infusão IV contínua — acesso central preferencial',
     notes: 'Vasopressor de 1ª escolha no choque séptico. Titular para PAM ≥ 65 mmHg.',
@@ -71,7 +73,7 @@ const _allDrugs = [
   ),
   DrugInfo(
     name: 'Dopamina',
-    category: 'Vasopressores',
+    category: 'Vasopressores/Inotrópicos',
     dose: '5–20 mcg/kg/min',
     route: 'Infusão IV contínua',
     notes:
@@ -86,7 +88,7 @@ const _allDrugs = [
   ),
   DrugInfo(
     name: 'Dobutamina',
-    category: 'Vasopressores',
+    category: 'Vasopressores/Inotrópicos',
     dose: '2–20 mcg/kg/min',
     route: 'Infusão IV contínua',
     notes:
@@ -102,7 +104,7 @@ const _allDrugs = [
   ),
   DrugInfo(
     name: 'Fenilefrina',
-    category: 'Vasopressores',
+    category: 'Vasopressores/Inotrópicos',
     dose: 'Bolus: 50–200 mcg IV\nInfusão: 0,5–5 mcg/kg/min',
     route: 'IV push (bolus) ou infusão contínua',
     notes:
@@ -610,6 +612,158 @@ const _allDrugs = [
     ],
     contraindications:
         'Alergia à protamina ou ao peixe (risco de anafilaxia). Hipotensão não corrigida.',
+  ),
+
+  // ──────────────────────────────────────────────────────
+  //  SEDATIVOS / ANALGÉSICOS
+  // ──────────────────────────────────────────────────────
+  DrugInfo(
+    name: 'Fentanil',
+    category: 'Sedativos/Analgésicos',
+    dose: 'Bolus: 1–2 mcg/kg IV\nInfusão: 1–3 mcg/kg/h',
+    route: 'IV lento / Infusão',
+    notes: 'Ação rápida (1-2 min). Causa menos hipotensão que a morfina.',
+    color: '#3B82F6',
+    indications: [
+      'Analgesia pré-cardioversão / intubação',
+      'Dor isquêmica refratária',
+      'Sedação contínua pós-PCR (TTM)',
+    ],
+    contraindications: 'Choque não reanimado, depressão respiratória não ventilada.',
+  ),
+  DrugInfo(
+    name: 'Midazolam',
+    category: 'Sedativos/Analgésicos',
+    dose: 'Bolus: 1–5 mg IV lento\nInfusão: 0,02–0,1 mg/kg/h',
+    route: 'IV lento / Infusão',
+    notes: 'Ação rápida (2-3 min). Risco de hipotensão severa em hipovolêmicos.',
+    color: '#3B82F6',
+    indications: [
+      'Sedação pré-cardioversão',
+      'Controle de crises convulsivas',
+    ],
+    contraindications: 'Hipotensão severa, choque refratário, miastenia gravis.',
+  ),
+  DrugInfo(
+    name: 'Propofol',
+    category: 'Sedativos/Analgésicos',
+    dose: 'Bolus: 1–2 mg/kg IV\nInfusão: 5–50 mcg/kg/min',
+    route: 'IV restrito a via calibrosa',
+    notes: 'Desperta rápido. Causa intensa vasodilatação e depressão miocárdica.',
+    color: '#3B82F6',
+    indications: [
+      'Indução para intubação orotraqueal',
+      'Sedação profunda em neurointensivismo',
+    ],
+    contraindications: 'Choque cardiogênico ou hipovolêmico grave, alergia a ovo/soja.',
+  ),
+  DrugInfo(
+    name: 'Cetamina',
+    category: 'Sedativos/Analgésicos',
+    dose: 'Bolus: 1–2 mg/kg IV',
+    route: 'IV lento',
+    notes: 'Preserva PA (efeito simpatomimético) e drive respiratório.',
+    color: '#3B82F6',
+    indications: [
+      'Intubação em pacientes hipotensos/chocados',
+      'Asma grave (broncodilatador)',
+    ],
+    contraindications: 'Emergência hipertensiva, esquizofrenia. Cautela em coronariopatas.',
+  ),
+
+  // ──────────────────────────────────────────────────────
+  //  ANTI-HIPERTENSIVOS / DIURÉTICOS
+  // ──────────────────────────────────────────────────────
+  DrugInfo(
+    name: 'Nitroprussiato de Sódio (Nipride)',
+    category: 'Anti-hipertensivos',
+    dose: '0,25–10 mcg/kg/min',
+    route: 'Infusão IV contínua (fotossensível)',
+    notes: 'Vasodilatador arterial/venoso potente. Risco de intoxicação por cianeto.',
+    color: '#06B6D4',
+    indications: [
+      'Emergências hipertensivas graves',
+      'Edema Agudo de Pulmão (com PA elevada)',
+    ],
+    contraindications: 'Insuficiência renal/hepática grave (intoxicação), PIC elevada.',
+  ),
+  DrugInfo(
+    name: 'Labetalol',
+    category: 'Anti-hipertensivos',
+    dose: 'Bolus: 10–20 mg IV\nInfusão: 2–8 mg/min',
+    route: 'IV push / Infusão',
+    notes: 'Bloqueador misto (alfa e beta). Reduz PA sem taquicardia reflexa.',
+    color: '#06B6D4',
+    indications: [
+      'Controle de PA no AVC isquêmico agudo',
+      'Dissecção aguda de aorta',
+    ],
+    contraindications: 'Asma severa, BAV 2º/3º grau, bradicardia acentuada, ICC.',
+  ),
+  DrugInfo(
+    name: 'Hidralazina',
+    category: 'Anti-hipertensivos',
+    dose: '5–10 mg IV (bolus)',
+    route: 'IV lento (1-2 min)',
+    frequency: 'Pode repetir a cada 20-30 min',
+    notes: 'Vasodilatador arterial direto. Causa taquicardia reflexa e aumenta consumo de O2.',
+    color: '#06B6D4',
+    indications: [
+      'Emergência hipertensiva na gestação (Pré-eclâmpsia grave / Eclâmpsia)',
+    ],
+    contraindications: 'SCA, dissecção de aorta, lúpus.',
+  ),
+  DrugInfo(
+    name: 'Nitroglicerina SL (Isossorbida / Nitrato)',
+    category: 'Anti-hipertensivos',
+    dose: '0,4 mg (nitroglicerina) ou 5 mg (isossorbida)',
+    route: 'Sublingual (SL)',
+    frequency: 'A cada 5 min (máx 3 doses)',
+    notes: 'Ação rápida. Avaliar PA e dor antes de cada nova dose.',
+    color: '#06B6D4',
+    indications: [
+      'Angina / Dor torácica isquêmica aguda (SCA)',
+    ],
+    contraindications: 'Infarto de VD, PAS < 90 mmHg, uso de inibidores da fosfodiesterase (ex: Sildenafila nas últimas 24h).',
+  ),
+  DrugInfo(
+    name: 'Nitroglicerina IV (Tridil)',
+    category: 'Anti-hipertensivos',
+    dose: '5–100 mcg/min (titular)',
+    route: 'Infusão IV contínua',
+    notes: 'Venodilatadora predominante. Melhora fluxo coronariano.',
+    color: '#06B6D4',
+    indications: [
+      'SCA com dor refratária',
+      'Edema Agudo de Pulmão (EAP)',
+    ],
+    contraindications: 'Infarto de VD, PAS < 90 mmHg, uso de Sildenafila < 24h.',
+  ),
+  DrugInfo(
+    name: 'Furosemida (Lasix)',
+    category: 'Anti-hipertensivos',
+    dose: '0,5–1 mg/kg IV (habitual 20-40 mg)',
+    route: 'IV direto (máx 4 mg/min para evitar ototoxicidade)',
+    notes: 'Diurético de alça rápido (5-15 min).',
+    color: '#06B6D4',
+    indications: [
+      'Edema Agudo de Pulmão',
+      'Congestão por Insuficiência Cardíaca aguda',
+    ],
+    contraindications: 'Hipovolemia, desidratação, anúria refratária.',
+  ),
+  DrugInfo(
+    name: 'Milrinona',
+    category: 'Vasopressores/Inotrópicos',
+    dose: 'Ataque: 50 mcg/kg em 10 min\nManutenção: 0,375–0,75 mcg/kg/min',
+    route: 'IV lento / Infusão',
+    notes: 'Inodilatador (aumenta contratilidade e reduz resistência).',
+    color: '#EF4444',
+    indications: [
+      'Choque cardiogênico refratário',
+      'Insuficiência de VD isolada',
+    ],
+    contraindications: 'Hipotensão severa, doença valvar obstrutiva severa.',
   ),
 ];
 

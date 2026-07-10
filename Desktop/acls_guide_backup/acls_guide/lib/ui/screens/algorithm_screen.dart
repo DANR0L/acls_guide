@@ -11,7 +11,9 @@ import '../../models/algorithm_node.dart';
 import '../../providers/algorithm_provider.dart';
 import '../widgets/drug_card.dart';
 import '../widgets/timer_widget.dart';
+import '../widgets/nihss_card.dart';
 import '../widgets/node_action_card.dart';
+import 'cpr_dashboard_screen.dart';
 
 class AlgorithmScreen extends ConsumerStatefulWidget {
   final String algorithmId;
@@ -79,6 +81,10 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
       );
     }
 
+    if (widget.algorithmId == 'cardiac_arrest' && !isStudyMode) {
+      return const CprDashboardScreen();
+    }
+
     final canGoBack = session?.history.isNotEmpty ?? false;
 
     return Scaffold(
@@ -112,6 +118,8 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
     bool isStudyMode,
   ) {
     final algoColor = _hexToColor(algorithm.color);
+    final shockCount = ref.watch(shockCountProvider);
+    
     return AppBar(
       backgroundColor: AppColors.background,
       leading: IconButton(
@@ -164,6 +172,24 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                   ),
                 ),
               ),
+              if (shockCount > 0) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '⚡ $shockCount',
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.warning,
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ],
@@ -257,10 +283,19 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
 
           const SizedBox(height: 24),
 
+          // ── NIHSS interativo ──────────────────────────────────
+          if (node.type == NodeType.nihss && node.nextNodeId != null)
+            NihssCard(
+              nextNodeId: node.nextNodeId!,
+              isStudyMode: isStudyMode,
+              onComplete: (nextId, score) => _handleOption(nextId),
+            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+
           // ── Action Button (for non-question nodes with nextNodeId)
           if (node.type != NodeType.question &&
               node.type != NodeType.end &&
               node.type != NodeType.timer &&
+              node.type != NodeType.nihss &&
               node.nextNodeId != null)
             ElevatedButton.icon(
               onPressed: () => _handleOption(node.nextNodeId!),
@@ -368,6 +403,8 @@ class _ProgressBreadcrumb extends ConsumerWidget {
         return Icons.info_outline_rounded;
       case NodeType.end:
         return Icons.flag_rounded;
+      case NodeType.nihss:
+        return Icons.assignment_rounded;
       default:
         return Icons.circle_outlined;
     }
@@ -387,6 +424,8 @@ class _ProgressBreadcrumb extends ConsumerWidget {
         return 'Informação';
       case NodeType.end:
         return 'Conclusão';
+      case NodeType.nihss:
+        return 'Escala NIHSS';
       default:
         return 'Passo';
     }

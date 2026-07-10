@@ -13,13 +13,15 @@ final selectedAlgorithmProvider = StateProvider<Algorithm?>((ref) => null);
 // ─── Provider da sessão ativa ────────────────────────────────────
 final algorithmSessionProvider =
     StateNotifierProvider<AlgorithmSessionNotifier, AlgorithmSession?>((ref) {
-  return AlgorithmSessionNotifier();
+  return AlgorithmSessionNotifier(ref);
 });
 
 class AlgorithmSessionNotifier extends StateNotifier<AlgorithmSession?> {
-  AlgorithmSessionNotifier() : super(null);
+  final Ref ref;
+  AlgorithmSessionNotifier(this.ref) : super(null);
 
   void startSession(Algorithm algorithm) {
+    ref.invalidate(nihssScoresProvider);
     state = AlgorithmSession(
       algorithmId: algorithm.id,
       history: [],
@@ -126,6 +128,18 @@ class CprTimerNotifier extends StateNotifier<CprTimerState> {
     );
   }
 
+  void resume() {
+    if (state.secondsRemaining > 0) {
+      state = CprTimerState(
+        isRunning: true,
+        secondsRemaining: state.secondsRemaining,
+        totalSeconds: state.totalSeconds,
+      );
+    } else {
+      start(120);
+    }
+  }
+
   void reset() {
     state = CprTimerState(
       isRunning: false,
@@ -134,3 +148,24 @@ class CprTimerNotifier extends StateNotifier<CprTimerState> {
     );
   }
 }
+
+// ─── Provider para o estado do NIHSS ────────────────────────────
+final nihssScoresProvider = StateProvider<List<int?>>((ref) => List.filled(15, null));
+
+// ─── Provider para contagem de choques na PCR ───────────────────
+final shockCountProvider = Provider<int>((ref) {
+  final session = ref.watch(algorithmSessionProvider);
+  if (session == null) return 0;
+  
+  final algorithm = allAlgorithms[session.algorithmId];
+  if (algorithm == null) return 0;
+  
+  int count = 0;
+  final allVisitedNodes = [...session.history, session.currentNodeId];
+  for (final nodeId in allVisitedNodes) {
+    if (algorithm.nodes[nodeId]?.isShockNode == true) {
+      count++;
+    }
+  }
+  return count;
+});
