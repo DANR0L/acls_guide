@@ -197,9 +197,9 @@ class CprDynamicState {
         return '⚡ 3º Choque (120-200 J). Após: CPR 2 min + Amiodarona 300mg IV + Epi 1mg (se disponível).';
       }
       if (shockCount == 3) {
-        return '⚡ 4º Choque (120-200 J). Após: Amiodarona 150mg IV (2ª dose) + Epi 1mg a cada 3-5 min.';
+        return '⚡ 4º Choque (120-200 J) OU considere DSD (Dupla Desfibrilação). Após: Amiodarona 150mg IV (2ª dose).';
       }
-      return '⚡ Choque ${shockCount + 1} (120-200 J). Continue Epi a cada 3-5 min. Pesquise causas reversíveis (5H e 5T).';
+      return '⚡ Choque ${shockCount + 1} (120-200 J) OU DSD (Dupla Desfibrilação). Continue Epi a cada 3-5 min. Pesquise causas (5H e 5T).';
     } else {
       if (epiAvailable) return '💉 Administre Epinefrina 1mg IV O MAIS RÁPIDO POSSÍVEL. CPR contínua.';
       return 'Continue CPR contínua. Epi a cada 3-5 min. Investigue causas reversíveis (5H e 5T).';
