@@ -99,7 +99,9 @@ class CprDynamicState {
     // Se mudou para Assistolia/PEA (isShockableRhythm == false), libera imediatamente.
     if (isShockableRhythm != false && shockCount == 1 && epiCount == 0) return true; 
 
-    // Removido o bloqueio rígido de 3 minutos para permitir discrição médica.
+    // Bloqueia durante o "cooldown" de 3 minutos para não ser administrada várias vezes
+    if (!epiAvailable) return true;
+
     return false;
   }
 
