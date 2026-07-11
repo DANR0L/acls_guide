@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 class CprLogEvent {
   final String timeText;
@@ -262,46 +261,13 @@ class CprDynamicState {
 class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
   Timer? _timer;
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final FlutterTts _flutterTts = FlutterTts();
-  String _lastSpokenSuggestion = '';
 
-  CprDynamicNotifier() : super(CprDynamicState()) {
-    _initTts();
-  }
-
-  void _initTts() async {
-    await _flutterTts.setLanguage("pt-BR");
-    await _flutterTts.setSpeechRate(1.0); // Velocidade normal (0.55 ficou muito lento na web)
-    await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.1); // Tom mais agudo
-
-    try {
-      final voices = await _flutterTts.getVoices;
-      for (var voice in voices) {
-        if (voice is Map && voice["locale"]?.toString().startsWith("pt") == true) {
-          final name = voice["name"].toString().toLowerCase();
-          // Busca por vozes femininas conhecidas (Microsoft Francisca, Google BR, Luciana do Mac)
-          if (name.contains("francisca") || 
-              name.contains("luciana") || 
-              name.contains("google") || 
-              name.contains("female") || 
-              name.contains("maria") ||
-              name.contains("vitoria")) {
-            await _flutterTts.setVoice({"name": voice["name"], "locale": voice["locale"]});
-            break; // Achou a voz feminina, sai do loop
-          }
-        }
-      }
-    } catch (e) {
-      // Ignora erros na busca de vozes, mantendo o default
-    }
-  }
+  CprDynamicNotifier() : super(CprDynamicState());
 
   @override
   void dispose() {
     _timer?.cancel();
     _audioPlayer.dispose();
-    _flutterTts.stop();
     super.dispose();
   }
 
@@ -355,13 +321,6 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
       clearShockableRhythm: newCycle == 120,
       logs: newLogs,
     );
-
-    final currentSuggestion = state.suggestion;
-    if (currentSuggestion != _lastSpokenSuggestion && currentSuggestion.isNotEmpty) {
-      _lastSpokenSuggestion = currentSuggestion;
-      String cleanText = currentSuggestion.replaceAll(RegExp(r'[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]', unicode: true), '').trim();
-      _flutterTts.speak(cleanText);
-    }
   }
 
   void registerRhythm(bool isShockable) {
