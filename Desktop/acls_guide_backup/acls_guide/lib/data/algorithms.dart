@@ -941,7 +941,7 @@ final bradycardiaAlgorithm = Algorithm(
         route: 'IV push',
         frequency: 'Repetir a cada 3–5 min se necessário',
         maxDose: 'Máx 3 mg (0,04 mg/kg)',
-        notes: 'Administrar rapidamente (push). Atualização AHA 2020: dose passou de 0,5mg para 1mg. Não usar em transplantados cardíacos. Ineficaz em BAV infranodal.',
+        notes: 'Administrar rapidamente (push). Atualização AHA 2025: dose passou de 0,5mg para 1mg. Não usar em transplantados cardíacos. Ineficaz em BAV infranodal.',
         color: '#3B82F6',
       ),
       nextNodeId: 'brady_atropine_response',

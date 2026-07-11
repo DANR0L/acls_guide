@@ -187,7 +187,7 @@ class CprDynamicState {
     }
 
     if (isShockableRhythm == true) {
-      // Momento de checagem do ritmo: guia o próximo passo conforme AHA 2020
+      // Momento de checagem do ritmo: guia o próximo passo conforme AHA 2025
       if (shockCount == 0) {
         return '⚡ DESFIBRILAR AGORA! 1º Choque (120-200 J bifásico). Retome CPR imediatamente após.';
       }
