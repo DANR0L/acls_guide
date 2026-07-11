@@ -78,7 +78,7 @@ final cardiacArrestAlgorithm = Algorithm(
     // ── TIMER 2 MIN ──────────────────────────────────────────
     'start_timer_2min': const AlgorithmNode(
       id: 'start_timer_2min',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Iniciar Ciclo de CPR',
       subtitle: '2 minutos de CPR contínua',
       timerSeconds: 120,
@@ -150,7 +150,7 @@ final cardiacArrestAlgorithm = Algorithm(
 
     'start_timer_2min_2': const AlgorithmNode(
       id: 'start_timer_2min_2',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Ciclo CPR — 2 minutos',
       timerSeconds: 120,
       nextNodeId: 'rhythm_check_2',
@@ -210,7 +210,7 @@ final cardiacArrestAlgorithm = Algorithm(
 
     'start_timer_2min_3': const AlgorithmNode(
       id: 'start_timer_2min_3',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Ciclo CPR — 2 minutos',
       timerSeconds: 120,
       nextNodeId: 'rhythm_check_3',
@@ -302,7 +302,7 @@ final cardiacArrestAlgorithm = Algorithm(
 
     'start_timer_2min_4': const AlgorithmNode(
       id: 'start_timer_2min_4',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Ciclo CPR — 2 minutos',
       timerSeconds: 120,
       nextNodeId: 'rhythm_check_4',
@@ -378,7 +378,7 @@ final cardiacArrestAlgorithm = Algorithm(
 
     'start_timer_2min_5': const AlgorithmNode(
       id: 'start_timer_2min_5',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Ciclo CPR — 2 minutos',
       timerSeconds: 120,
       nextNodeId: 'rhythm_check_5',
@@ -468,7 +468,7 @@ final cardiacArrestAlgorithm = Algorithm(
 
     'vf_continuous_timer': const AlgorithmNode(
       id: 'vf_continuous_timer',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Ciclo CPR — 2 minutos',
       timerSeconds: 120,
       nextNodeId: 'vf_continuous_check',
@@ -566,7 +566,7 @@ final cardiacArrestAlgorithm = Algorithm(
 
     'asystole_cycle': const AlgorithmNode(
       id: 'asystole_cycle',
-      type: NodeType.timer,
+      type: NodeType.action,
       title: 'Ciclo CPR — Assistolia (2 min)',
       timerSeconds: 120,
       nextNodeId: 'rhythm_check_asystole',
