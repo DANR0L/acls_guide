@@ -285,7 +285,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                   },
                 ),
                 _ActionBtn(
-                  label: '💊 Amio (+manut)/Lido',
+                  label: '💊 Amiodarona/Lido',
                   icon: Icons.medication_rounded,
                   color: const Color(0xFFA855F7),
                   disabled: state.isAmioDisabled,
@@ -411,12 +411,12 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                     },
                   ),
                   _ActionBtn(
-                    label: '💊 Amio 150mg (+manut)',
+                    label: '💊 Amiodarona 150mg/10min',
                     icon: Icons.medication_rounded,
                     color: const Color(0xFFA855F7),
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      notifier.registerDrug('Amiodarona 150mg IV (+ manutenção)');
+                      notifier.registerDrug('Amiodarona 150mg IV em 10min');
                     },
                   ),
                 ],
@@ -424,12 +424,12 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                 // ── Drogas para TV Monomórfica ──
                 if (state.tachycardiaRhythm == 'Monomórfica') ...[
                   _ActionBtn(
-                    label: '💊 Amio 150mg (+manut)',
+                    label: '💊 Amiodarona 150mg/10min',
                     icon: Icons.medication_rounded,
                     color: const Color(0xFFA855F7),
                     onTap: () {
                       HapticFeedback.mediumImpact();
-                      notifier.registerDrug('Amiodarona 150mg IV (+ manutenção)');
+                      notifier.registerDrug('Amiodarona 150mg IV em 10min');
                     },
                   ),
                   _ActionBtn(

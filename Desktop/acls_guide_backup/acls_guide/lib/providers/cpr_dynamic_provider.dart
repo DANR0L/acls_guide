@@ -169,7 +169,7 @@ class CprDynamicState {
       }
     }
     
-    if (isRosc) return 'ROSC Obtido. Inicie cuidados pós-parada.';
+    if (isRosc) return 'ROSC Obtido. Inicie cuidados pós-parada (se usou Amiodarona, inicie manutenção).';
     if (isTor) return 'Ressuscitação encerrada. Comunique a família e equipe.';
     if (cycleSecondsRemaining <= 5) return 'Prepare-se para pausar e Checar Ritmo!';
     
