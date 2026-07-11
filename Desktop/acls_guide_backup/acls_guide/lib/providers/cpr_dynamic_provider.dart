@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class CprLogEvent {
   final String timeText;
@@ -261,13 +262,25 @@ class CprDynamicState {
 class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
   Timer? _timer;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final FlutterTts _flutterTts = FlutterTts();
+  String _lastSpokenSuggestion = '';
 
-  CprDynamicNotifier() : super(CprDynamicState());
+  CprDynamicNotifier() : super(CprDynamicState()) {
+    _initTts();
+  }
+
+  void _initTts() async {
+    await _flutterTts.setLanguage("pt-BR");
+    await _flutterTts.setSpeechRate(0.55);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.1); // Slightly higher pitch for female voice tendency
+  }
 
   @override
   void dispose() {
     _timer?.cancel();
     _audioPlayer.dispose();
+    _flutterTts.stop();
     super.dispose();
   }
 
@@ -321,6 +334,13 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
       clearShockableRhythm: newCycle == 120,
       logs: newLogs,
     );
+
+    final currentSuggestion = state.suggestion;
+    if (currentSuggestion != _lastSpokenSuggestion && currentSuggestion.isNotEmpty) {
+      _lastSpokenSuggestion = currentSuggestion;
+      String cleanText = currentSuggestion.replaceAll(RegExp(r'[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]', unicode: true), '').trim();
+      _flutterTts.speak(cleanText);
+    }
   }
 
   void registerRhythm(bool isShockable) {
