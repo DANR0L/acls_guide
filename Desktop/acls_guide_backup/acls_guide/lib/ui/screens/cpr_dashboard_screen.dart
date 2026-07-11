@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/gestures.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/cpr_dynamic_provider.dart';
 import '../../services/pdf_export_service.dart';
@@ -224,10 +225,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                     const Icon(Icons.tips_and_updates_rounded, color: AppColors.warning, size: 20),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        state.suggestion,
-                        style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                      ),
+                      child: _buildSuggestionText(context, state.suggestion),
                     ),
                   ],
                 ),
@@ -322,15 +320,6 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                   onTap: () {
                     HapticFeedback.mediumImpact();
                     _showTachycardiaModal(context, notifier);
-                  },
-                ),
-                _ActionBtn(
-                  label: '🔍 Causas (5H/5T)',
-                  icon: Icons.search_rounded,
-                  color: AppColors.primary,
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    _show5Hs5TsModal(context);
                   },
                 ),
               ],
@@ -606,6 +595,37 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSuggestionText(BuildContext context, String text) {
+    if (!text.contains('5H e 5T')) {
+      return Text(
+        text,
+        style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+      );
+    }
+    
+    final parts = text.split('5H e 5T');
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+        children: [
+          TextSpan(text: parts[0]),
+          TextSpan(
+            text: '5H e 5T',
+            style: const TextStyle(
+              color: AppColors.primary,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()..onTap = () {
+              HapticFeedback.mediumImpact();
+              _show5Hs5TsModal(context);
+            },
+          ),
+          if (parts.length > 1) TextSpan(text: parts[1]),
+        ],
+      ),
     );
   }
 
