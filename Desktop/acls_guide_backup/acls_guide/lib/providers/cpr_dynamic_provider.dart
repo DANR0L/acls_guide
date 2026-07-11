@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class CprLogEvent {
   final String timeText;
@@ -259,12 +260,14 @@ class CprDynamicState {
 
 class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
   Timer? _timer;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   CprDynamicNotifier() : super(CprDynamicState());
 
   @override
   void dispose() {
     _timer?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -293,6 +296,10 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
     // epiElapsedSeconds: 0 = not used yet, 1-301 = counting up (capped at 301 = 5:00)
     int newEpiElapsed = state.epiElapsedSeconds;
     if (newEpiElapsed > 0 && newEpiElapsed <= 301) newEpiElapsed++;
+
+    if (newCycle > 0 && newCycle <= 5) {
+      _audioPlayer.play(AssetSource('audio/beep.wav'));
+    }
 
     List<CprLogEvent> newLogs = List.from(state.logs);
 
