@@ -175,9 +175,9 @@ class CprDynamicState {
     
     if (isShockableRhythm == null) {
       if (shockCount >= 3 && amioLidoCount == 0) {
-        return 'CPR em andamento. Administre Amiodarona 300mg IV AGORA.';
+        return 'CPR em andamento. Administre Amiodarona 300mg IV AGORA + inicie manutenção.';
       } else if (shockCount >= 5 && amioLidoCount == 1) {
-        return 'CPR em andamento. Administre Amiodarona 150mg IV (2ª dose) AGORA.';
+        return 'CPR em andamento. Administre Amiodarona 150mg IV (2ª dose) AGORA + manutenção.';
       } else if (shockCount >= 2 && epiAvailable) {
         return 'CPR em andamento. Administre Epinefrina 1mg IV AGORA.';
       } else if (shockCount >= 1) {
@@ -195,12 +195,12 @@ class CprDynamicState {
         return '⚡ 2º Choque (120-200 J). Após o choque: CPR 2 min + Epinefrina 1mg IV durante a CPR.';
       }
       if (shockCount == 2) {
-        return '⚡ 3º Choque (120-200 J). Após: CPR 2 min + Amiodarona 300mg IV + Epi 1mg (se disponível).';
+        return '⚡ 3º Choque (120-200 J). Após: CPR 2 min + Amio 300mg IV (+ manutenção) + Epi 1mg.';
       }
       if (shockCount == 3) {
-        return '⚡ 4º Choque (120-200 J) OU considere DSD (Dupla Desfibrilação). Após: Amiodarona 150mg IV (2ª dose).';
+        return '⚡ 4º Choque (120-200 J) OU considere DSD/Mudança de Vetor. Após: Amio 150mg IV (+ manutenção).';
       }
-      return '⚡ Choque ${shockCount + 1} (120-200 J) OU DSD (Dupla Desfibrilação). Continue Epi a cada 3-5 min. Pesquise causas (5H e 5T).';
+      return '⚡ Choque ${shockCount + 1} (120-200 J) OU DSD. Continue Epi a cada 3-5 min. Pesquise causas (5H e 5T).';
     } else {
       if (epiAvailable) return '💉 Administre Epinefrina 1mg IV O MAIS RÁPIDO POSSÍVEL. CPR contínua.';
       return 'Continue CPR contínua. Epi a cada 3-5 min. Investigue causas reversíveis (5H e 5T).';
@@ -366,8 +366,8 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
   void registerAmioLido() {
     final nextCount = state.amioLidoCount + 1;
     final logMessage = nextCount == 1 
-      ? 'Amiodarona 300mg administrada (1ª dose)' 
-      : 'Amiodarona 150mg administrada (2ª dose)';
+      ? 'Amiodarona 300mg administrada (+ inicie manutenção)' 
+      : 'Amiodarona 150mg administrada (+ ajuste manutenção)';
       
     state = state.copyWith(
       amioLidoCount: nextCount,

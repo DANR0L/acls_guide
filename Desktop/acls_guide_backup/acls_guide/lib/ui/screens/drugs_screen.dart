@@ -129,7 +129,8 @@ const _allDrugs = [
     frequency: 'Manutenção: 1 mg/min × 6h → 0,5 mg/min × 18h',
     maxDose: 'Máx 2,2 g/24h',
     notes:
-        'Antiarrítmico de 1ª escolha em PCR com FV/TV. Pode causar hipotensão e bradicardia em infusão rápida. Monitorar QTc.',
+        'Antiarrítmico de 1ª escolha em PCR com FV/TV. Pode causar hipotensão e bradicardia. Monitorar QTc.\n'
+        'Diluição p/ manutenção (Bomba de Infusão): 900 mg em 500 mL SG5% (1,8 mg/mL).',
     color: '#A855F7',
     indications: [
       'VF / pVT refratária após 3º choque — 1ª linha',
