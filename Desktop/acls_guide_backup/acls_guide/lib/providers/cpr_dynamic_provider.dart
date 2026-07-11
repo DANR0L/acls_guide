@@ -271,9 +271,30 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
 
   void _initTts() async {
     await _flutterTts.setLanguage("pt-BR");
-    await _flutterTts.setSpeechRate(0.55);
+    await _flutterTts.setSpeechRate(1.0); // Velocidade normal (0.55 ficou muito lento na web)
     await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.1); // Slightly higher pitch for female voice tendency
+    await _flutterTts.setPitch(1.1); // Tom mais agudo
+
+    try {
+      final voices = await _flutterTts.getVoices;
+      for (var voice in voices) {
+        if (voice is Map && voice["locale"]?.toString().startsWith("pt") == true) {
+          final name = voice["name"].toString().toLowerCase();
+          // Busca por vozes femininas conhecidas (Microsoft Francisca, Google BR, Luciana do Mac)
+          if (name.contains("francisca") || 
+              name.contains("luciana") || 
+              name.contains("google") || 
+              name.contains("female") || 
+              name.contains("maria") ||
+              name.contains("vitoria")) {
+            await _flutterTts.setVoice({"name": voice["name"], "locale": voice["locale"]});
+            break; // Achou a voz feminina, sai do loop
+          }
+        }
+      }
+    } catch (e) {
+      // Ignora erros na busca de vozes, mantendo o default
+    }
   }
 
   @override
