@@ -64,9 +64,9 @@ class PdfExportService {
       );
 
       final bytes = await pdf.save();
-      await Printing.sharePdf(
-        bytes: bytes,
-        filename: 'Relatorio_PCR_$dateStr.pdf',
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => bytes,
+        name: 'Relatorio_PCR_$dateStr',
       );
     } catch (e) {
       if (onError != null) {
