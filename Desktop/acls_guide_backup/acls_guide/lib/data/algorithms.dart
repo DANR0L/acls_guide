@@ -2513,11 +2513,11 @@ final strokeAlgorithm = Algorithm(
       nextNodeId: 'stroke_thrombectomy_check',
     ),
 
-    // ── JANELA TROMBECTOMIA (6–24h) ─────────────────────────────
+    // ── JANELA TROMBECTOMIA (9–24h) ─────────────────────────────
     'stroke_thrombectomy_window': const AlgorithmNode(
       id: 'stroke_thrombectomy_window',
       type: NodeType.action,
-      title: 'Janela Trombectomia (6–24h) — Avaliação por Imagem',
+      title: 'Janela Trombectomia (9–24h) — Avaliação por Imagem',
       alertLevel: 'warning',
       bullets: [
         '🖥️ Solicitar TC + Angiotomografia ou RM de perfusão',
