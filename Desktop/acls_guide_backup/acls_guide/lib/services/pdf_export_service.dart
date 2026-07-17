@@ -4,6 +4,26 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../providers/cpr_dynamic_provider.dart';
 
+/// Remove emojis e caracteres Unicode especiais que a fonte Helvetica não suporta
+String _sanitize(String text) {
+  // Remove emojis e símbolos Unicode fora do range Latin-1
+  return text.replaceAll(RegExp(
+    r'[\u{1F600}-\u{1F64F}]|'  // Emoticons
+    r'[\u{1F300}-\u{1F5FF}]|'  // Misc Symbols and Pictographs
+    r'[\u{1F680}-\u{1F6FF}]|'  // Transport and Map
+    r'[\u{1F1E0}-\u{1F1FF}]|'  // Flags
+    r'[\u{2702}-\u{27B0}]|'    // Dingbats
+    r'[\u{FE00}-\u{FE0F}]|'    // Variation Selectors
+    r'[\u{1F900}-\u{1F9FF}]|'  // Supplemental Symbols
+    r'[\u{2600}-\u{26FF}]|'    // Misc symbols (⚠️ etc)
+    r'[\u{2300}-\u{23FF}]|'    // Misc Technical (⏰ etc)
+    r'[\u{200D}]|'              // Zero Width Joiner
+    r'[\u{20E3}]|'              // Combining Enclosing Keycap
+    r'[\u{E0020}-\u{E007F}]',   // Tags
+    unicode: true,
+  ), '').trim();
+}
+
 class PdfExportService {
   static Future<void> exportCprLog(CprDynamicState state, {Function(String)? onError}) async {
     try {
@@ -171,9 +191,9 @@ class PdfExportService {
           final timeStr = '${hr.hour.toString().padLeft(2, '0')}:${hr.minute.toString().padLeft(2, '0')}:${hr.second.toString().padLeft(2, '0')}';
           return pw.TableRow(
             children: [
-              _buildTableCell(log.timeText, font),
+              _buildTableCell(_sanitize(log.timeText), font),
               _buildTableCell(timeStr, font),
-              _buildTableCell(log.message, log.isAlert ? fontBold : font),
+              _buildTableCell(_sanitize(log.message), log.isAlert ? fontBold : font),
             ],
           );
         }),
