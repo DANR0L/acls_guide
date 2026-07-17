@@ -2228,12 +2228,12 @@ final strokeAlgorithm = Algorithm(
         AlgorithmOption(
           label: '⏰ 4,5h a 9h (onset desconhecido)',
           sublabel: 'Janela estendida — imagem avançada (DWI-FLAIR mismatch)',
-          nextNodeId: 'stroke_late_window',
+          nextNodeId: 'stroke_extended_thrombolysis',
         ),
         AlgorithmOption(
           label: '⏰ 9h a 24h',
           sublabel: 'Avaliar trombectomia (DAWN/DEFUSE)',
-          nextNodeId: 'stroke_late_window',
+          nextNodeId: 'stroke_thrombectomy_window',
         ),
         AlgorithmOption(
           label: '⏰ > 24 horas',
