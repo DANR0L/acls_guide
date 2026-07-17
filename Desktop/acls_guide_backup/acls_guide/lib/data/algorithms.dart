@@ -2494,20 +2494,42 @@ final strokeAlgorithm = Algorithm(
       nextNodeId: 'stroke_post_care',
     ),
 
-    // ── JANELA TARDIA ─────────────────────────────────────────
-    'stroke_late_window': const AlgorithmNode(
-      id: 'stroke_late_window',
+    // ── JANELA ESTENDIDA TROMBÓLISE (4,5–9h) ───────────────────────
+    'stroke_extended_thrombolysis': const AlgorithmNode(
+      id: 'stroke_extended_thrombolysis',
       type: NodeType.action,
-      title: 'Janela Tardia (4,5h–24h) — Avaliação por Imagem',
+      title: 'Janela Estendida (4,5–9h) — Trombólise por Imagem',
       alertLevel: 'warning',
       bullets: [
-        '💊 Janela 4,5–9h: TNK/Alteplase possível se DWI-FLAIR mismatch na RM (AHA/ASA 2026)',
-        '🖥️ Solicitar TC + Angiotomografia ou RM de difusão/perfusão',
-        '🔬 Avaliar trombectomia (critérios DAWN / DEFUSE 3):',
-        '   • NIHSS ≥ 6 + OGV confirmada em circulação anterior',
-        '   • Core isquêmico pequeno vs. grande penumbra viável',
-        '   • Janela até 24h para casos selecionados',
-        '   • Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10',
+        '💡 Indicada para onset desconhecido ou wake-up stroke',
+        '🖥️ Solicitar RM: DWI-FLAIR mismatch',
+        '   • DWI positivo (lesão aguda) + FLAIR negativo = lesão < 4,5h',
+        '💊 TNK 0,25 mg/kg (máx 25 mg) IV bolus único (AHA/ASA 2026)',
+        '   ou Alteplase 0,9 mg/kg (máx 90 mg) — 10% bolus + 90% em 1h',
+        '⚠️ Mesmas contraindicações do trombolítico padrão',
+        '🔬 Se OGV presente: avaliar trombectomia associada',
+        '🛏️ Internação em unidade de AVC',
+      ],
+      nextNodeId: 'stroke_thrombectomy_check',
+    ),
+
+    // ── JANELA TROMBECTOMIA (6–24h) ─────────────────────────────
+    'stroke_thrombectomy_window': const AlgorithmNode(
+      id: 'stroke_thrombectomy_window',
+      type: NodeType.action,
+      title: 'Janela Trombectomia (6–24h) — Avaliação por Imagem',
+      alertLevel: 'warning',
+      bullets: [
+        '🖥️ Solicitar TC + Angiotomografia ou RM de perfusão',
+        '🔬 Critérios DAWN (6–24h):',
+        '   • NIHSS ≥ 10 + OGV em circulação anterior',
+        '   • Idade ≥ 80: core < 21 mL',
+        '   • Idade < 80: core < 31 mL (NIHSS ≥ 10) ou core < 51 mL (NIHSS ≥ 20)',
+        '🔬 Critérios DEFUSE 3 (6–16h):',
+        '   • NIHSS ≥ 6 + OGV em circulação anterior',
+        '   • Core < 70 mL, mismatch ratio ≥ 1.8, penumbra ≥ 15 mL',
+        '🧠 Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10 (AHA/ASA 2026)',
+        '💊 Trombólise prévia NÃO contraindica trombectomia',
         '🛏️ Internação em unidade de AVC',
       ],
       nextNodeId: 'stroke_thrombectomy_check',
