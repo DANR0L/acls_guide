@@ -126,7 +126,7 @@ final cardiacArrestAlgorithm = Algorithm(
       alertLevel: 'danger',
       isShockNode: true,
       bullets: [
-        'Bifásico: 200 J (ou máximo do equipamento)',
+        'Bifásico: 120–200 J (seguir recomendação do fabricante; se desconhecida: dose máxima)',
         'Monofásico: 360 J',
         'Afastar todos antes do choque',
         'Retomar CPR IMEDIATAMENTE após choque',
@@ -141,7 +141,7 @@ final cardiacArrestAlgorithm = Algorithm(
       alertLevel: 'warning',
       bullets: [
         'Reiniciar CPR imediatamente (2 min)',
-        'Acesso IV ou IO — estabelecer AGORA',
+        'Acesso IV preferencial (1ª tentativa); IO se IV falhar (AHA 2025)',
         'Intubar ou usar máscara laríngea após 1–2 min de CPR, se possível',
         'Monitorizar ETCO₂ se disponível',
       ],
@@ -782,7 +782,7 @@ final cardiacArrestAlgorithm = Algorithm(
         '🅗 Hipotermia → Reaquecimento ativo',
         '🅣 Tensão (pneumotórax) → Descompressão agulha',
         '🅣 Tamponamento → Pericardiocentese',
-        '🅣 Toxinas → Naloxona, flumazenil, Intralipid, glucagonato',
+        '🅣 Toxinas → Naloxona (opioide), Intralipid 20% (anest. local/BCC), Gluconato de Ca²⁺ (hiperK/BCC), NaHCO₃ (tricíclicos, cocaína)',
         '🅣 Trombose coronária → IAMCSST → ICP emergência',
         '🅣 Trombose pulmonar → TEP → trombólise',
       ],
@@ -1190,8 +1190,9 @@ final tachycardiaAlgorithm = Algorithm(
         'Sincronizar no monitor: botão SYNC',
         'Posicionar pás: antero-posterior ou antero-lateral',
         '🔋 Energia recomendada:',
-        '   • FA: ≥ 200 J bifásico (nova recomendação 2025)',
-        '   • Flutter/TSV: 50–100 J',
+        '   • FA: ≥ 200 J bifásico',
+        '   • Flutter: 200 J bifásico (AHA 2025)',
+        '   • TSV: 100 J bifásico',
         '   • TV monomórfica: 100 J',
         'Se falhar: aumentar energia',
         'TV polimórfica (instável): desfibrilação (não sincronizado)',
@@ -1483,7 +1484,7 @@ final tachycardiaAlgorithm = Algorithm(
       title: 'Flutter Atrial — Conduta',
       alertLevel: 'info',
       bullets: [
-        'Cardioversão elétrica: 50–100 J (mais fácil que FA)',
+        'Cardioversão elétrica sincronizada: 200 J bifásico (AHA 2025)',
         'ou Controle de frequência: Betabloqueador / BCC',
         'Mesmas regras de anticoagulação que FA',
         'Ablação por cateter: tratamento definitivo',
@@ -1499,7 +1500,7 @@ final tachycardiaAlgorithm = Algorithm(
         'EVITAR: Adenosina, Betabloqueadores, BCC, Digoxina',
         'Podem acelerar condução pela via acessória → FV',
         'SE INSTÁVEL: Cardioversão elétrica IMEDIATA',
-        'SE ESTÁVEL: Procainamida 15–17 mg/kg IV em 30 min',
+        'SE ESTÁVEL: Procainamida 20–50 mg/min IV (máx 17 mg/kg). Parar se: hipotensão, QRS ↑ >50% ou dose máx',
         'ou Ibutilide (alternativa)',
         'Consulta urgente a eletrofisiologista',
         'Ablação da via acessória: tratamento definitivo',
@@ -1790,13 +1791,14 @@ final postRoscAlgorithm = Algorithm(
       title: '❄️ Controle de Temperatura Alvo (TTM)',
       alertLevel: 'info',
       bullets: [
-        'Meta: temperatura 32–36°C por ≥ 24 horas',
-        'Evitar FEBRE ativamente (> 37,7°C prejudicial)',
+        'Controle ativo de temperatura: 32–37,5°C por ≥ 36 horas (AHA 2025)',
+        'PREVENIR FEBRE ativamente (> 37,5°C prejudicial)',
+        'Individualizar: hipotermia (32–34°C) vs normotermia (36–37,5°C)',
         'Métodos de resfriamento:',
-        '   • Soro fisiológico gelado IV (4°C, 30 mL/kg)',
         '   • Bolsas de gelo nas axilas/virilhas',
         '   • Cateter endovascular (Artic Sun, Thermogard)',
         '   • Cobertor refrescante',
+        '   • ⚠️ NÃO usar soro gelado IV pré-hospitalar (risco edema pulmonar/re-PCR)',
         'Monitorizar: temperatura central (vesical/esofágica)',
         'Sedação + bloqueio neuromuscular para evitar tremores',
       ],
@@ -1825,7 +1827,7 @@ final postRoscAlgorithm = Algorithm(
       title: '🧠 Neuroprognosticação',
       alertLevel: 'warning',
       bullets: [
-        'NÃO prognosticar precocemente (< 72h após ROSC)',
+        'NÃO prognosticar precocemente (≥ 72h após normotermia — AHA 2025)',
         'Aguardar: efeito de sedativos, TTM, temperatura normalizando',
         'Exames multimodais após 72–120h:',
         '   • Reflexos de tronco (pupilas, córnea)',
@@ -1922,7 +1924,7 @@ final scaAlgorithm = Algorithm(
         '   • ICP Primária: Clopidogrel 600mg, Ticagrelor 180mg ou Prasugrel 60mg',
         '   • Trombólise: Clopidogrel 300mg (75mg se > 75 anos)',
         '🚫 Evitar Prasugrel se AVC/AIT prévio',
-        '💉 HNF: bólus 70–100 UI/kg IV (máx 4000 UI)',
+        '💉 HNF: ICP → 70–100 UI/kg IV bolus (ajustar por ACT na sala); Trombólise → 60 UI/kg (máx 4000 UI) + infusão 12 UI/kg/h (máx 1000 UI/h)',
         '💨 O₂ apenas se SpO₂ < 90%',
         '💉 Morfina se dor severa (cautela)',
         '💊 Nitrato se PA > 90 mmHg (CI: VD ou PDE5i)',
@@ -2005,9 +2007,9 @@ final scaAlgorithm = Algorithm(
       title: 'Tenecteplase (TNK) — IAMCSST',
       drug: DrugInfo(
         name: 'Tenecteplase (TNK)',
-        dose: 'Baseado no peso:\n< 60 kg: 30 mg\n60–70 kg: 35 mg\n70–80 kg: 40 mg\n80–90 kg: 45 mg\n> 90 kg: 50 mg',
+        dose: 'Baseado no peso:\n< 60 kg: 30 mg\n60–70 kg: 35 mg\n70–80 kg: 40 mg\n80–90 kg: 45 mg\n> 90 kg: 50 mg\n⚠️ IDOSOS ≥75 anos: usar MEIA DOSE',
         route: 'IV bolus em 5–10 seg',
-        notes: 'Administrar junto com Heparina. Transferir para hemodinâmica após (ICP de resgate se falha). Monitorizar sinais de reperfusão: alívio da dor, supradesnivelamento de ST reduz > 50%, reperfusion arrhythmias.',
+        notes: 'IDOSOS ≥75 anos: meia dose (STREAM Trial). Administrar junto com Heparina. Fibrinólise em ≤10 min do diagnóstico se ICP >120 min (AHA 2025). Transferir para hemodinâmica após. Sinais de reperfusão: alívio da dor, ↓ST >50%, arritmias de reperfusão.',
         color: '#F97316',
       ),
       nextNodeId: 'post_thrombolysis',
@@ -2062,8 +2064,8 @@ final scaAlgorithm = Algorithm(
 );
 
 // ═══════════════════════════════════════════════════════════════
-//  ALGORITMO AVC — Acidente Vascular Cerebral (AHA/ASA 2025)
-//  Inclui: NIHSS passo a passo, Alteplase, Trombectomia
+//  ALGORITMO AVC — Acidente Vascular Cerebral (AHA/ASA 2026)
+//  Inclui: NIHSS passo a passo, Alteplase/TNK, Trombectomia, Basilar
 // ═══════════════════════════════════════════════════════════════
 
 final strokeAlgorithm = Algorithm(
@@ -2201,8 +2203,13 @@ final strokeAlgorithm = Algorithm(
           nextNodeId: 'nihss_score',
         ),
         AlgorithmOption(
-          label: '⏰ 4,5h a 24h ou desconhecido',
-          sublabel: 'Fora da janela da alteplase — avaliar trombectomia',
+          label: '⏰ 4,5h a 9h (onset desconhecido)',
+          sublabel: 'Janela estendida — imagem avançada (DWI-FLAIR mismatch)',
+          nextNodeId: 'stroke_late_window',
+        ),
+        AlgorithmOption(
+          label: '⏰ 9h a 24h',
+          sublabel: 'Avaliar trombectomia (DAWN/DEFUSE)',
           nextNodeId: 'stroke_late_window',
         ),
         AlgorithmOption(
@@ -2265,13 +2272,14 @@ final strokeAlgorithm = Algorithm(
       title: 'AVC Hemorrágico — Acionar Neurocirurgia',
       alertLevel: 'danger',
       bullets: [
-        '🚫 CONTRAINDICADO: Alteplase, anticoagulantes, antiagregantes',
+        '🚫 CONTRAINDICADO: Alteplase/TNK, anticoagulantes, antiagregantes',
         '📞 Acionar Neurocirurgia IMEDIATAMENTE',
         '💉 Reversão de anticoagulação se em uso:',
         '   • Heparina → Protamina',
-        '   • Warfarina → Vitamina K + CCP (Octaplex)',
-        '   • DOAC → Andexanet alfa / Idarucizumabe',
-        '📈 Alvo de PA: sistólica < 140 mmHg (AHA 2022)',
+        '   • Warfarina → Vitamina K + CCP 4 fatores (Octaplex)',
+        '   • Dabigatran → Idarucizumabe (Praxbind) 5g IV',
+        '   • Rivaroxaban/Apixaban/Edoxaban → Andexanet alfa ou CCP 4 fatores 50 UI/kg',
+        '📈 Alvo de PA: sistólica < 140 mmHg (AHA/ASA 2026 — INTERACT-3)',
         '🛏️ UTI ou unidade de AVC imediatamente',
         '🧠 Critérios cirúrgicos: hematoma > 30 mL, deterioração, hidrocefalia',
         '🌡️ Controle de temperatura, glicemia e convulsões',
@@ -2381,9 +2389,9 @@ final strokeAlgorithm = Algorithm(
       alertLevel: 'danger',
       drug: DrugInfo(
         name: 'Tenecteplase (TNK) OU Alteplase (rt-PA)',
-        dose: 'TNK: 0,25 mg/kg IV (máx 25 mg) bolus único\nOU\nAlteplase: 0,9 mg/kg (máx 90 mg) → 10% bolus + 90% infusão',
+        dose: 'TNK: 0,25 mg/kg IV (máx 25 mg) bolus único\nOU\nAlteplase: 0,9 mg/kg (máx 90 mg) → 10% bolus + 90% infusão em 60 min',
         route: 'IV (bolus único para TNK, infusão para rt-PA)',
-        notes: 'Meta porta-agulha: ≤ 45–60 min. PA alvo durante e após: < 180/105 mmHg. TNK é preferível se for para trombectomia.',
+        notes: 'TNK e Alteplase têm mesma eficácia (AHA/ASA 2026). TNK preferível: bolus único, logística mais simples, ideal se trombectomia subsequente. Meta porta-agulha: ≤ 45 min. PA < 180/105 mmHg durante e 24h após. NÃO usar antiagregantes/anticoagulantes nas primeiras 24h.',
         color: '#F97316',
       ),
       nextNodeId: 'stroke_post_alteplase',
@@ -2430,8 +2438,10 @@ final strokeAlgorithm = Algorithm(
       bullets: [
         'Angiotomografia ou RM-angio para identificar OGV',
         'NIHSS ≥ 6 com OGV confirmada = candidato preferencial',
-        'Janela ≤ 6h (circulação anterior) ou 6–24h (DAWN/DEFUSE)',
+        'Circulação anterior: janela ≤ 6h (padrão) ou 6–24h (DAWN/DEFUSE)',
+        'Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10 (AHA/ASA 2026)',
         'Trombolítico NÃO é contraindicação — fazer os dois se elegível',
+        'Não aguardar resposta ao trombolítico — prosseguir direto à trombectomia',
       ],
       options: [
         AlgorithmOption(
@@ -2468,12 +2478,13 @@ final strokeAlgorithm = Algorithm(
       title: 'Janela Tardia (4,5h–24h) — Avaliação por Imagem',
       alertLevel: 'warning',
       bullets: [
-        '🚫 Trombolítico IV NÃO indicado (fora da janela de 4,5h)',
-        '🖥️ Solicitar TC + Angiotomografia ou RM de difusão',
+        '💊 Janela 4,5–9h: TNK/Alteplase possível se DWI-FLAIR mismatch na RM (AHA/ASA 2026)',
+        '🖥️ Solicitar TC + Angiotomografia ou RM de difusão/perfusão',
         '🔬 Avaliar trombectomia (critérios DAWN / DEFUSE 3):',
         '   • NIHSS ≥ 6 + OGV confirmada em circulação anterior',
         '   • Core isquêmico pequeno vs. grande penumbra viável',
         '   • Janela até 24h para casos selecionados',
+        '   • Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10',
         '🛏️ Internação em unidade de AVC',
       ],
       nextNodeId: 'stroke_thrombectomy_check',
@@ -2507,7 +2518,7 @@ final strokeAlgorithm = Algorithm(
         '🍬 Glicemia: manter 140–180 mg/dL (evitar hipoglicemia)',
         '📈 PA pós-trombólise: < 180/105 mmHg',
         '📈 PA sem trombólise: < 220/120 nas primeiras 24h',
-        '🛏️ Decúbito: cabeceira 0–30° (primeiras 24h — fluxo colateral)',
+        '🛏️ Cabeceira elevada 30° (reduzir PIC — HeadPoST: posição plana sem benefício)',
         '💧 Hidratação: SF 0,9% (evitar SG — piora edema cerebral)',
         '🗣️ Fonoaudiologia: avaliar deglutição antes de qualquer via oral',
         '🧠 RM de difusão: confirmar topografia e extensão do infarto',

@@ -139,17 +139,18 @@ class CprDynamicState {
     if (tachycardiaRhythm != null) {
       switch (tachycardiaRhythm) {
         case 'TSV':
-          return '📌 TSV ESTÁVEL: 1) Manobra Vagal (Valsalva/carotídea). '
+          return '📌 TSV ESTÁVEL: 1) Manobra Vagal (Valsalva modificado/carotídea). '
               '2) Adenosina 6mg IV em acesso proximal + flush 20mL rápido. '
               '3) Se falhar: Adenosina 12mg IV (repetir 12mg mais 1x se necessário). '
-              '4) Alternativas: Metoprolol 2,5-5mg IV lento (até 3x) ou Diltiazem 0,25mg/kg IV lento. '
-              '⚡ TSV INSTÁVEL: Cardioversão Sincronizada 50-100 J bifásico.';
+              '4) Alternativas: Metoprolol 2,5-5mg IV lento (até 3x) ou Diltiazem 0,25mg/kg IV lento (manutenção 5-15mg/h). '
+              '⚡ TSV INSTÁVEL: Cardioversão Sincronizada 100 J bifásico (AHA 2025).';
         case 'FA / Flutter':
           return '📌 FA/FLUTTER ESTÁVEL: Controle de frequência: Metoprolol 2,5-5mg IV (até 3x) ou '
               'Diltiazem 0,25mg/kg IV lento (manutenção: 5-15mg/h). '
               'Alternativa: Amiodarona 150mg IV em 10min + 1mg/min por 6h. '
-              '⚡ FA INSTÁVEL → Cardioversão Sincronizada 120-200 J bifásico. '
-              '⚡ FLUTTER INSTÁVEL → Cardioversão Sincronizada 50-100 J bifásico.';
+              'NÃO combinar BCC IV + BB IV (risco de assistolia). '
+              '⚡ FA INSTÁVEL → Cardioversão Sincronizada ≥ 200 J bifásico. '
+              '⚡ FLUTTER INSTÁVEL → Cardioversão Sincronizada 200 J bifásico.';
         case 'Monomórfica':
           return '📌 TV MONOMÓRFICA ESTÁVEL: '
               'Amiodarona 150mg IV em 10min + 1mg/min (6h) + 0,5mg/min (18h). '
@@ -159,8 +160,8 @@ class CprDynamicState {
               '(se falhar, aumentar para 200 J).';
         case 'Polimórfica':
           return '🚨 TV POLIMÓRFICA / TORSADES: '
-              '⚡ Desfibrilação NÃO-sincronizada imediata: 200 J bifásico (mesma dose da FV). '
-              '💉 Sulfato de Magnésio 2g IV em 15min (se Torsades/QT longo). '
+              '⚡ Desfibrilação NÃO-sincronizada imediata: 120-200 J bifásico (mesma dose da FV). '
+              '💉 Sulfato de Magnésio 2g IV em 1-2min (bolus) se Torsades/QT longo. '
               '🛑 Suspender drogas que prolongam QT (amiodarona, sotalol, azitromicina). '
               '💊 Isoproterenol ou Lidocaína 1-1,5mg/kg IV se TV recorrente. '
               'Tratar causa base: hipopotassemia, hipomagnesemia.';
@@ -198,7 +199,7 @@ class CprDynamicState {
         return '⚡ 3º Choque (120-200 J). Após: CPR 2 min + Amio 300mg IV + Epi 1mg.';
       }
       if (shockCount == 3) {
-        return '⚡ 4º Choque (120-200 J) OU considere DSD/Mudança de Vetor. Após: Amio 150mg IV.';
+        return '⚡ 4º Choque (120-200 J) OU considere DSD/Mudança de Vetor. Após: Epi 1mg IV (se ≥3 min desde última). Amio 150mg só após 5º choque.';
       }
       return '⚡ Choque ${shockCount + 1} (120-200 J) OU DSD. Continue Epi a cada 3-5 min. Pesquise causas (5H e 5T).';
     } else {
