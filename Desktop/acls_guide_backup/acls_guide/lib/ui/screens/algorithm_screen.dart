@@ -508,12 +508,14 @@ class _NodeHeader extends StatelessWidget {
 }
 
 // ── Bullet List ───────────────────────────────────────────────
-class _BulletList extends StatelessWidget {
+class _BulletList extends ConsumerWidget {
   final List<String> bullets;
   const _BulletList({required this.bullets});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isStudyMode = ref.watch(studyModeProvider);
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -523,26 +525,55 @@ class _BulletList extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: bullets
-            .map((bullet) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          bullet,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: AppColors.textPrimary,
-                            height: 1.5,
-                          ),
+        children: bullets.map((bullet) {
+          final hasDSD = bullet.toLowerCase().contains('double sequential') || 
+                         bullet.toLowerCase().contains('dupla cardioversão') || 
+                         bullet.contains('DSD');
+                         
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    bullet,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: AppColors.textPrimary,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                if (hasDSD && isStudyMode)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const _DSDExplanationDialog(),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: AppColors.info.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.info,
+                          size: 20,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ))
-            .toList(),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -842,4 +873,65 @@ class _StudyTimerRunning extends ConsumerWidget {
 Color _hexToColor(String hex) {
   final h = hex.replaceFirst('#', 'FF');
   return Color(int.parse(h, radix: 16));
+}
+
+class _DSDExplanationDialog extends StatelessWidget {
+  const _DSDExplanationDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        'DSD (Double Sequential Defibrillation)',
+        style: GoogleFonts.inter(
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'O que é?',
+              style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'É a aplicação quase simultânea (com intervalo menor que 1 segundo) de dois choques a partir de dois desfibriladores diferentes em um paciente.',
+              style: GoogleFonts.inter(color: AppColors.textSecondary, height: 1.5),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Quando é usada?',
+              style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Indicada em casos de FV (Fibrilação Ventricular) ou TV sem pulso que sejam refratárias a choque, definidos como a persistência da arritmia após pelo menos 3 a 5 choques com energias convencionais, além de doses de amiodarona/lidocaína e epinefrina.',
+              style: GoogleFonts.inter(color: AppColors.textSecondary, height: 1.5),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Por que foi criada e sua base?',
+              style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'A teoria por trás da DSD baseia-se em dois principais mecanismos: 1) o aumento da energia total entregue ao miocárdio, conseguindo atingir o limiar de desfibrilação num miocárdio dilatado ou com aumento da impedância torácica; 2) alteração no vetor do choque ao usar dois pares de pás em posições diferentes (ex: um par ântero-lateral e outro ântero-posterior), o que atingiria uma maior massa miocárdica simultaneamente.\n\nEvidências recentes, notadamente o estudo DOSE-VF (2022), demonstraram que a DSD, assim como a simples troca do vetor das pás, melhorou significativamente as taxas de sobrevida e recuperação neurológica em FV refratária comparada à desfibrilação padrão contínua.',
+              style: GoogleFonts.inter(color: AppColors.textSecondary, height: 1.5),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Entendi'),
+        ),
+      ],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    );
+  }
 }
