@@ -525,7 +525,7 @@ class _BulletList extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: bullets.map((bullet) {
-          final RegExp dsdRegex = RegExp(r'(dupla cardioversão sequencial \(double sequential\)|double sequential|dsd)', caseSensitive: false);
+          final RegExp dsdRegex = RegExp(r'(desfibrilação dupla sequencial \(dsd\)|choque sequencial duplo \(dsd\)|dupla cardioversão sequencial \(double sequential\)|double sequential|dsd)', caseSensitive: false);
           final matches = dsdRegex.allMatches(bullet).toList();
 
           Widget bulletWidget;
