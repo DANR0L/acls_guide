@@ -166,7 +166,7 @@ const _allDrugs = [
     route: 'IV lento (infusão controlada)',
     maxDose: '17 mg/kg total na dose de ataque',
     notes:
-        'Monitorar QRS e PA continuamente. Parar se QRS alargar >50%, hipotensão ou dose máxima atingida.',
+        'Monitorar QRS e PA continuamente. Parar se QRS alargar >50%, hipotensão ou dose máxima atingida.\nDiluição padrão (BIC): 2 g (2 amp de 1g/10mL) em 230 mL SG5% (8 mg/mL).',
     color: '#A855F7',
     indications: [
       'TV monomórfica estável — opção eficaz',
@@ -267,7 +267,7 @@ const _allDrugs = [
     dose: 'Ataque: 0,25 mg/kg IV em 2 min\n2ª dose: 0,35 mg/kg após 15 min\nManutenção: 5–15 mg/h',
     route: 'IV lento',
     notes:
-        'BCC não-dihidropiridínico. Menos inotrópico negativo que o Verapamil — preferível em disfunção ventricular leve.',
+        'BCC não-dihidropiridínico. Menos inotrópico negativo que o Verapamil — preferível em disfunção ventricular leve.\nDiluição padrão (BIC): 100 mg (4 amp de 25mg/5mL) em 100 mL SG5% (aprox. 0,8 mg/mL).',
     color: '#A855F7',
     indications: [
       'Controle de frequência em FA/Flutter estável',
@@ -300,7 +300,7 @@ const _allDrugs = [
     dose: 'Ataque: 500 mcg/kg IV em 1 min\nManutenção: 50–200 mcg/kg/min',
     route: 'IV bolus + infusão contínua',
     notes:
-        'Betabloqueador de ação ultrarrápida — meia-vida ~9 min. Ideal para titulação fina em ambiente de urgência.',
+        'Betabloqueador de ação ultrarrápida — meia-vida ~9 min. Ideal para titulação fina em ambiente de urgência.\nDiluição padrão (BIC): 2,5 g (1 amp de 2,5g/10mL) em 240 mL SG5% ou SF (10 mg/mL).',
     color: '#A855F7',
     indications: [
       'Controle agudo de FC em FA/Flutter',
@@ -551,7 +551,7 @@ const _allDrugs = [
     dose: 'Reposição: 10–20 mEq/h IV\nMáx 40 mEq/h com monitorização cardíaca contínua',
     route: 'IV diluído em infusão (NUNCA IV push concentrado)',
     notes:
-        '⚠️ NUNCA administrar IV rápido ou concentrado — risco de parada cardíaca imediata. Diluir sempre em SF ou SG.',
+        '⚠️ NUNCA administrar IV rápido ou concentrado — risco de parada cardíaca imediata. Diluir sempre em SF ou SG.\nDiluição padrão (BIC): 10 a 20 mL de KCl 19,1% em 100 mL SF (infundir em 1-2 horas, via acesso calibroso).',
     color: '#EAB308',
     indications: [
       'Hipopotassemia grave (K+ <3,0 mEq/L) com arritmias',
@@ -680,7 +680,7 @@ const _allDrugs = [
     category: 'Anti-hipertensivos',
     dose: '0,25–10 mcg/kg/min',
     route: 'Infusão IV contínua (fotossensível)',
-    notes: 'Vasodilatador arterial/venoso potente. Risco de intoxicação por cianeto.',
+    notes: 'Vasodilatador arterial/venoso potente. Risco de intoxicação por cianeto.\nDiluição padrão (BIC): 50 mg (1 amp de 50mg/2mL) em 250 mL SG5% (200 mcg/mL). Utilizar equipo fotossensível.',
     color: '#06B6D4',
     indications: [
       'Emergências hipertensivas graves',
@@ -693,7 +693,7 @@ const _allDrugs = [
     category: 'Anti-hipertensivos',
     dose: 'Bolus: 10–20 mg IV\nInfusão: 2–8 mg/min',
     route: 'IV push / Infusão',
-    notes: 'Bloqueador misto (alfa e beta). Reduz PA sem taquicardia reflexa.',
+    notes: 'Bloqueador misto (alfa e beta). Reduz PA sem taquicardia reflexa.\nDiluição padrão (BIC): 200 mg (4 amp de 50mg/10mL) em 160 mL SG5% (1 mg/mL).',
     color: '#06B6D4',
     indications: [
       'Controle de PA no AVC isquêmico agudo',
@@ -732,7 +732,7 @@ const _allDrugs = [
     category: 'Anti-hipertensivos',
     dose: '5–100 mcg/min (titular)',
     route: 'Infusão IV contínua',
-    notes: 'Venodilatadora predominante. Melhora fluxo coronariano.',
+    notes: 'Venodilatadora predominante. Melhora fluxo coronariano.\nDiluição padrão (BIC): 50 mg (1 amp de 50mg/10mL) em 240 mL SG5% (200 mcg/mL).',
     color: '#06B6D4',
     indications: [
       'SCA com dor refratária',
@@ -758,7 +758,7 @@ const _allDrugs = [
     category: 'Vasopressores/Inotrópicos',
     dose: 'Ataque: 50 mcg/kg em 10 min\nManutenção: 0,375–0,75 mcg/kg/min',
     route: 'IV lento / Infusão',
-    notes: 'Inodilatador (aumenta contratilidade e reduz resistência).',
+    notes: 'Inodilatador (aumenta contratilidade e reduz resistência).\nDiluição padrão (BIC): 20 mg (2 amp de 10mg/10mL) em 80 mL SG5% (200 mcg/mL).',
     color: '#EF4444',
     indications: [
       'Choque cardiogênico refratário',
