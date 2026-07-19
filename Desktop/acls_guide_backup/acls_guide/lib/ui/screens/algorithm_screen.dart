@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -514,8 +515,6 @@ class _BulletList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isStudyMode = ref.watch(studyModeProvider);
-    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -526,50 +525,68 @@ class _BulletList extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: bullets.map((bullet) {
-          final hasDSD = bullet.toLowerCase().contains('double sequential') || 
-                         bullet.toLowerCase().contains('dupla cardioversão') || 
-                         bullet.contains('DSD');
-                         
+          final RegExp dsdRegex = RegExp(r'(dupla cardioversão sequencial \(double sequential\)|double sequential|dsd)', caseSensitive: false);
+          final matches = dsdRegex.allMatches(bullet).toList();
+
+          Widget bulletWidget;
+          
+          if (matches.isNotEmpty) {
+            final spans = <TextSpan>[];
+            int lastIndex = 0;
+            for (final match in matches) {
+              if (match.start > lastIndex) {
+                spans.add(TextSpan(text: bullet.substring(lastIndex, match.start)));
+              }
+              spans.add(
+                TextSpan(
+                  text: bullet.substring(match.start, match.end),
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.info,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => const _DSDExplanationDialog(),
+                      );
+                    },
+                ),
+              );
+              lastIndex = match.end;
+            }
+            if (lastIndex < bullet.length) {
+              spans.add(TextSpan(text: bullet.substring(lastIndex)));
+            }
+
+            bulletWidget = RichText(
+              text: TextSpan(
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                  height: 1.5,
+                ),
+                children: spans,
+              ),
+            );
+          } else {
+            bulletWidget = Text(
+              bullet,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: AppColors.textPrimary,
+                height: 1.5,
+              ),
+            );
+          }
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    bullet,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: AppColors.textPrimary,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-                if (hasDSD)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const _DSDExplanationDialog(),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: AppColors.info.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.info_outline_rounded,
-                          color: AppColors.info,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
+                Expanded(child: bulletWidget),
               ],
             ),
           );
