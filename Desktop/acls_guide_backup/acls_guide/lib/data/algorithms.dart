@@ -1200,7 +1200,7 @@ final tachycardiaAlgorithm = Algorithm(
         'ENERGIA INICIAL POR ARRITMIA (AHA 2025):',
         '   - FA: >= 200 J bifásico (iniciar na energia máxima)',
         '   - Flutter Atrial: 200 J bifásico (AHA 2025 padronizou)',
-        '   - TSV/TRNAV: 50-100 J bifásico (escalonar se necessário)',
+        '   - TSV/TRNAV: 100 J bifásico (AHA 2025)',
         '   - TV monomórfica com pulso: 100 J bifásico',
         '',
         'ATENÇÃO — TV POLIMÓRFICA / TORSADES:',
