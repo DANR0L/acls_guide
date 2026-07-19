@@ -30,7 +30,7 @@ const _allDrugs = [
     dose: 'PCR: 1 mg IV/IO bolus\nBradicardia/Choque: infusão 2–10 mcg/min',
     route: 'IV push (PCR) / Infusão contínua',
     frequency: 'PCR: a cada 3–5 minutos. Infusão: titular para efeito.',
-    notes: 'PCR: preparar 1 mg em 10 mL SF. Flush 20 mL após. Sem dose máxima.',
+    notes: 'PCR: preparar 1 mg em 10 mL SF. Flush 20 mL após. Sem dose máxima.\nDiluição padrão (BIC): 4 mg (4 amp de 1mg) em 250 mL SG5% (16 mcg/mL).',
     color: '#EF4444',
     indications: [
       'PCR (VF, pVT, Assistolia, AESP) — 1ª linha',
@@ -61,7 +61,7 @@ const _allDrugs = [
     category: 'Vasopressores/Inotrópicos',
     dose: '0,1–1 mcg/kg/min (titular)',
     route: 'Infusão IV contínua — acesso central preferencial',
-    notes: 'Vasopressor de 1ª escolha no choque séptico. Titular para PAM ≥ 65 mmHg.',
+    notes: 'Vasopressor de 1ª escolha no choque séptico. Titular para PAM ≥ 65 mmHg.\nDiluição padrão (BIC): 16 mg (4 amp de 4mg) em 250 mL SG5% (64 mcg/mL).',
     color: '#EF4444',
     indications: [
       'Choque séptico',
@@ -77,7 +77,7 @@ const _allDrugs = [
     dose: '5–20 mcg/kg/min',
     route: 'Infusão IV contínua',
     notes:
-        '5–10 mcg/kg/min: inotrópico/cronotrópico (β1). >10 mcg/kg/min: vasoconstricção (α1).',
+        '5–10 mcg/kg/min: inotrópico/cronotrópico (β1). >10 mcg/kg/min: vasoconstricção (α1).\nDiluição padrão (BIC): 250 mg (5 amp de 50mg/10mL) em 200 mL SG5% (1 mg/mL).',
     color: '#EF4444',
     indications: [
       'Bradicardia sintomática refratária à Atropina (2ª linha — preferir MP)',
@@ -92,7 +92,7 @@ const _allDrugs = [
     dose: '2–20 mcg/kg/min',
     route: 'Infusão IV contínua',
     notes:
-        'Inotrópico positivo sem efeito vasopressor. Pode reduzir PA — associar vasopressor se necessário.',
+        'Inotrópico positivo sem efeito vasopressor. Pode reduzir PA — associar vasopressor se necessário.\nDiluição padrão (BIC): 250 mg (1 amp de 250mg/20mL) em 230 mL SG5% (1 mg/mL).',
     color: '#EF4444',
     indications: [
       'Choque cardiogênico com PA preservada (PAM >65)',
@@ -149,7 +149,7 @@ const _allDrugs = [
     frequency: 'Repetir a cada 5–10 min. Manutenção: 1–4 mg/min',
     maxDose: 'Máx 3 mg/kg total',
     notes:
-        'Alternativa à Amiodarona em FV/TV. Menor evidência de melhora de sobrevida a longo prazo.',
+        'Alternativa à Amiodarona em FV/TV. Menor evidência de melhora de sobrevida a longo prazo.\nDiluição padrão (BIC): 1 g (50 mL a 2%) em 200 mL SG5% (4 mg/mL).',
     color: '#A855F7',
     indications: [
       'VF / pVT refratária — alternativa à Amiodarona',
