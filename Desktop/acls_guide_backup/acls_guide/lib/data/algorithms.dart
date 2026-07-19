@@ -142,8 +142,8 @@ final cardiacArrestAlgorithm = Algorithm(
       bullets: [
         'Reiniciar CPR imediatamente (2 min)',
         'Acesso IV preferencial (1ª tentativa); IO se IV falhar (AHA 2025)',
-        'Intubar ou usar máscara laríngea após 1–2 min de CPR, se possível',
-        'Monitorizar ETCO₂ se disponível',
+
+
       ],
       nextNodeId: 'start_timer_2min_2',
     ),
@@ -188,6 +188,8 @@ final cardiacArrestAlgorithm = Algorithm(
         'Retomar CPR imediatamente',
         '💊 Epinefrina 1 mg IV/IO — AGORA',
         'Repetir Epi a cada 3–5 minutos',
+        'Considerar via aérea avançada (intubação ou supraglótico)',
+        'Monitorizar ETCO₂ se disponível',
       ],
       nextNodeId: 'epi_1',
     ),
