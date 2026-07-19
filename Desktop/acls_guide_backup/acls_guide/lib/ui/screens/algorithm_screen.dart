@@ -545,7 +545,7 @@ class _BulletList extends ConsumerWidget {
                     ),
                   ),
                 ),
-                if (hasDSD && isStudyMode)
+                if (hasDSD)
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: InkWell(
