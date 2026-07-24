@@ -2111,12 +2111,31 @@ final scaAlgorithm = Algorithm(
       ],
       options: [
         AlgorithmOption(
-          label: '✅ Sem contraindicações absolutas — administrar',
-          nextNodeId: 'tenecteplase_drug',
+          label: '✅ Sem contraindicações — escolher fibrinolítico',
+          nextNodeId: 'fibrinolytic_choice',
         ),
         AlgorithmOption(
           label: '❌ Contraindicação absoluta presente',
           nextNodeId: 'thrombolysis_ci',
+        ),
+      ],
+    ),
+
+    'fibrinolytic_choice': const AlgorithmNode(
+      id: 'fibrinolytic_choice',
+      type: NodeType.question,
+      title: 'Escolha do Fibrinolítico',
+      subtitle: 'TNK é preferencial (bolus único). Alteplase é alternativa válida.',
+      options: [
+        AlgorithmOption(
+          label: '💉 Tenecteplase (TNK) — Preferencial',
+          sublabel: 'Bolus único IV. Mais prático.',
+          nextNodeId: 'tenecteplase_drug',
+        ),
+        AlgorithmOption(
+          label: '💉 Alteplase (rt-PA) — Alternativa',
+          sublabel: 'Infusão em 90 min',
+          nextNodeId: 'alteplase_drug',
         ),
       ],
     ),
@@ -2134,7 +2153,7 @@ final scaAlgorithm = Algorithm(
         'Dissecção aórtica',
         'Sangramento interno ativo (exceto menstruação)',
         'Cirurgia/procedimento maior < 3 semanas',
-        '→ Se todas presentes: transferência urgente para ICP',
+        '→ Se ALGUMA contraindicação absoluta presente: transferência urgente para ICP',
       ],
     ),
 
@@ -2146,7 +2165,21 @@ final scaAlgorithm = Algorithm(
         name: 'Tenecteplase (TNK)',
         dose: 'Baseado no peso:\n< 60 kg: 30 mg\n60–70 kg: 35 mg\n70–80 kg: 40 mg\n80–90 kg: 45 mg\n> 90 kg: 50 mg\n⚠️ IDOSOS ≥75 anos: usar MEIA DOSE',
         route: 'IV bolus em 5–10 seg',
-        notes: 'IDOSOS ≥75 anos: meia dose (STREAM Trial). Administrar junto com Heparina. Fibrinólise em ≤10 min do diagnóstico se ICP >120 min (AHA 2025). Transferir para hemodinâmica após. Sinais de reperfusão: alívio da dor, ↓ST >50%, arritmias de reperfusão.',
+        notes: 'IDOSOS ≥75 anos: meia dose (STREAM Trial). Administrar junto com Heparina. Meta porta-agulha ≤ 30 min. Indicar se FMC-to-device previsto > 120 min (AHA 2025). Transferir para hemodinâmica após. Sinais de reperfusão: alívio da dor, ↓ST >50%, arritmias de reperfusão.',
+        color: '#F97316',
+      ),
+      nextNodeId: 'post_thrombolysis',
+    ),
+
+    'alteplase_drug': const AlgorithmNode(
+      id: 'alteplase_drug',
+      type: NodeType.drug,
+      title: 'Alteplase (rt-PA) — IAMCSST',
+      drug: DrugInfo(
+        name: 'Alteplase (rt-PA)',
+        dose: '15 mg IV bolus\n+ 0,75 mg/kg IV em 30 min (máx 50 mg)\n+ 0,5 mg/kg IV em 60 min (máx 35 mg)\nDose total máxima: 100 mg',
+        route: 'IV bolus + infusão (90 min total)',
+        notes: 'Alternativa ao TNK. Esquema acelerado de 90 min. Administrar junto com HNF. Meta porta-agulha ≤ 30 min. Transferir para hemodinâmica após.',
         color: '#F97316',
       ),
       nextNodeId: 'post_thrombolysis',
@@ -2163,7 +2196,24 @@ final scaAlgorithm = Algorithm(
         'Monitorizar: hemorragias, PA, ritmo cardíaco',
         'Heparina: infusão contínua por 48h',
         'ECG a cada 90 min após trombólise',
-        'Critérios de reperfusão: ↓ST > 50% + alívio da dor',
+        'Critérios de reperfusão: ↓ST > 50% + alívio da dor + arritmias de reperfusão (RIVA — ritmo idioventricular acelerado)',
+      ],
+      nextNodeId: 'adjuvant_therapy_stemi',
+    ),
+
+    'adjuvant_therapy_stemi': const AlgorithmNode(
+      id: 'adjuvant_therapy_stemi',
+      type: NodeType.info,
+      title: 'Terapia Adjuvante Pós-Reperfusão',
+      alertLevel: 'info',
+      bullets: [
+        '💊 DAPT: AAS + Clopidogrel (manter por 12 meses)',
+        '💊 Betabloqueador oral: Metoprolol 25–50 mg VO 12/12h (se estável, sem IC descompensada)',
+        '💊 Estatina alta potência: Atorvastatina 80 mg ou Rosuvastatina 40 mg',
+        '💊 IECA/BRA: iniciar em 24h se FE ≤ 40% ou sinais de IC (ex: Enalapril 2,5 mg VO)',
+        '💊 Espironolactona 25 mg: se FE ≤ 40% + IC ou DM (sem hipercalemia/IR)',
+        '📊 Ecocardiograma para avaliar FE antes da alta',
+        '🏥 Coronariografia: em 3–24h após trombólise (rotina)',
       ],
     ),
 
