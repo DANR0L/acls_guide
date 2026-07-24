@@ -2018,6 +2018,7 @@ final scaAlgorithm = Algorithm(
         'Repetir em 15–30 min se o primeiro não diagnóstico',
         'Derivações adicionais: V3R, V4R (IAM inferior/VD)',
         'V7, V8, V9 (IAM posterior)',
+        '🩸 Coletar: troponina hs, hemograma, creatinina, coagulograma, eletrólitos, glicemia',
       ],
       nextNodeId: 'ecg_result_sca',
     ),
@@ -2064,6 +2065,10 @@ final scaAlgorithm = Algorithm(
       type: NodeType.question,
       title: 'Estratégia de Reperfusão',
       subtitle: 'Tempo do início dos sintomas + disponibilidade de hemodinâmica',
+      alertLevel: 'warning',
+      bullets: [
+        '⚠️ Se INR > 1,7 ou plaquetas < 100.000: trombólise é contraindicada (preferir ICP)',
+      ],
       options: [
         AlgorithmOption(
           label: '🏥 ICP disponível — D2B < 90 min possível',
@@ -2171,6 +2176,7 @@ final scaAlgorithm = Algorithm(
         'Sangramento interno ativo (exceto menstruação)',
         'Cirurgia/procedimento maior < 3 semanas',
         '→ Se ALGUMA contraindicação absoluta presente: transferência urgente para ICP',
+        '⚠️ Se INR ou plaquetas pendentes e história suspeita: considerar ICP como via mais segura',
       ],
     ),
 
