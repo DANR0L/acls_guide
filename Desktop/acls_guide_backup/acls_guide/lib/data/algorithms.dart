@@ -2051,14 +2051,10 @@ final scaAlgorithm = Algorithm(
       bullets: [
         '⏱️ TEMPO É MÚSCULO — iniciar tratamento EM PARALELO',
         '💊 AAS 300 mg VO (mascar) — AGORA',
-        '💊 Dose de ataque do Inibidor P2Y12:',
-        '   • ICP Primária: Clopidogrel 600mg, Ticagrelor 180mg ou Prasugrel 60mg',
-        '   • Trombólise: Clopidogrel 300mg (75mg se > 75 anos)',
-        '🚫 Evitar Prasugrel se AVC/AIT prévio',
-        '💉 HNF: ICP → 70–100 UI/kg IV bolus (ajustar por ACT na sala); Trombólise → 60 UI/kg (máx 4000 UI) + infusão 12 UI/kg/h (máx 1000 UI/h)',
         '💨 O₂ apenas se SpO₂ < 90%',
         '💉 Morfina se dor severa (cautela)',
         '💊 Nitrato se PA > 90 mmHg (CI: VD ou PDE5i)',
+        '⚠️ Definir estratégia de reperfusão ANTES do 2º antiagregante e anticoagulação!',
       ],
       nextNodeId: 'reperfusion_strategy',
     ),
@@ -2090,8 +2086,12 @@ final scaAlgorithm = Algorithm(
       bullets: [
         'Ativar laboratório de hemodinâmica IMEDIATAMENTE',
         'Meta Porta-Balão (D2B): ≤ 90 min',
+        '💊 Dose de ataque Inibidor P2Y12 (Ordem de Preferência):',
+        '   1. Ticagrelor 180 mg (Preferencial)',
+        '   2. Prasugrel 60 mg (Evitar se AVC/AIT prévio, >75 anos ou <60kg)',
+        '   3. Clopidogrel 600 mg (Alternativa)',
+        '💉 HNF: 70–100 UI/kg IV bolus (ajustar por ACT na sala)',
         'Acesso radial preferencial (menos sangramentos)',
-        'Considerar Prasugrel 60 mg (se não em uso de ACO)',
         'Inibidor GPIIb/IIIa: Tirofiban/Abciximab (selecionado)',
         'Ecocardiograma pós-ICP para avaliar FE',
         'UTI coronariana após procedimento',
@@ -2101,8 +2101,14 @@ final scaAlgorithm = Algorithm(
     'thrombolysis_stemi': const AlgorithmNode(
       id: 'thrombolysis_stemi',
       type: NodeType.question,
-      title: 'Trombólise — Verificar Contraindicações',
-      subtitle: 'OBRIGATÓRIO antes de administrar',
+      title: 'Estratégia Fibrinolítica — Trombólise',
+      subtitle: 'Terapia adjuvante + Contraindicações',
+      alertLevel: 'warning',
+      bullets: [
+        '💊 Dose de ataque P2Y12 (exclusivo p/ Trombólise): Clopidogrel 300mg (75mg se > 75 anos)',
+        '💉 HNF: 60 UI/kg IV em bolus (máx 4000 UI) + infusão de 12 UI/kg/h (máx 1000 UI/h)',
+        '⚠️ Checar contraindicações absolutas ANTES de administrar o trombolítico!',
+      ],
       options: [
         AlgorithmOption(
           label: '✅ Sem contraindicações absolutas — administrar',
@@ -2695,4 +2701,3 @@ final allAlgorithms = <String, Algorithm>{
   scaAlgorithm.id: scaAlgorithm,
   strokeAlgorithm.id: strokeAlgorithm,
 };
-
