@@ -296,6 +296,15 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                   },
                 ),
                 _ActionBtn(
+                  label: '💊 Outras Drogas',
+                  icon: Icons.local_pharmacy_rounded,
+                  color: const Color(0xFF0EA5E9), // Light blue
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    _showOtherDrugsModal(context, notifier);
+                  },
+                ),
+                _ActionBtn(
                   label: '✅ ROSC',
                   icon: Icons.favorite_rounded,
                   color: AppColors.info,
@@ -743,6 +752,56 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
           ),
         );
       },
+    );
+  }
+
+  void _showOtherDrugsModal(BuildContext context, CprDynamicNotifier notifier) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.cardBg,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Drogas Adicionais (AHA)',
+                style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.medication_liquid_rounded, color: AppColors.info),
+                title: Text('Bicarbonato de Sódio 8,4%', style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                subtitle: Text('1 mEq/kg IV bolus', style: GoogleFonts.inter(color: AppColors.textSecondary)),
+                onTap: () {
+                  notifier.registerDrug('Bicarbonato de Sódio 8,4% (1 mEq/kg)');
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.medication_liquid_rounded, color: AppColors.info),
+                title: Text('Gluconato de Cálcio 10%', style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                subtitle: Text('15-30 mL IV (ou Cloreto 10% 5-10mL)', style: GoogleFonts.inter(color: AppColors.textSecondary)),
+                onTap: () {
+                  notifier.registerDrug('Cálcio (Gluconato 15-30mL ou Cloreto 5-10mL)');
+                  Navigator.pop(ctx);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.medication_liquid_rounded, color: AppColors.info),
+                title: Text('Sulfato de Magnésio 10%', style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                subtitle: Text('1-2 g IV/IO (Torsades)', style: GoogleFonts.inter(color: AppColors.textSecondary)),
+                onTap: () {
+                  notifier.registerDrug('Sulfato de Magnésio 1-2g IV');
+                  Navigator.pop(ctx);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
