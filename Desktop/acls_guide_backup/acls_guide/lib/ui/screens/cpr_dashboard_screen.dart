@@ -902,7 +902,6 @@ class _AdvancedDrugsModalState extends State<_AdvancedDrugsModal> {
     {'name': 'Plasma-Lyte', 'sug': '500-1000 mL', 'icon': Icons.water_drop_rounded, 'color': AppColors.info},
     {'name': 'Glicose 50%', 'sug': '20-50 mL', 'icon': Icons.medication_liquid_rounded, 'color': AppColors.info},
     {'name': 'Naloxona (Narcan)', 'sug': '0,4-2 mg', 'icon': Icons.vaccines_rounded, 'color': AppColors.warning},
-    {'name': 'Alteplase', 'sug': '50 mg bolus', 'icon': Icons.bloodtype_rounded, 'color': AppColors.danger},
   ];
 
   late List<TextEditingController> _doseCtrls;
@@ -1025,7 +1024,6 @@ class _AdvancedDrugsModalState extends State<_AdvancedDrugsModal> {
                             flex: 2,
                             child: TextField(
                               controller: _doseCtrls[i],
-                              keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 hintText: 'Dose Real',
                                 filled: true,
