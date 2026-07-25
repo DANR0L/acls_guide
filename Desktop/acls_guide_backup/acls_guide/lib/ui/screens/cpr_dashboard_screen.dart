@@ -305,6 +305,15 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                   },
                 ),
                 _ActionBtn(
+                  label: '🌬️ Via Aérea',
+                  icon: Icons.air_rounded,
+                  color: const Color(0xFF14B8A6), // Teal
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    _showAirwayModal(context, notifier);
+                  },
+                ),
+                _ActionBtn(
                   label: '✅ ROSC',
                   icon: Icons.favorite_rounded,
                   color: AppColors.info,
@@ -1060,4 +1069,73 @@ class _AdvancedDrugsModalState extends State<_AdvancedDrugsModal> {
       ),
     );
   }
+}
+
+void _showAirwayModal(BuildContext context, CprDynamicNotifier notifier) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: AppColors.cardBg,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.air_rounded, color: Color(0xFF14B8A6), size: 28),
+                const SizedBox(width: 12),
+                Text(
+                  'Manejo de Via Aérea',
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                notifier.registerCustom('Via Aérea: Intubação Orotraqueal (TOT)', '#14B8A6');
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.medical_services_rounded),
+              label: const Text('Intubação Orotraqueal'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF14B8A6),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                textStyle: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () {
+                notifier.registerCustom('Via Aérea: Máscara Laríngea', '#14B8A6');
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.masks_rounded),
+              label: const Text('Máscara Laríngea'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0EA5E9),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                textStyle: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      );
+    },
+  );
 }
