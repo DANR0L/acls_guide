@@ -238,107 +238,154 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
         if (!state.isRosc && state.tachycardiaRhythm == null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+            child: Column(
               children: [
-                _ActionBtn(
-                  label: 'VF / pVT',
-                  icon: Icons.monitor_heart_rounded,
-                  color: AppColors.danger,
-                  pulsing: state.pulsingButtons.contains('rhythm'),
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    notifier.registerRhythm(true);
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionBtn(
+                        label: 'VF / pVT',
+                        icon: Icons.monitor_heart_rounded,
+                        color: AppColors.danger,
+                        pulsing: state.pulsingButtons.contains('rhythm'),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          notifier.registerRhythm(true);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ActionBtn(
+                        label: 'Asistolia / AESP',
+                        icon: Icons.show_chart_rounded,
+                        color: AppColors.warning,
+                        pulsing: state.pulsingButtons.contains('rhythm'),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          notifier.registerRhythm(false);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                _ActionBtn(
-                  label: 'Asistolia / AESP',
-                  icon: Icons.show_chart_rounded,
-                  color: AppColors.warning,
-                  pulsing: state.pulsingButtons.contains('rhythm'),
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    notifier.registerRhythm(false);
-                  },
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '⚡ Choque (120-200 J)',
+                        icon: Icons.flash_on_rounded,
+                        color: AppColors.danger,
+                        disabled: state.isShockableRhythm != true,
+                        pulsing: state.pulsingButtons.contains('shock'),
+                        onTap: () {
+                          HapticFeedback.heavyImpact();
+                          notifier.registerShock();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ActionBtn(
+                        label: state.epiButtonLabel,
+                        icon: Icons.vaccines_rounded,
+                        color: AppColors.secondary,
+                        disabled: state.isEpiDisabled,
+                        pulsing: state.pulsingButtons.contains('epi'),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          notifier.registerEpi();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                _ActionBtn(
-                  label: '⚡ Choque (120-200 J)',
-                  icon: Icons.flash_on_rounded,
-                  color: AppColors.danger,
-                  disabled: state.isShockableRhythm != true,
-                  pulsing: state.pulsingButtons.contains('shock'),
-                  onTap: () {
-                    HapticFeedback.heavyImpact();
-                    notifier.registerShock();
-                  },
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '💊 Amiodarona/Lido',
+                        icon: Icons.medication_rounded,
+                        color: const Color(0xFFA855F7),
+                        disabled: state.isAmioDisabled,
+                        pulsing: state.pulsingButtons.contains('amio'),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          notifier.registerAmioLido();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '💊 Outras Drogas',
+                        icon: Icons.local_pharmacy_rounded,
+                        color: const Color(0xFF0EA5E9),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          _showOtherDrugsModal(context, notifier);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                _ActionBtn(
-                  label: state.epiButtonLabel,
-                  icon: Icons.vaccines_rounded,
-                  color: AppColors.secondary,
-                  disabled: state.isEpiDisabled,
-                  pulsing: state.pulsingButtons.contains('epi'),
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    notifier.registerEpi();
-                  },
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '🌬️ Via Aérea',
+                        icon: Icons.air_rounded,
+                        color: const Color(0xFF14B8A6),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          _showAirwayModal(context, notifier);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '✅ ROSC',
+                        icon: Icons.favorite_rounded,
+                        color: AppColors.info,
+                        onTap: () {
+                          HapticFeedback.heavyImpact();
+                          notifier.registerRosc();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                _ActionBtn(
-                  label: '💊 Amiodarona/Lido',
-                  icon: Icons.medication_rounded,
-                  color: const Color(0xFFA855F7),
-                  disabled: state.isAmioDisabled,
-                  pulsing: state.pulsingButtons.contains('amio'),
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    notifier.registerAmioLido();
-                  },
-                ),
-                _ActionBtn(
-                  label: '💊 Outras Drogas',
-                  icon: Icons.local_pharmacy_rounded,
-                  color: const Color(0xFF0EA5E9), // Light blue
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    _showOtherDrugsModal(context, notifier);
-                  },
-                ),
-                _ActionBtn(
-                  label: '🌬️ Via Aérea',
-                  icon: Icons.air_rounded,
-                  color: const Color(0xFF14B8A6), // Teal
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    _showAirwayModal(context, notifier);
-                  },
-                ),
-                _ActionBtn(
-                  label: '✅ ROSC',
-                  icon: Icons.favorite_rounded,
-                  color: AppColors.info,
-                  onTap: () {
-                    HapticFeedback.heavyImpact();
-                    notifier.registerRosc();
-                  },
-                ),
-                _ActionBtn(
-                  label: '🛑 TOR',
-                  icon: Icons.cancel_rounded,
-                  color: AppColors.textSecondary,
-                  onTap: () {
-                    HapticFeedback.heavyImpact();
-                    notifier.registerTor();
-                  },
-                ),
-                _ActionBtn(
-                  label: '📈 Taquicardia',
-                  icon: Icons.trending_up_rounded,
-                  color: const Color(0xFFF97316),
-                  onTap: () {
-                    HapticFeedback.mediumImpact();
-                    _showTachycardiaModal(context, notifier);
-                  },
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '🛑 TOR',
+                        icon: Icons.cancel_rounded,
+                        color: AppColors.textSecondary,
+                        onTap: () {
+                          HapticFeedback.heavyImpact();
+                          notifier.registerTor();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ActionBtn(
+                        label: '📈 Taquicardia',
+                        icon: Icons.trending_up_rounded,
+                        color: const Color(0xFFF97316),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          _showTachycardiaModal(context, notifier);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -864,17 +911,20 @@ class _ActionBtnState extends State<_ActionBtn> with SingleTickerProviderStateMi
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(widget.icon, size: 18,
                         color: widget.disabled ? AppColors.textMuted : widget.color),
                     const SizedBox(width: 6),
-                    Text(
-                      widget.label,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: widget.disabled ? AppColors.textMuted : widget.color,
+                    Flexible(
+                      child: Text(
+                        widget.label,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: widget.disabled ? AppColors.textMuted : widget.color,
+                        ),
                       ),
                     ),
                   ],

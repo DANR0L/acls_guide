@@ -312,6 +312,7 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
     // Transition from cooldown → overdue: log alert when elapsed crosses 180s
     if (state.epiElapsedSeconds == 180 && newEpiElapsed == 181) {
       newLogs.insert(0, _createLog('⚠️ Epinefrina disponível! Administrar AGORA.', '#10B981', isAlert: true));
+      _playEpiAlert();
     }
 
     state = state.copyWith(
@@ -445,6 +446,14 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
       colorHex: colorHex,
       isAlert: isAlert,
     );
+  }
+
+  void _playEpiAlert() async {
+    for (int i = 0; i < 3; i++) {
+      if (!state.isRunning) break;
+      await _audioPlayer.play(AssetSource('audio/beep.wav'));
+      await Future.delayed(const Duration(milliseconds: 200));
+    }
   }
 }
 
