@@ -143,13 +143,13 @@ class CprDynamicState {
     if (tachycardiaRhythm != null) {
       switch (tachycardiaRhythm) {
         case 'TSV':
-          return '📌 TSV ESTÁVEL: 1) Manobra Vagal (Valsalva modificado/carotídea). '
+          return '📌 QRS ESTREITO E REGULAR: 1) Manobra Vagal (Valsalva modificado/carotídea). '
               '2) Adenosina 6mg IV em acesso proximal + flush 20mL rápido. '
               '3) Se falhar: Adenosina 12mg IV (repetir 12mg mais 1x se necessário). '
               '4) Alternativas: Metoprolol 2,5-5mg IV lento (até 3x) ou Diltiazem 0,25mg/kg IV lento (manutenção 5-15mg/h). '
               '⚡ TSV INSTÁVEL: Cardioversão Sincronizada 100 J bifásico (AHA 2025).';
         case 'FA / Flutter':
-          return '📌 FA/FLUTTER ESTÁVEL: Controle de frequência: Metoprolol 2,5-5mg IV (até 3x) ou '
+          return '📌 QRS ESTREITO IRREGULAR: Controle de frequência: Metoprolol 2,5-5mg IV (até 3x) ou '
               'Diltiazem 0,25mg/kg IV lento (manutenção: 5-15mg/h). '
               'Alternativa: Amiodarona 150mg IV em 10min + 1mg/min por 6h. '
               'NÃO combinar BCC IV + BB IV (risco de assistolia). '

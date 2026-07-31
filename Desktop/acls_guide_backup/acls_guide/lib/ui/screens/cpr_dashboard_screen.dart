@@ -388,10 +388,10 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                   label: state.tachycardiaRhythm == 'Polimórfica'
                       ? '⚡ Desfibrila (200 J)'
                       : state.tachycardiaRhythm == 'FA / Flutter'
-                          ? '⚡ Cardiov. FA (120-200 J)'
+                          ? '⚡ Cardiov. (≥200 J)'
                           : state.tachycardiaRhythm == 'Monomórfica'
-                              ? '⚡ Cardiov. TV (100 J)'
-                              : '⚡ Cardiov. TSV (50-100 J)',
+                              ? '⚡ Cardiov. (100 J)'
+                              : '⚡ Cardiov. (100 J)',
                   icon: Icons.flash_on_rounded,
                   color: AppColors.danger,
                   onTap: () {
@@ -762,7 +762,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                title: const Text('Fibrilação Atrial / Flutter Atrial'),
+                title: const Text('QRS Estreito e Irregular (FA / Flutter)'),
                 leading: const Icon(Icons.show_chart_rounded, color: AppColors.warning),
                 onTap: () {
                   notifier.registerTachycardia('FA / Flutter');
@@ -770,7 +770,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Taquicardia Supraventricular (TSV)'),
+                title: const Text('QRS Estreito e Regular (TSV / Flutter 2:1)'),
                 leading: const Icon(Icons.trending_up_rounded, color: AppColors.danger),
                 onTap: () {
                   notifier.registerTachycardia('TSV');
@@ -778,7 +778,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                 },
               ),
               ListTile(
-                title: const Text('TV Monomórfica (com pulso)'),
+                title: const Text('QRS Largo e Regular (TV Monomórfica)'),
                 leading: const Icon(Icons.monitor_heart_rounded, color: Color(0xFFA855F7)),
                 onTap: () {
                   notifier.registerTachycardia('Monomórfica');
@@ -786,7 +786,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                 },
               ),
               ListTile(
-                title: const Text('TV Polimórfica (Torsades)'),
+                title: const Text('QRS Largo e Irregular (TV Polimórfica / Torsades)'),
                 leading: const Icon(Icons.polyline_rounded, color: AppColors.danger),
                 onTap: () {
                   notifier.registerTachycardia('Polimórfica');
