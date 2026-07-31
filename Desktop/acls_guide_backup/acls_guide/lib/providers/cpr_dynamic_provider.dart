@@ -32,6 +32,7 @@ class CprDynamicState {
   final int epiCount;
   final int amioLidoCount;
   final bool? isShockableRhythm;
+  final bool rhythmCheckNeeded;
   final int totalCprSeconds;
   final List<CprLogEvent> logs;
   final bool isRosc;
@@ -48,6 +49,7 @@ class CprDynamicState {
     this.epiCount = 0,
     this.amioLidoCount = 0,
     this.isShockableRhythm,
+    this.rhythmCheckNeeded = true,
     this.totalCprSeconds = 0,
     this.logs = const [],
     this.isRosc = false,
@@ -65,6 +67,7 @@ class CprDynamicState {
     int? epiCount,
     int? amioLidoCount,
     bool? isShockableRhythm,
+    bool? rhythmCheckNeeded,
     int? totalCprSeconds,
     bool clearShockableRhythm = false,
     List<CprLogEvent>? logs,
@@ -82,6 +85,7 @@ class CprDynamicState {
       epiCount: epiCount ?? this.epiCount,
       amioLidoCount: amioLidoCount ?? this.amioLidoCount,
       isShockableRhythm: clearShockableRhythm ? null : (isShockableRhythm ?? this.isShockableRhythm),
+      rhythmCheckNeeded: rhythmCheckNeeded ?? this.rhythmCheckNeeded,
       totalCprSeconds: totalCprSeconds ?? this.totalCprSeconds,
       logs: logs ?? this.logs,
       isRosc: isRosc ?? this.isRosc,
@@ -213,8 +217,9 @@ class CprDynamicState {
     if (!isRunning || isRosc || isTor || tachycardiaRhythm != null) return {};
     final pulses = <String>{};
 
-    // Rhythm check buttons pulse when rhythm is unknown OR cycle almost done
-    if (isShockableRhythm == null || cycleSecondsRemaining <= 15) {
+    // Rhythm check buttons pulse when rhythm is unknown AND needs check
+    // OR cycle is almost done (<= 15s)
+    if (rhythmCheckNeeded || cycleSecondsRemaining <= 15) {
       pulses.add('rhythm');
     }
 
@@ -321,6 +326,7 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
       cycleSecondsRemaining: newCycle,
       epiElapsedSeconds: newEpiElapsed,
       clearShockableRhythm: newCycle == 120,
+      rhythmCheckNeeded: newCycle == 120 ? true : null, // Set to true if cycle resets
       logs: newLogs,
     );
   }
@@ -331,6 +337,7 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
     
     state = state.copyWith(
       isShockableRhythm: isShockable,
+      rhythmCheckNeeded: false,
       cycleSecondsRemaining: 120, // Resume CPR
       logs: [_createLog('Ritmo checado: $type', color), ...state.logs],
     );
@@ -349,6 +356,7 @@ class CprDynamicNotifier extends StateNotifier<CprDynamicState> {
       epiCount: state.epiCount,
       amioLidoCount: state.amioLidoCount,
       isShockableRhythm: null,         // Must re-confirm rhythm after CPR!
+      rhythmCheckNeeded: false,        // Just shocked, do CPR for 2 mins without checking
       totalCprSeconds: state.totalCprSeconds,
       logs: [_createLog('${nextCount}º Choque administrado — Retome CPR!', '#EF4444', isAlert: true), ...state.logs],
       isRosc: state.isRosc,
