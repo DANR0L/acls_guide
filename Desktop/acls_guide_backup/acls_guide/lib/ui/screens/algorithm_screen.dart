@@ -154,25 +154,7 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                   color: algoColor,
                 ),
               ),
-              const SizedBox(width: 8),
-              // Badge do modo
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                decoration: BoxDecoration(
-                  color: isStudyMode
-                      ? AppColors.info.withOpacity(0.2)
-                      : AppColors.danger.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  isStudyMode ? '📖 Estudo' : '🚨 Emergência',
-                  style: GoogleFonts.inter(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: isStudyMode ? AppColors.info : AppColors.danger,
-                  ),
-                ),
-              ),
+
               if (shockCount > 0) ...[
                 const SizedBox(width: 6),
                 Container(
