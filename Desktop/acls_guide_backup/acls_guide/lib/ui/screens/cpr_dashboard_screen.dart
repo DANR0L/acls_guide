@@ -277,6 +277,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                         label: '⚡ Choque (120-200 J)',
                         icon: Icons.flash_on_rounded,
                         color: AppColors.shock,
+                        filled: true,
                         disabled: state.isShockableRhythm != true,
                         pulsing: state.pulsingButtons.contains('shock'),
                         onTap: () {
@@ -836,6 +837,7 @@ class _ActionBtn extends StatefulWidget {
   final VoidCallback onTap;
   final bool disabled;
   final bool pulsing;
+  final bool filled;
 
   const _ActionBtn({
     required this.label,
@@ -844,6 +846,7 @@ class _ActionBtn extends StatefulWidget {
     required this.onTap,
     this.disabled = false,
     this.pulsing = false,
+    this.filled = false,
   });
 
   @override
@@ -895,7 +898,7 @@ class _ActionBtnState extends State<_ActionBtn> with SingleTickerProviderStateMi
           child: Material(
             color: widget.disabled
                 ? AppColors.surfaceVariant
-                : widget.color.withOpacity(0.15),
+                : (widget.filled ? widget.color : widget.color.withOpacity(0.15)),
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               onTap: widget.disabled ? null : widget.onTap,
@@ -906,7 +909,7 @@ class _ActionBtnState extends State<_ActionBtn> with SingleTickerProviderStateMi
                   border: Border.all(
                     color: widget.disabled
                         ? Colors.transparent
-                        : widget.color.withOpacity(0.5),
+                        : (widget.filled ? widget.color : widget.color.withOpacity(0.5)),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -914,7 +917,9 @@ class _ActionBtnState extends State<_ActionBtn> with SingleTickerProviderStateMi
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(widget.icon, size: 18,
-                        color: widget.disabled ? AppColors.textMuted : widget.color),
+                        color: widget.disabled 
+                            ? AppColors.textMuted 
+                            : (widget.filled ? Colors.white : widget.color)),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
@@ -923,7 +928,9 @@ class _ActionBtnState extends State<_ActionBtn> with SingleTickerProviderStateMi
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: widget.disabled ? AppColors.textMuted : widget.color,
+                          color: widget.disabled 
+                              ? AppColors.textMuted 
+                              : (widget.filled ? Colors.white : widget.color),
                         ),
                       ),
                     ),
