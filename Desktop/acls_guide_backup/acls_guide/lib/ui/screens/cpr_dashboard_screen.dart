@@ -235,9 +235,13 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
         ),
 
         // ── Botões de Ação ──
-        if (!state.isRosc && state.tachycardiaRhythm == null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                if (!state.isRosc && state.tachycardiaRhythm == null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 Row(
@@ -615,6 +619,10 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
               ),
             ),
           ),
+              ],
+            ),
+          ),
+        ),
 
         const SizedBox(height: 16),
         const Divider(height: 1),
