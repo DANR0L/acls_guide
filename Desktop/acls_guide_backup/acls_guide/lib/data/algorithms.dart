@@ -1339,12 +1339,12 @@ final tachycardiaAlgorithm = Algorithm(
       options: [
         AlgorithmOption(
           label: '🔵 QRS Estreito < 120 ms',
-          sublabel: 'Taquicardia supraventricular (TSV)',
+          sublabel: 'TSV / Flutter / FA',
           nextNodeId: 'narrow_regular',
         ),
         AlgorithmOption(
           label: '🔴 QRS Largo ≥ 120 ms',
-          sublabel: 'TV ou TSV com aberrância',
+          sublabel: 'TV Monomórfica / Polimórfica',
           nextNodeId: 'wide_regular',
         ),
       ],
@@ -1354,7 +1354,7 @@ final tachycardiaAlgorithm = Algorithm(
     'narrow_regular': const AlgorithmNode(
       id: 'narrow_regular',
       type: NodeType.question,
-      title: 'TSV — Ritmo Regular ou Irregular?',
+      title: 'QRS Estreito — Regular ou Irregular?',
       options: [
         AlgorithmOption(
           label: '📏 Regular',
@@ -1371,8 +1371,8 @@ final tachycardiaAlgorithm = Algorithm(
     'narrow_regular_action': const AlgorithmNode(
       id: 'narrow_regular_action',
       type: NodeType.question,
-      title: 'TSV Regular — Estratégia',
-      subtitle: 'TRNAV / TRAV / Taquicardia atrial',
+      title: 'QRS Estreito Regular — Estratégia',
+      subtitle: 'TSV / Flutter 2:1',
       options: [
         AlgorithmOption(
           label: '🤸 Manobra Vagal primeiro',
@@ -1422,7 +1422,7 @@ final tachycardiaAlgorithm = Algorithm(
     'adenosine_drug': const AlgorithmNode(
       id: 'adenosine_drug',
       type: NodeType.drug,
-      title: 'Adenosina — TSV Regular',
+      title: 'Adenosina — QRS Estreito Regular',
       drug: DrugInfo(
         name: 'Adenosina',
         dose: '6 mg (1ª dose) → 12 mg (2ª dose) → 12 mg (3ª dose)',
@@ -1473,7 +1473,7 @@ final tachycardiaAlgorithm = Algorithm(
     'narrow_irregular': const AlgorithmNode(
       id: 'narrow_irregular',
       type: NodeType.question,
-      title: 'Taquicardia Irregular — Tipo',
+      title: 'QRS Estreito Irregular — Tipo',
       options: [
         AlgorithmOption(
           label: '🔵 Fibrilação Atrial (FA)',
