@@ -276,7 +276,7 @@ class _CprDashboardScreenState extends ConsumerState<CprDashboardScreen> {
                       child: _ActionBtn(
                         label: '⚡ Choque (120-200 J)',
                         icon: Icons.flash_on_rounded,
-                        color: AppColors.danger,
+                        color: AppColors.shock,
                         disabled: state.isShockableRhythm != true,
                         pulsing: state.pulsingButtons.contains('shock'),
                         onTap: () {
