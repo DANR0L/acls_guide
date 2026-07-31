@@ -2075,19 +2075,79 @@ final scaAlgorithm = Algorithm(
 
     'sca_complications': const AlgorithmNode(
       id: 'sca_complications',
-      type: NodeType.info,
-      title: 'Manejo de Complicações na Fase Aguda',
+      type: NodeType.question,
+      title: 'Manejo de Complicações no IAM',
       alertLevel: 'warning',
       bullets: [
-        '🫀 IAM de VD (V3R/V4R positivos):',
-        '   • Evitar/suspender nitratos e diuréticos',
-        '   • Otimizar pré-carga (reposição volêmica com SF 0,9%)',
-        '   • Inotrópicos se baixo débito persistente',
-        '📉 IAM Posterior (V7-V9 positivos):',
-        '   • Tratar como IAMCSST (angioplastia primária/trombólise)',
-        '⚡ Arritmias na Fase Aguda:',
-        '   • FA rápida: Amiodarona ou cardioversão se instável',
-        '   • BAVT no IAM inferior: Atropina ou marcapasso transcutâneo se instável',
+        'Selecione a complicação identificada para ver o manejo específico:',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '🫀 IAM de Ventrículo Direito (VD)',
+          nextNodeId: 'sca_comp_vd',
+        ),
+        AlgorithmOption(
+          label: '📉 IAM Posterior (V7, V8, V9)',
+          nextNodeId: 'sca_comp_posterior',
+        ),
+        AlgorithmOption(
+          label: '⚡ Arritmias na Fase Aguda',
+          nextNodeId: 'sca_comp_arrhythmias',
+        ),
+        AlgorithmOption(
+          label: '➡️ Voltar para Estratégia de Reperfusão',
+          nextNodeId: 'reperfusion_strategy',
+        ),
+      ]
+    ),
+
+    'sca_comp_vd': const AlgorithmNode(
+      id: 'sca_comp_vd',
+      type: NodeType.action,
+      title: 'Manejo: IAM de VD',
+      alertLevel: 'danger',
+      bullets: [
+        '⚠️ Diagnóstico: Suspeitar em todo IAM inferior. Confirmar com V3R e V4R (>1mm de supra).',
+        '❌ CONTRAINDICADOS: Nitratos (nitroglicerina), diuréticos e vasodilatadores — reduzem drasticamente a pré-carga, causando hipotensão severa.',
+        '❌ Morfina: Usar com extrema cautela (efeito venodilatador).',
+        '💧 Reposição Volêmica: Tratamento inicial para hipotensão. Dar alíquotas de 250-500 mL de SF 0,9% (guiado por ausculta pulmonar/congestão).',
+        '💊 Inotrópicos: Se refratário a volume, iniciar Dobutamina para suporte inotrópico.',
+        '⚡ Manter sincronia AV: O VD isquêmico depende muito da contração atrial. BAVs devem ser tratados precocemente.',
+      ],
+      nextNodeId: 'reperfusion_strategy',
+    ),
+
+    'sca_comp_posterior': const AlgorithmNode(
+      id: 'sca_comp_posterior',
+      type: NodeType.info,
+      title: 'Manejo: IAM Posterior',
+      alertLevel: 'warning',
+      bullets: [
+        '⚠️ Diagnóstico: Infra de ST isolado e persistente em V1-V3 + ondas R amplas e proeminentes nestas derivações.',
+        '✅ Confirmação: Solicitar derivações posteriores (V7, V8, V9). Supra ≥ 0,5 mm confirma o diagnóstico (≥ 1 mm se homem < 40 anos).',
+        '🔴 Tratamento: É um equivalente de IAM com Supra (STEMI). Acionar protocolo de ICP primária ou trombólise, não tratar como NSTEMI!',
+      ],
+      nextNodeId: 'reperfusion_strategy',
+    ),
+
+    'sca_comp_arrhythmias': const AlgorithmNode(
+      id: 'sca_comp_arrhythmias',
+      type: NodeType.action,
+      title: 'Manejo: Arritmias Agudas no IAM',
+      alertLevel: 'danger',
+      bullets: [
+        '⚡ Fibrilação Atrial (FA) Rápida:',
+        '   • Instabilidade hemodinâmica → Cardioversão Elétrica Sincronizada IMEDIATA.',
+        '   • Estável → Controle de frequência com Betabloqueador (preferencial se não houver CI) ou Amiodarona (se CI a BB ou IC aguda).',
+        '',
+        '⚡ Taquicardia Ventricular Não Sustentada (TVNS):',
+        '   • Comum nas primeiras 24h. Em geral, não requer antiarrítmicos profiláticos.',
+        '   • Otimizar K+ (> 4,0) e Mg2+ (> 2,0). Manter Betabloqueador se sem contraindicações.',
+        '',
+        '⚡ Bloqueio Atrioventricular (BAV) no IAM Inferior:',
+        '   • Ocorre por isquemia do nó AV (a. coronária direita) ou aumento do tônus vagal.',
+        '   • Se instável (hipotensão/choque): Atropina 1mg IV (máx 3mg).',
+        '   • Se refratário: Marcapasso transcutâneo → Marcapasso transvenoso se persistir.',
       ],
       nextNodeId: 'reperfusion_strategy',
     ),
