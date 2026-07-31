@@ -1987,7 +1987,7 @@ final scaAlgorithm = Algorithm(
     'sca_start': const AlgorithmNode(
       id: 'sca_start',
       type: NodeType.question,
-      title: 'Dor Precordial / Equivalente Isquêmico',
+      title: 'Passo 1 — Suspeita Clínica',
       subtitle: 'Suspeita de Síndrome Coronariana Aguda',
       bullets: [
         'Dor precordial, peso, pressão',
@@ -2010,7 +2010,7 @@ final scaAlgorithm = Algorithm(
     'ecg_sca': const AlgorithmNode(
       id: 'ecg_sca',
       type: NodeType.action,
-      title: '⚡ ECG em 10 minutos — URGENTE',
+      title: 'Passo 2 — ECG (≤ 10 minutos)',
       alertLevel: 'danger',
       bullets: [
         'ECG 12 derivações nos primeiros 10 min da chegada',
@@ -2026,7 +2026,7 @@ final scaAlgorithm = Algorithm(
     'ecg_result_sca': const AlgorithmNode(
       id: 'ecg_result_sca',
       type: NodeType.question,
-      title: 'Resultado do ECG',
+      title: 'Passo 3 — Resultado do ECG',
       options: [
         AlgorithmOption(
           label: '🔴 Supradesnivelamento de ST ≥ 1mm em ≥ 2 derivações contíguas',
@@ -2046,16 +2046,48 @@ final scaAlgorithm = Algorithm(
 
     'stemi_confirmed': const AlgorithmNode(
       id: 'stemi_confirmed',
-      type: NodeType.action,
-      title: '🔴 IAMCSST Confirmado — Reperfusão URGENTE',
+      type: NodeType.question,
+      title: 'Passo 4 — Conduta Inicial IAMCSST (STEMI)',
       alertLevel: 'danger',
       bullets: [
         '⏱️ TEMPO É MÚSCULO — iniciar tratamento EM PARALELO',
         '💊 AAS 300 mg VO (mascar) — AGORA',
+        '💊 P2Y12: Se ICP → Ticagrelor 180mg ou Prasugrel 60mg. Se trombólise → Clopidogrel 300mg (75mg se ≥75a).',
+        '💉 Anticoagulação: Se ICP → HNF 70-100 UI/kg IV. Se trombólise → HNF 60 UI/kg IV + infusão.',
         '💨 O₂ apenas se SpO₂ < 90%',
         '💉 Morfina se dor severa (cautela)',
         '💊 Nitrato se PA > 90 mmHg (CI: VD ou PDE5i)',
+        '💊 Betabloqueador (se sem CI) e Estatina de alta potência',
         '⚠️ Definir estratégia de reperfusão ANTES do 2º antiagregante e anticoagulação!',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '➡️ Prosseguir para Estratégia de Reperfusão',
+          nextNodeId: 'reperfusion_strategy',
+        ),
+        AlgorithmOption(
+          label: '⚠️ Ver Manejo de Complicações',
+          sublabel: 'IAM de VD, Posterior, Arritmias',
+          nextNodeId: 'sca_complications',
+        ),
+      ],
+    ),
+
+    'sca_complications': const AlgorithmNode(
+      id: 'sca_complications',
+      type: NodeType.info,
+      title: 'Manejo de Complicações na Fase Aguda',
+      alertLevel: 'warning',
+      bullets: [
+        '🫀 IAM de VD (V3R/V4R positivos):',
+        '   • Evitar/suspender nitratos e diuréticos',
+        '   • Otimizar pré-carga (reposição volêmica com SF 0,9%)',
+        '   • Inotrópicos se baixo débito persistente',
+        '📉 IAM Posterior (V7-V9 positivos):',
+        '   • Tratar como IAMCSST (angioplastia primária/trombólise)',
+        '⚡ Arritmias na Fase Aguda:',
+        '   • FA rápida: Amiodarona ou cardioversão se instável',
+        '   • BAVT no IAM inferior: Atropina ou marcapasso transcutâneo se instável',
       ],
       nextNodeId: 'reperfusion_strategy',
     ),
@@ -2380,11 +2412,11 @@ final scaAlgorithm = Algorithm(
     'nstemi_path': const AlgorithmNode(
       id: 'nstemi_path',
       type: NodeType.action,
-      title: 'IAMSST / Angina Instável — Conduta',
+      title: 'Passo 4 — Conduta IAMSST / Angina Instável (NSTEMI)',
       alertLevel: 'warning',
       bullets: [
         '💊 AAS 300 mg VO',
-        '💊 Inibidor P2Y12 (Ticagrelor/Clopidogrel) — discutir timing com hemodinâmica',
+        '💊 P2Y12: Ticagrelor 180 mg na admissão (NÃO usar prasugrel antes da anatomia/cine)',
         '💉 Anticoagulação: Enoxaparina 1 mg/kg SC 12/12h (ajustar se ClCr < 30)',
         '💊 Betabloqueador: Metoprolol 25–50 mg VO 12/12h (se sem CI)',
         '💊 Nitroglicerina 0,4 mg SL a cada 5 min (máx 3x) se PA > 90 mmHg (CI: VD ou PDE5i)',
