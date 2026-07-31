@@ -2064,21 +2064,27 @@ final scaAlgorithm = Algorithm(
       id: 'reperfusion_strategy',
       type: NodeType.question,
       title: 'Estratégia de Reperfusão',
-      subtitle: 'Tempo do início dos sintomas + disponibilidade de hemodinâmica',
+      subtitle: 'Onde o paciente está? Quanto tempo para ICP?',
       alertLevel: 'warning',
       bullets: [
-        '⚠️ Se INR > 1,7 ou plaquetas < 100.000: trombólise é contraindicada (preferir ICP)',
+        '⚠️ Se INR > 1,7 ou plaquetas < 100.000: trombólise é CONTRAINDICADA (preferir ICP)',
+        '⏱️ A decisão depende da disponibilidade de hemodinâmica e do tempo estimado de transferência (FMC-to-device)',
       ],
       options: [
         AlgorithmOption(
-          label: '🏥 ICP disponível — D2B < 90 min possível',
-          sublabel: 'ICP Primária (1ª escolha)',
+          label: '🏥 Hospital COM hemodinâmica',
+          sublabel: 'ICP Primária — meta FMC-device ≤90 min',
           nextNodeId: 'pci_primary',
         ),
         AlgorithmOption(
-          label: '⏱️ ICP não disponível ou D2B > 120 min',
-          sublabel: 'Trombolítico + transfer',
-          nextNodeId: 'thrombolysis_stemi',
+          label: '🚑 Sem hemodinâmica — transferência ≤120 min factível',
+          sublabel: 'Transferir para ICP — meta FMC-device ≤120 min',
+          nextNodeId: 'pci_transfer',
+        ),
+        AlgorithmOption(
+          label: '⏱️ Sem hemodinâmica — transferência >120 min',
+          sublabel: 'Avaliar trombólise vs ICP tardia',
+          nextNodeId: 'no_transfer_decision',
         ),
       ],
     ),
@@ -2097,6 +2103,7 @@ final scaAlgorithm = Algorithm(
         '   3. Clopidogrel 600 mg (Alternativa)',
         '💉 HNF: 70–100 UI/kg IV bolus (ajustar por ACT na sala)',
         'Acesso radial preferencial (menos sangramentos)',
+        '🔬 Imagem intracoronariana recomendada (Classe I, AHA 2025)',
         '🔄 Revascularização completa recomendada (culpada + não-culpadas) — mesmo procedimento ou estagiado (Classe I, AHA 2025)',
         '⚠️ Inibidor GPIIb/IIIa (Tirofiban/Abciximab): uso BAILOUT/resgate apenas (alta carga trombótica, no-reflow). NÃO usar de rotina se já recebeu Ticagrelor ou Prasugrel.',
       ],
@@ -2118,6 +2125,87 @@ final scaAlgorithm = Algorithm(
         '💧 Prevenção de nefropatia por contraste: hidratação com SF 1 mL/kg/h (se FE preservada). Minimizar volume de contraste em IRC, DM, idosos.',
         '📋 Monitorizar: sangramentos, ritmo, PA, acesso vascular',
       ],
+    ),
+
+    // ── TRANSFERÊNCIA PARA ICP (≤120 min) ─────────────────────
+    'pci_transfer': const AlgorithmNode(
+      id: 'pci_transfer',
+      type: NodeType.action,
+      title: '🚑 Transferência para ICP',
+      subtitle: 'Meta FMC-to-device ≤120 min',
+      alertLevel: 'danger',
+      bullets: [
+        '🚑 Acionar transporte (SAMU / UTI Móvel) IMEDIATAMENTE',
+        '⏱️ Meta: FMC-to-device ≤120 min',
+        '💊 AAS 300 mg já administrado (confirmar)',
+        '💊 Ticagrelor 180 mg OU Prasugrel 60 mg — administrar ANTES da transferência',
+        '💉 HNF: 70–100 UI/kg IV bolus',
+        '📞 Contatar centro receptor — ativar hemodinâmica antes da chegada',
+        '📋 Enviar ECG por telemedicina ao centro receptor',
+        '',
+        '💡 CONSIDERAR TROMBÓLISE em vez da transferência se TODOS presentes:',
+        '   • IAM inferior pequeno (supra limitado a DII, DIII, aVF)',
+        '   • Sem extensão para VD (V3R, V4R negativos)',
+        '   • Sem instabilidade hemodinâmica',
+        '   • Sintomas com menos de 3 horas ("hora dourada" — CAPTIM Trial)',
+        '   • Sem contraindicações à trombólise',
+        '   → Nas primeiras 2-3h, trombólise tem eficácia equivalente à ICP',
+      ],
+      nextNodeId: 'post_pci_care',
+    ),
+
+    // ── SEM TRANSFERÊNCIA RÁPIDA (>120 min) ──────────────────
+    'no_transfer_decision': const AlgorithmNode(
+      id: 'no_transfer_decision',
+      type: NodeType.question,
+      title: '⏱️ Sem Transferência Rápida — Avaliar Conduta',
+      subtitle: 'FMC-to-device estimado >120 min',
+      alertLevel: 'warning',
+      bullets: [
+        'Regra geral: Trombólise se janela ≤12h e sem contraindicações',
+        '⚠️ PORÉM: algumas situações exigem ICP mesmo com tempo >120 min',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '💉 Trombólise — paciente estável, sem CI',
+          sublabel: 'Janela ≤12h, meta porta-agulha ≤30 min',
+          nextNodeId: 'thrombolysis_stemi',
+        ),
+        AlgorithmOption(
+          label: '🚨 ICP mesmo >120 min — alto risco',
+          sublabel: 'Choque, IAM anterior extenso, TV/FV, CI trombólise',
+          nextNodeId: 'rescue_transfer',
+        ),
+      ],
+    ),
+
+    // ── ICP OBRIGATÓRIA MESMO >120 min ───────────────────────
+    'rescue_transfer': const AlgorithmNode(
+      id: 'rescue_transfer',
+      type: NodeType.action,
+      title: '🚨 ICP Obrigatória — Transferir Mesmo >120 min',
+      alertLevel: 'danger',
+      bullets: [
+        '⚠️ A trombólise NÃO é opção neste cenário. Transferir para ICP é a única via.',
+        '🚑 Acionar transporte de emergência para centro com hemodinâmica',
+        '📞 Contatar centro receptor com urgência',
+        '',
+        '🔴 INDICAÇÕES (qualquer um presente):',
+        '   🫀 Choque cardiogênico (PA <90 + hipoperfusão) — trombólise ineficaz no choque',
+        '   ⚡ TV sustentada ou FV recorrente — restaurar fluxo mecanicamente',
+        '   🔴 IAM anterior extenso (V1-V6 ou BRE novo) — ICP dramaticamente superior',
+        '   🔴 IAM de VD (supra V3R/V4R) — trombólise menos eficaz em câmara de baixa pressão',
+        '   💊 Anticoagulante oral (INR >2,5 ou DOAC) — CI absoluta à trombólise',
+        '   🩸 INR >1,7 ou plaquetas <100.000 — risco hemorrágico proibitivo',
+        '   ⛔ Qualquer contraindicação absoluta à trombólise',
+        '   🔧 CABG prévio — trombólise menos eficaz em trombo de enxerto',
+        '   ⏰ >12h de sintomas — trombólise fora da janela',
+        '',
+        '💡 Suporte circulatório no choque:',
+        '   Impella CP: Classe IIa (AHA 2025)',
+        '   Balão intra-aórtico (BIA): alternativa se Impella indisponível',
+      ],
+      nextNodeId: 'post_pci_care',
     ),
 
     'thrombolysis_stemi': const AlgorithmNode(
@@ -2210,18 +2298,66 @@ final scaAlgorithm = Algorithm(
 
     'post_thrombolysis': const AlgorithmNode(
       id: 'post_thrombolysis',
-      type: NodeType.info,
-      title: 'Pós-Trombólise — Monitorização',
+      type: NodeType.question,
+      title: 'Pós-Trombólise — Avaliar Resposta (60-90 min)',
       alertLevel: 'warning',
       bullets: [
-        'Transferir para centro com ICP em até 24h',
-        'ICP de resgate se: sem sinais de reperfusão em 90 min',
-        'Monitorizar: hemorragias, PA, ritmo cardíaco',
-        'Heparina: infusão contínua por 48h',
-        'ECG a cada 90 min após trombólise',
-        'Critérios de reperfusão: ↓ST > 50% + alívio da dor + arritmias de reperfusão (RIVA — ritmo idioventricular acelerado)',
+        '⏱️ Avaliar critérios de reperfusão 60-90 min após administração do trombolítico',
+        '📊 ECG seriado — comparar supra ST com ECG inicial',
+        '💉 Manter HNF: infusão contínua por 48h',
+        '📋 Monitorizar: sangramentos, PA, ritmo cardíaco',
+        '',
+        '✅ Critérios de reperfusão:',
+        '   • Redução do supra ST ≥50% em relação ao ECG inicial',
+        '   • Alívio ou resolução da dor precordial',
+        '   • Arritmias de reperfusão (RIVA — ritmo idioventricular acelerado)',
+      ],
+      options: [
+        AlgorithmOption(
+          label: '✅ Sucesso — ST caiu ≥50% + dor resolveu',
+          sublabel: 'Reperfusão bem-sucedida',
+          nextNodeId: 'thrombolysis_success',
+        ),
+        AlgorithmOption(
+          label: '❌ Falha — ST não caiu ou dor persiste',
+          sublabel: 'ICP de resgate IMEDIATA',
+          nextNodeId: 'rescue_pci',
+        ),
+      ],
+    ),
+
+    // ── SUCESSO DA TROMBÓLISE ────────────────────────────────
+    'thrombolysis_success': const AlgorithmNode(
+      id: 'thrombolysis_success',
+      type: NodeType.info,
+      title: '✅ Trombólise Bem-Sucedida — Estratégia Fármaco-Invasiva',
+      alertLevel: 'info',
+      bullets: [
+        '🏥 Coronariografia (cine) em 3–24 horas (Classe I, AHA 2025)',
+        '💊 Manter DAPT: AAS + Clopidogrel (NÃO trocar para Ticagrelor/Prasugrel antes da cine)',
+        '💉 Manter HNF em infusão contínua até a cine',
+        '📊 ECG seriado a cada 6h nas primeiras 24h',
+        '📋 Monitorizar sangramentos, especialmente no acesso vascular',
+        '⚠️ Se reoclusão (retorno do supra ST + dor) → ICP de resgate imediata',
       ],
       nextNodeId: 'adjuvant_therapy_stemi',
+    ),
+
+    // ── ICP DE RESGATE (FALHA DA TROMBÓLISE) ─────────────────
+    'rescue_pci': const AlgorithmNode(
+      id: 'rescue_pci',
+      type: NodeType.action,
+      title: '🚨 FALHA da Trombólise — ICP de Resgate IMEDIATA',
+      alertLevel: 'danger',
+      bullets: [
+        '⛔ NÃO repetir dose do trombolítico — risco hemorrágico proibitivo',
+        '🚑 Ativar hemodinâmica / transferir COM URGÊNCIA',
+        '⏱️ Não esperar — a cada minuto há perda de miocárdio',
+        '📞 Contatar centro receptor — informar falha de trombólise',
+        '💉 Manter HNF em infusão contínua durante o transporte',
+        '💊 NÃO administrar novo P2Y12 antes da cine — risco de sangramento',
+      ],
+      nextNodeId: 'post_pci_care',
     ),
 
     'adjuvant_therapy_stemi': const AlgorithmNode(
@@ -2230,13 +2366,12 @@ final scaAlgorithm = Algorithm(
       title: 'Terapia Adjuvante Pós-Reperfusão',
       alertLevel: 'info',
       bullets: [
-        '💊 DAPT: AAS + Clopidogrel (manter por 12 meses)',
+        '💊 DAPT: AAS + P2Y12 (manter por 12 meses)',
         '💊 Betabloqueador oral: Metoprolol 25–50 mg VO 12/12h (se estável, sem IC descompensada)',
         '💊 Estatina alta potência: Atorvastatina 80 mg ou Rosuvastatina 40 mg',
         '💊 IECA/BRA: iniciar em 24h se FE ≤ 40% ou sinais de IC (ex: Enalapril 2,5 mg VO)',
         '💊 Espironolactona 25 mg: se FE ≤ 40% + IC ou DM (sem hipercalemia/IR)',
         '📊 Ecocardiograma para avaliar FE antes da alta',
-        '🏥 Coronariografia: em 3–24h após trombólise (rotina)',
       ],
     ),
 
