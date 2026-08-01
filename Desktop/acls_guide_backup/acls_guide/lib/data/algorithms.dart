@@ -1383,6 +1383,11 @@ final tachycardiaAlgorithm = Algorithm(
           label: '💊 Ir direto para Adenosina',
           nextNodeId: 'adenosine_drug',
         ),
+        AlgorithmOption(
+          label: '🔵 Flutter Atrial',
+          sublabel: 'Ondas F já claramente visíveis (dentes de serra)',
+          nextNodeId: 'flutter_strategy',
+        ),
       ],
     ),
 
@@ -1445,8 +1450,12 @@ final tachycardiaAlgorithm = Algorithm(
           nextNodeId: 'tachy_post_cardioversion',
         ),
         AlgorithmOption(
-          label: '📉 Revelou Flutter/FA subjacente',
+          label: '📉 Revelou Fibrilação Atrial',
           nextNodeId: 'narrow_irregular',
+        ),
+        AlgorithmOption(
+          label: '📉 Revelou Flutter Atrial',
+          nextNodeId: 'flutter_strategy',
         ),
         AlgorithmOption(
           label: '❌ Sem resposta — taquicardia atrial provável',
@@ -1479,11 +1488,6 @@ final tachycardiaAlgorithm = Algorithm(
           label: '🔵 Fibrilação Atrial (FA)',
           sublabel: 'Linha de base irregular, sem ondas P',
           nextNodeId: 'afib_strategy',
-        ),
-        AlgorithmOption(
-          label: '🔵 Flutter Atrial',
-          sublabel: 'Ondas F em "dentes de serra"',
-          nextNodeId: 'flutter_strategy',
         ),
         AlgorithmOption(
           label: '⚡ Pré-excitação (WPW + FA)',
