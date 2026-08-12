@@ -116,3 +116,15 @@
 3. **Betabloqueador no STEMI**: Especificada a via para `"Betabloqueador ORAL nas primeiras 24h se estável (sem choque/IC/BAV) — evitar IV rotineiro"` (Nó 4).
 4. **Troponina e Reperfusão**: Adicionado o alerta `"⚠️ Troponina NÃO deve atrasar a decisão de reperfusão — tratar com base no ECG e na clínica"` (Nó 2) para garantir o cumprimento das metas de tempo porta-balão/porta-agulha.
 
+---
+
+## MÓDULO TAQUICARDIA COM PULSO — 4 CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 12/Ago/2026 — Baseado em AHA/ASA 2025
+
+### algorithms.dart (tachycardiaAlgorithm) — 4 alterações:
+
+1. **Energia da FA**: Substituído o termo impreciso "(máximo)" por `"200 J bifásico (energia inicial de escolha — AHA 2025)"` (Nó 2).
+2. **Procainamida na Cardioversão Refratária**: Na FA refratária, estabelecido que a Amiodarona é a 1ª linha e clarificado que `"Procainamida é alternativa na TV monomórfica, NÃO na FA refratária"` (Nó 5).
+3. **Taquicardia Atrial e BCC/BB**: Inserido alerta crítico de que `"Betabloqueador IV (Metoprolol 5 mg) OU Verapamil 5-10 mg — NUNCA ambos juntos (risco de assistolia)"` e para evitar Verapamil em disfunção ventricular/IC (Nó 13).
+4. **TV Monomórfica Estável**: Reforçada a sequência correta: `"Sequência: antiarrítmico IV → se falhar ou instabilizar, cardioversão elétrica sincronizada (100 J bifásico)"` (Nó 21).
+
