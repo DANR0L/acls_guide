@@ -943,7 +943,7 @@ final bradycardiaAlgorithm = Algorithm(
         route: 'IV push',
         frequency: 'Repetir a cada 3–5 min se necessário',
         maxDose: 'Máx 3 mg (0,04 mg/kg)',
-        notes: 'Administrar rapidamente (push). Atualização AHA 2025: dose passou de 0,5mg para 1mg. Não usar em transplantados cardíacos. Ineficaz em BAV infranodal.',
+        notes: 'Administrar rapidamente (push). Atualização AHA 2025: dose passou de 0,5mg para 1mg. Não usar em transplantados cardíacos. Ineficaz em BAV infranodal. ⚠️ Se suspeita de BAV de alto grau / infranodal (Mobitz II ou BAVT), preparar MCP transcutâneo em paralelo — a atropina é provavelmente ineficaz nesses bloqueios.',
         color: '#3B82F6',
       ),
       nextNodeId: 'brady_atropine_response',
@@ -978,6 +978,7 @@ final bradycardiaAlgorithm = Algorithm(
       bullets: [
         'Monitorização contínua',
         'Investigar e tratar causa de base',
+        'Causas reversíveis a investigar: isquemia/infarto (IAM inferior), drogas (bloqueador de canal de cálcio, betabloqueador, digoxina), hipóxia, distúrbios eletrolíticos (hipercalemia), hipotireoidismo, aumento da PIC, vagotonia.',
         'Avaliar necessidade de marcapasso definitivo',
         'Solicitar avaliação de cardiologia',
       ],

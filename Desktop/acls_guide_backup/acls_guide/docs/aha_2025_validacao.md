@@ -128,3 +128,14 @@
 3. **Taquicardia Atrial e BCC/BB**: Inserido alerta crítico de que `"Betabloqueador IV (Metoprolol 5 mg) OU Verapamil 5-10 mg — NUNCA ambos juntos (risco de assistolia)"` e para evitar Verapamil em disfunção ventricular/IC (Nó 13).
 4. **TV Monomórfica Estável**: Reforçada a sequência correta: `"Sequência: antiarrítmico IV → se falhar ou instabilizar, cardioversão elétrica sincronizada (100 J bifásico)"` (Nó 21).
 
+---
+
+## MÓDULO BRADICARDIA COM PULSO — CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 12/Ago/2026 — Baseado em AHA/ASA 2025
+
+### algorithms.dart (bradycardiaAlgorithm) — 2 alterações clínicas e 2 ajustes formais:
+
+1. **Aviso de Marcapasso Precoce (Nó 4 - Atropina)**: Adicionado o alerta crítico: `"⚠️ Se suspeita de BAV de alto grau / infranodal (Mobitz II ou BAVT), preparar MCP transcutâneo em paralelo — a atropina é provavelmente ineficaz nesses bloqueios."` para evitar atraso no tratamento definitivo conforme recomendação AHA 2025.
+2. **Causas Reversíveis Completas (Nó 6/11)**: Incluída a lista detalhada para investigação: `"isquemia/infarto (IAM inferior), drogas (bloqueador de canal de cálcio, betabloqueador, digoxina), hipóxia, distúrbios eletrolíticos (hipercalemia), hipotireoidismo, aumento da PIC, vagotonia."`
+3. **Ajustes Formais**: Contagem de nós atualizada para 16 e nota de erro interna removida do Nó 16.
+
