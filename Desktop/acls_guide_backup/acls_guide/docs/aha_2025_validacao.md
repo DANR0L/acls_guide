@@ -104,3 +104,15 @@
 
 > ⚠️ NUNCA usar a dose do IAM no AVC — superdose pode causar transformação hemorrágica fatal.
 
+---
+
+## MÓDULO SCA (IAMCSST) — 4 CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 12/Ago/2026 — Baseado em AHA/ASA 2026
+
+### algorithms.dart (scaAlgorithm) — 4 alterações:
+
+1. **[CRÍTICA] CI Absolutas à Trombólise**: Adicionadas duas contraindicações vitais ao Nó 17: `"PA sistólica > 180 mmHg ou diastólica > 110 mmHg não controlada (refratária)"` e `"Endocardite infecciosa"`.
+2. **IVUS/OCT (Imagem Intracoronariana)**: Corrigido de Classe I para `"Classe IIa em casos selecionados (AHA 2025)"` (Nó 10) para evitar superestimação.
+3. **Betabloqueador no STEMI**: Especificada a via para `"Betabloqueador ORAL nas primeiras 24h se estável (sem choque/IC/BAV) — evitar IV rotineiro"` (Nó 4).
+4. **Troponina e Reperfusão**: Adicionado o alerta `"⚠️ Troponina NÃO deve atrasar a decisão de reperfusão — tratar com base no ECG e na clínica"` (Nó 2) para garantir o cumprimento das metas de tempo porta-balão/porta-agulha.
+
