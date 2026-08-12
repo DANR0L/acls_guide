@@ -126,7 +126,7 @@ final cardiacArrestAlgorithm = Algorithm(
       alertLevel: 'danger',
       isShockNode: true,
       bullets: [
-        'Bifásico: 120–200 J (seguir recomendação do fabricante; se desconhecida: dose máxima)',
+        'Bifásico: 200 J (faixa recomendada 120–200 J)',
         'Monofásico: 360 J',
         'Afastar todos antes do choque',
         'Retomar CPR IMEDIATAMENTE após choque',
@@ -320,7 +320,7 @@ final cardiacArrestAlgorithm = Algorithm(
           nextNodeId: 'shock_4',
         ),
         AlgorithmOption(
-          label: '⚡ Chocável refratária — DSD (Dupla Desfibrilação)',
+          label: '⚡ Chocável refratária — DSD (Não rotineiro)',
           nextNodeId: 'dsd_shock',
         ),
         AlgorithmOption(
@@ -337,10 +337,11 @@ final cardiacArrestAlgorithm = Algorithm(
     'dsd_shock': const AlgorithmNode(
       id: 'dsd_shock',
       type: NodeType.action,
-      title: '⚡ Choque Sequencial Duplo (DSD)',
+      title: '⚡ Choque Sequencial Duplo (DSD) — NÃO ROTINA',
       alertLevel: 'danger',
       isShockNode: true,
       bullets: [
+        'Utilidade NÃO bem estabelecida — NÃO realizar rotineiramente (AHA 2025)',
         'Aplicar 2 DEAs simultaneamente (cargas máximas)',
         'Retomar CPR imediatamente',
         '💊 Epinefrina 1 mg IV/IO — AGORA',
@@ -521,7 +522,7 @@ final cardiacArrestAlgorithm = Algorithm(
       title: 'Assistolia — Protocolo',
       alertLevel: 'danger',
       bullets: [
-        'Confirmar: verificar cabos e eletrodos',
+        'Confirmar cabos e conexões do monitor (excluir artefato/desconexão)',
         'CPR contínua de alta qualidade',
         '💊 Epinefrina 1 mg IV/IO — O MAIS RÁPIDO POSSÍVEL (Prioridade AHA)',
         'Repetir Epi a cada 3–5 min',
@@ -831,10 +832,12 @@ final cardiacArrestAlgorithm = Algorithm(
       subtitle: 'Protocolo AHA 2025',
       alertLevel: 'info',
       bullets: [
-        'Controle de temperatura alvo (evitar febre, TTM 32–36 °C)',
-        'Otimizar hemodinâmica (PAM ≥ 65 mmHg ou PAS ≥ 90 mmHg)',
-        'Otimizar ventilação/oxigenação (SpO₂ 92–98%)',
-        'Realizar ECG 12 derivações (buscar supra de ST)',
+        'Prevenção ativa de febre — alvo ≤ 37,5°C (NÃO induzir hipotermia ativa em todos os pacientes — AHA 2025, trial TTM2)',
+        'Otimizar hemodinâmica (PAM (MAP) ≥ 65 mmHg) (evitar hipotensão)',
+        'Otimizar ventilação/oxigenação (SpO₂ 92–98%) e evitar hiperoxemia',
+        'Normocapnia (PaCO₂ 35–45 mmHg)',
+        'Glicemia 110–180 mg/dL',
+        'Realizar ECG 12 derivações (buscar supra de ST) e considerar cine coronariana de urgência se suspeita de causa isquêmica',
         'Manter antiarrítmicos contínuos (ex: Amiodarona) se utilizado',
         'Avançar para algoritmo Pós-PCR completo',
       ],

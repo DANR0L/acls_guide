@@ -139,3 +139,17 @@
 2. **Causas Reversíveis Completas (Nó 6/11)**: Incluída a lista detalhada para investigação: `"isquemia/infarto (IAM inferior), drogas (bloqueador de canal de cálcio, betabloqueador, digoxina), hipóxia, distúrbios eletrolíticos (hipercalemia), hipotireoidismo, aumento da PIC, vagotonia."`
 3. **Ajustes Formais**: Contagem de nós atualizada para 16 e nota de erro interna removida do Nó 16.
 
+---
+
+## MÓDULO PCR (PARADA CARDIORRESPIRATÓRIA) — CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 12/Ago/2026 — Baseado em AHA/ASA 2025
+
+### algorithms.dart (cardiacArrestAlgorithm) — 1 alteração crítica, 3 ajustes de precisão e 2 complementos:
+
+1. **[CRÍTICA] Temperatura Alvo Pós-ROSC**: A recomendação foi atualizada abandonando a hipotermia ativa, agora instruindo: `"Prevenção ativa de febre — alvo ≤ 37,5°C (NÃO induzir hipotermia ativa em todos os pacientes — AHA 2025, trial TTM2)"`. Esta é a principal mudança de diretriz da AHA 2025 para Cuidados Pós-PCR.
+2. **Dupla Desfibrilação Sequencial (DSD)**: Avisado que a técnica não deve ser rotina: `"Utilidade NÃO bem estabelecida — NÃO realizar rotineiramente (AHA 2025)"` (Nó dsd_shock e rhythm_check_4).
+3. **Alvo Pressórico**: Substituída a imprecisa "PAS ≥ 90" pela correta `"PAM (MAP) ≥ 65 mmHg (evitar hipotensão)"` no Cuidados Pós-PCR.
+4. **Precisão de Linguagem**: A nota interna/coloquial ("cagada no monitor") foi corrigida para `"Confirmar cabos e conexões do monitor (excluir artefato/desconexão)"` na checagem de Assistolia.
+5. **Energia do Choque**: Ajustada a indicação de energia inicial para choque bifásico para priorizar os 200 J: `"Bifásico: 200 J (faixa recomendada 120–200 J)"`.
+6. **Cuidados Pós-ROSC**: Adicionados os parâmetros essenciais: normocapnia (PaCO₂ 35–45 mmHg), glicemia (110–180 mg/dL), evitar hiperoxemia e considerar cine coronariana.
+
