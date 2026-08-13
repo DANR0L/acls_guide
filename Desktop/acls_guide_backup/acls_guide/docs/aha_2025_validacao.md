@@ -153,3 +153,15 @@
 5. **Energia do Choque**: Ajustada a indicação de energia inicial para choque bifásico para priorizar os 200 J: `"Bifásico: 200 J (faixa recomendada 120–200 J)"`.
 6. **Cuidados Pós-ROSC**: Adicionados os parâmetros essenciais: normocapnia (PaCO₂ 35–45 mmHg), glicemia (110–180 mg/dL), evitar hiperoxemia e considerar cine coronariana.
 
+---
+
+## MÓDULO CUIDADOS PÓS-PCR (ROSC) — CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 12/Ago/2026 — Baseado em AHA/ASA 2025
+
+### algorithms.dart (postRoscAlgorithm) — 1 alteração de alta prioridade e 3 refinamentos:
+
+1. **[ALTA] TTM e Duração (Nó 11)**: Detalhada a duração e a estratégia do controle de temperatura: `"AHA 2025: Prevenção ativa de febre — alvo ≤ 37,5°C (tratar febre ≥ 37,7°C) por pelo menos 72 horas em pacientes comatosos (estratégia de escolha — trial TTM2). Hipotermia ativa 32–34°C: NÃO é rotina."`
+2. **LBBB Novo (Nó 7)**: Separou-se LBBB prévio documentado (ECG normal) do novo: `"🟢 ECG normal ou LBBB prévio documentado (⚠️ LBBB novo = tratar como IAMCSST)"`.
+3. **Alvo de SpO₂ (Nó 3)**: Ajustado de 94-98% para `"92-98% (evitar hipoxemia < 92% e hiperoxemia)"`, alinhado com o restante do app.
+4. **Faixa da Norepinefrina (Nó 6)**: Refinada a dosagem inicial: `"0,05–1 mcg/kg/min (Iniciar em 0,05–0,1 mcg/kg/min e titular para PAM ≥ 65 mmHg)"` para evitar dosagens hipertensivas de largada.
+
