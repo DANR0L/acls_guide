@@ -307,8 +307,7 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
               onTap: () => _showEcgFullscreen(context, node.ecgImage!),
               child: Container(
                 width: double.infinity,
-                height: 86,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                height: 80,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -320,18 +319,19 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                       offset: const Offset(0, 2),
                     ),
                   ],
+                  image: DecorationImage(
+                    image: AssetImage(node.ecgImage!),
+                    fit: BoxFit.fitHeight,
+                    repeat: ImageRepeat.repeatX,
+                    alignment: Alignment.centerLeft,
+                  ),
                 ),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(
-                      node.ecgImage!,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.center,
-                    ),
                     Positioned(
-                      right: 0,
-                      bottom: 0,
+                      right: 8,
+                      bottom: 8,
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
