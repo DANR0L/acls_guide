@@ -300,25 +300,50 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
           if (node.bullets != null && node.bullets!.isNotEmpty)
             _BulletList(bullets: node.bullets!),
 
-          // ── ECG Image Link ─────────────────────────────────────
+          // ── ECG Image Thumbnail ────────────────────────────────
           if (node.ecgImage != null) ...[
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: () => _showEcgFullscreen(context, node.ecgImage!),
-                icon: Icon(Icons.monitor_heart_outlined, color: AppColors.textSecondary.withValues(alpha: 0.7), size: 18),
-                label: Text(
-                  'Ver Traçado de Referência',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary.withValues(alpha: 0.9),
-                  ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: () => _showEcgFullscreen(context, node.ecgImage!),
+              child: Container(
+                width: double.infinity,
+                height: 76,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(11),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        node.ecgImage!,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                      ),
+                      Positioned(
+                        right: 8,
+                        bottom: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.zoom_in, color: Colors.white, size: 16),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
             ),
