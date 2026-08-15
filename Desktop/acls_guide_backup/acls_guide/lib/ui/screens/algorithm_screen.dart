@@ -69,6 +69,42 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
     }
   }
 
+  void _showEcgFullscreen(BuildContext context, String assetPath) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(12),
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 5.0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    assetPath,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final algorithm = allAlgorithms[widget.algorithmId];
@@ -263,6 +299,25 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
           // ── Bullets ──────────────────────────────────────────
           if (node.bullets != null && node.bullets!.isNotEmpty)
             _BulletList(bullets: node.bullets!),
+
+          // ── ECG Image Link ─────────────────────────────────────
+          if (node.ecgImage != null) ...[
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () => _showEcgFullscreen(context, node.ecgImage!),
+              icon: const Icon(Icons.monitor_heart, color: Color(0xFFEF4444), size: 20),
+              label: Text(
+                'Visualizar Traçado de Referência (ECG)',
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.textPrimary,
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                side: const BorderSide(color: AppColors.border, width: 1.5),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+          ],
 
           const SizedBox(height: 24),
 
