@@ -296,13 +296,8 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
             const SizedBox(height: 16),
           ],
 
-          // ── Bullets ──────────────────────────────────────────
-          if (node.bullets != null && node.bullets!.isNotEmpty)
-            _BulletList(bullets: node.bullets!),
-
           // ── ECG Image Thumbnail ────────────────────────────────
           if (node.ecgImage != null) ...[
-            const SizedBox(height: 16),
             GestureDetector(
               onTap: () => _showEcgFullscreen(context, node.ecgImage!),
               child: Container(
@@ -347,7 +342,12 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                 ),
               ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
             ),
+            const SizedBox(height: 16),
           ],
+
+          // ── Bullets ──────────────────────────────────────────
+          if (node.bullets != null && node.bullets!.isNotEmpty)
+            _BulletList(bullets: node.bullets!),
 
           const SizedBox(height: 24),
 
