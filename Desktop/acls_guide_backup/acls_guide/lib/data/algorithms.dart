@@ -2701,7 +2701,72 @@ final strokeAlgorithm = Algorithm(
       id: 'nihss_score',
       type: NodeType.nihss,
       title: 'Avaliação NIHSS',
-      nextNodeId: 'stroke_ct_scan',
+      subtitle: 'O NIHSS não define sozinho a reperfusão. O que importa: (1) déficit é incapacitante? (2) há janela? (3) há LVO? Score alto nunca contraindica; score 0 sem déficit não justifica trombolítico.',
+      nextNodeId: 'stroke_deficit_check',
+    ),
+
+    'stroke_deficit_check': const AlgorithmNode(
+      id: 'stroke_deficit_check',
+      type: NodeType.question,
+      title: 'Déficit incapacitante?',
+      subtitle: 'Compromete fala, força, visão ou marcha de forma independente?',
+      options: [
+        AlgorithmOption(
+          label: '✅ SIM — Déficit incapacitante',
+          sublabel: 'Reperfusão indicada em qualquer NIHSS (1 a 42)',
+          nextNodeId: 'stroke_ct_scan',
+        ),
+        AlgorithmOption(
+          label: '❌ NÃO — Déficit leve ou ausente',
+          sublabel: 'NIHSS 0 ou 1-4 não incapacitante',
+          nextNodeId: 'stroke_mild_or_zero',
+        ),
+      ],
+    ),
+
+    'stroke_mild_or_zero': const AlgorithmNode(
+      id: 'stroke_mild_or_zero',
+      type: NodeType.question,
+      title: 'Avaliação — NIHSS 0 ou Leve Não Incapacitante',
+      options: [
+        AlgorithmOption(
+          label: 'NIHSS 0 (Sem déficit a recuperar)',
+          nextNodeId: 'stroke_zero_deficit',
+        ),
+        AlgorithmOption(
+          label: 'NIHSS 1–4 (Leve não incapacitante)',
+          nextNodeId: 'stroke_mild_non_disabling',
+        ),
+      ],
+    ),
+
+    'stroke_zero_deficit': const AlgorithmNode(
+      id: 'stroke_zero_deficit',
+      type: NodeType.info,
+      title: 'NIHSS 0 — Sem Déficit Atual',
+      alertLevel: 'warning',
+      bullets: [
+        '🚫 NÃO indicar trombólise (risco de HIC sem benefício).',
+        'Reavaliar diagnóstico: TIA (sintomas resolvidos) ou miméticos (Todd, enxaqueca, sepse).',
+        'Iniciar prevenção secundária aguda (antiagregação, estatina).',
+        'Investigação etiológica: imagem vascular, Holter, ECO.',
+      ],
+      nextNodeId: 'stroke_post_care',
+    ),
+
+    'stroke_mild_non_disabling': const AlgorithmNode(
+      id: 'stroke_mild_non_disabling',
+      type: NodeType.info,
+      title: 'NIHSS 1–4 — Leve Não Incapacitante',
+      alertLevel: 'warning',
+      bullets: [
+        'Trombólise NÃO recomendada rotineiramente (PRISMS).',
+        'Decisão individualizada (Classe IIb).',
+        'Se não trombolisar, iniciar Dupla Antiagregação:',
+        '   • AAS + Clopidogrel × 21 dias (NIHSS ≤ 3)',
+        '   • AAS + Ticagrelor × 30 dias (NIHSS ≤ 5)',
+      ],
+      nextNodeId: 'stroke_ct_scan', // Usually proceeds to CT anyway to rule out bleed before antiplatelets, but conceptually leads to post care/non-lysis. Will route to CT for safety.
     ),
 
 
@@ -2784,7 +2849,7 @@ final strokeAlgorithm = Algorithm(
         '',
         '⚠️ EXCLUSÃO RELATIVA (risco/benefício individual):',
         '  • Cirurgia de grande porte < 14 dias',
-        '  • NIHSS 0–1 ou melhora rápida',
+        '  • Melhora rápida espontânea',
         '  • Convulsão no início (se déficit residual: tratar)',
         '  • Gravidez (risco/benefício materno-fetal)',
       ],
@@ -2915,9 +2980,9 @@ final strokeAlgorithm = Algorithm(
         'NIHSS ≥ 6 com OGV confirmada = candidato preferencial',
         'Circulação anterior: janela ≤ 6h (padrão) ou 6–24h (DAWN/DEFUSE)',
         'Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10 (AHA/ASA 2026)',
-        '🧠 ASPECTS ≥ 6 E/OU core < 70 mL (por perfusão/CTP ou RM) = critério favorável para trombectomia',
-        '   • ASPECTS: triagem rápida na TC sem contraste (0–10; ≥ 6 = favorável)',
-        '   • Core por perfusão: avaliação mais precisa na janela estendida (complementares)',
+        'Critérios de trombectomia:',
+        '   • ASPECTS ≥ 6 e/ou core < 50–70 mL = critério favorável clássico (0–6h: Classe I).',
+        '   • ⚠️ Core grande (ASPECTS 3–5 ou core ≥ 50 mL) NÃO é exclusão automática. Recomendada (Classe I) em selecionados: < 80 anos, NIHSS ≥ 6, mRS pré 0–1, LVO proximal, 6–24h.',
         '✅ Trombólise IV + trombectomia NÃO são mutuamente exclusivos',
         '⚠️ Paciente elegível para ambos: administrar trombólise IMEDIATAMENTE e acionar trombectomia em paralelo — NÃO aguardar o efeito da trombólise para decidir a trombectomia',
       ],

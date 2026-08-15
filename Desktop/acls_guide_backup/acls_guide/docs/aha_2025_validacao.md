@@ -165,3 +165,17 @@
 3. **Alvo de SpO₂ (Nó 3)**: Ajustado de 94-98% para `"92-98% (evitar hipoxemia < 92% e hiperoxemia)"`, alinhado com o restante do app.
 4. **Faixa da Norepinefrina (Nó 6)**: Refinada a dosagem inicial: `"0,05–1 mcg/kg/min (Iniciar em 0,05–0,1 mcg/kg/min e titular para PAM ≥ 65 mmHg)"` para evitar dosagens hipertensivas de largada.
 
+---
+
+## MÓDULO AVC — ESTRATIFICAÇÃO POR GRAVIDADE E TROMBECTOMIA — CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 15/Ago/2026 — Baseado em AHA/ASA 2025/2026
+
+### algorithms.dart (strokeAlgorithm) — 2 alterações de alta prioridade e 1 refinamento:
+
+1. **[ALTA] Estratificação Pós-NIHSS**: O fluxo único do NIHSS foi desmembrado. Inserido o *gate* decisivo `"Déficit incapacitante?"`. Agora o fluxo roteia pacientes adequadamente:
+   - NIHSS 0: `🚫 NÃO indicar trombólise (risco de HIC sem benefício). Reavaliar diagnóstico (TIA, miméticos).`
+   - NIHSS 1-4 Não Incapacitante: `Trombólise NÃO recomendada rotineiramente (PRISMS). Iniciar Dupla Antiagregação.`
+   - Qualquer NIHSS Incapacitante: Segue para TC e janela de reperfusão.
+2. **[ALTA] Trombectomia em Core Grande**: Removida a exclusão automática para pacientes com grande área isquêmica. Inserido: `"⚠️ Core grande (ASPECTS 3–5 ou core ≥ 50 mL) NÃO é exclusão automática. Recomendada (Classe I) em selecionados: < 80 anos, NIHSS ≥ 6, mRS pré 0–1, LVO proximal, 6–24h."`
+3. **Apoio de Tela (NIHSS)**: Adicionada a instrução de que `"O NIHSS não define sozinho a reperfusão. O que importa: (1) déficit é incapacitante? (2) há janela? (3) há LVO? Score alto nunca contraindica; score 0 sem déficit não justifica trombolítico."`
+
