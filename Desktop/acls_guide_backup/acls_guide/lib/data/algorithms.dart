@@ -1243,6 +1243,7 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'tachy_post_cardioversion',
       type: NodeType.info,
       title: 'Converteu — Ritmo Sinusal',
+      ecgImage: 'assets/ecg/trnav.png',
       alertLevel: 'success',
       bullets: [
         'MONITORIZAÇÃO PÓS-CARDIOVERSÃO:',
@@ -1396,6 +1397,7 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.question,
       title: 'TSV — Estratégia de Tratamento',
       subtitle: 'Manobra Vagal → Adenosina → Cardioversão',
+      ecgImage: 'assets/ecg/tsv.png',
       options: [
         AlgorithmOption(
           label: '🤸 Manobra Vagal primeiro',
