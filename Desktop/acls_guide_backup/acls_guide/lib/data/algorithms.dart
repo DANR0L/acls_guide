@@ -1520,6 +1520,7 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.question,
       title: 'FA — Estratégia de Tratamento',
       subtitle: 'Duração da FA é crucial para decisão',
+      ecgImage: 'assets/ecg/fa.png',
       options: [
         AlgorithmOption(
           label: '⏱️ FA < 48h — Controle de ritmo',
@@ -1611,6 +1612,7 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'flutter_strategy',
       type: NodeType.action,
       title: 'Flutter Atrial — Conduta (AHA 2025)',
+      ecgImage: 'assets/ecg/flutter.png',
       alertLevel: 'warning',
       bullets: [
         '⚡ Cardioversão elétrica sincronizada: 200 J bifásico (AHA 2025)',
