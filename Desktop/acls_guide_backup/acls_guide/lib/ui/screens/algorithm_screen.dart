@@ -302,21 +302,26 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
 
           // ── ECG Image Link ─────────────────────────────────────
           if (node.ecgImage != null) ...[
-            const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: () => _showEcgFullscreen(context, node.ecgImage!),
-              icon: const Icon(Icons.monitor_heart, color: Color(0xFFEF4444), size: 20),
-              label: Text(
-                'Visualizar Traçado de Referência (ECG)',
-                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.textPrimary,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                side: const BorderSide(color: AppColors.border, width: 1.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => _showEcgFullscreen(context, node.ecgImage!),
+                icon: Icon(Icons.monitor_heart_outlined, color: AppColors.textSecondary.withValues(alpha: 0.7), size: 18),
+                label: Text(
+                  'Ver Traçado de Referência',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary.withValues(alpha: 0.9),
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+            ),
           ],
 
           const SizedBox(height: 24),
