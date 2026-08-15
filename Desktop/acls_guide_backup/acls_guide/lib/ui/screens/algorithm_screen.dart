@@ -307,7 +307,8 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
               onTap: () => _showEcgFullscreen(context, node.ecgImage!),
               child: Container(
                 width: double.infinity,
-                height: 76,
+                height: 86,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -320,30 +321,27 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(11),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset(
-                        node.ecgImage!,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                      ),
-                      Positioned(
-                        right: 8,
-                        bottom: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.5),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.zoom_in, color: Colors.white, size: 16),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(
+                      node.ecgImage!,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                    ),
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
                         ),
+                        child: const Icon(Icons.zoom_in, color: Colors.white, size: 16),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
             ),
