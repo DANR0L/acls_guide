@@ -1758,6 +1758,7 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'svt_aberrancy',
       type: NodeType.action,
       title: 'TSV com Aberrância — Conduta',
+      ecgImages: ['assets/ecg/tsv_aberrancia_v1.png', 'assets/ecg/tsv_aberrancia_dii.png'],
       alertLevel: 'info',
       bullets: [
         'Se dúvida entre TV e TSV — tratar como TV',
