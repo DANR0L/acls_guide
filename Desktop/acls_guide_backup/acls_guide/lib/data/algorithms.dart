@@ -1379,8 +1379,8 @@ final tachycardiaAlgorithm = Algorithm(
       subtitle: 'Selecione o ritmo identificado',
       options: [
         AlgorithmOption(
-          label: '🔵 TSV (TRNAV / Taquicardia por Reentrada)',
-          sublabel: 'Onset/offset súbito, sem onda P visível ou onda P retrógrada',
+          label: '🔵 TSV — Taquicardia Supraventricular (TRNAV/TRNA)',
+          sublabel: 'Reentrada nodal (TRNAV) ou via acessória (TRNA) — onset/offset súbito, sem onda P visível ou onda P retrógrada',
           nextNodeId: 'tsv_strategy',
         ),
         AlgorithmOption(
@@ -1465,7 +1465,7 @@ final tachycardiaAlgorithm = Algorithm(
       title: 'Resposta à Adenosina?',
       options: [
         AlgorithmOption(
-          label: '✅ Converteu para sinusal — TRNAV',
+          label: '✅ Converteu para sinusal — TRNAV/TRNA',
           nextNodeId: 'tachy_post_cardioversion',
         ),
         AlgorithmOption(
