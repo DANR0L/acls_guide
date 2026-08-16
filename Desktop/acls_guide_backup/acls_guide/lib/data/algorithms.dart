@@ -1694,6 +1694,7 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'vt_stable',
       type: NodeType.action,
       title: 'TV Monomórfica Estável — Antiarrítmico',
+      ecgImage: 'assets/ecg/tv_mono.png',
       alertLevel: 'warning',
       bullets: [
         'Infusão de Antiarrítmicos (1ª escolha se estável):',
@@ -1726,6 +1727,7 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'torsades',
       type: NodeType.action,
       title: 'Torsades de Pointes',
+      ecgImage: 'assets/ecg/tv_poli.png',
       alertLevel: 'danger',
       bullets: [
         '💊 Sulfato de Magnésio 2 g IV em 1–2 min — AGORA',
