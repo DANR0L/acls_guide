@@ -39,6 +39,7 @@ class AlgorithmNode {
   final bool isShockNode;
   final String? ecgImage;         // Imagem única de ECG
   final List<String>? ecgImages;  // Múltiplas imagens de ECG (exibidas em coluna)
+  final double ecgImageHeight;    // Altura do thumbnail de ECG (padrão 86px)
 
   const AlgorithmNode({
     required this.id,
@@ -55,6 +56,7 @@ class AlgorithmNode {
     this.isShockNode = false,
     this.ecgImage,
     this.ecgImages,
+    this.ecgImageHeight = 86,
   });
 }
 

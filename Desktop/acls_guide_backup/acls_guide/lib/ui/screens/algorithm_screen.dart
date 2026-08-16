@@ -307,7 +307,7 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                   onTap: () => _showEcgFullscreen(context, img),
                   child: Container(
                     width: double.infinity,
-                    height: 86,
+                    height: node.ecgImageHeight,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -350,7 +350,7 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
               onTap: () => _showEcgFullscreen(context, node.ecgImage!),
               child: Container(
                 width: double.infinity,
-                height: 86,
+                height: node.ecgImageHeight,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),

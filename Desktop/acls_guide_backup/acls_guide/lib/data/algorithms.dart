@@ -1641,6 +1641,7 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.action,
       title: '⚠️ WPW + FA — Situação de Risco!',
       ecgImage: 'assets/ecg/wpw_fa.png',
+      ecgImageHeight: 150,
       alertLevel: 'danger',
       bullets: [
         '🚫 DROGAS PROIBIDAS: Adenosina, BCC, BB, Digoxina',
