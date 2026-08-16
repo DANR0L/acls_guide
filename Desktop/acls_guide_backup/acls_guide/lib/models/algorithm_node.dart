@@ -37,6 +37,8 @@ class AlgorithmNode {
   final String? alertLevel;       // 'danger' | 'warning' | 'info' | 'success'
   final List<String>? bullets;    // Lista de pontos de ação
   final bool isShockNode;
+  final String? ecgImage;         // Imagem única de ECG
+  final List<String>? ecgImages;  // Múltiplas imagens de ECG (exibidas em coluna)
 
   const AlgorithmNode({
     required this.id,
@@ -51,6 +53,8 @@ class AlgorithmNode {
     this.alertLevel,
     this.bullets,
     this.isShockNode = false,
+    this.ecgImage,
+    this.ecgImages,
   });
 }
 

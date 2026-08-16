@@ -1396,7 +1396,7 @@ final tachycardiaAlgorithm = Algorithm(
       type: NodeType.question,
       title: 'TSV — Estratégia de Tratamento',
       subtitle: 'Manobra Vagal → Adenosina → Cardioversão',
-      ecgImage: 'assets/ecg/tsv.png',
+      ecgImages: ['assets/ecg/trnav.png', 'assets/ecg/tsv.png'],
       options: [
         AlgorithmOption(
           label: '🤸 Manobra Vagal primeiro',

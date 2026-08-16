@@ -296,8 +296,56 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
             const SizedBox(height: 16),
           ],
 
-          // ── ECG Image Thumbnail ────────────────────────────────
-          if (node.ecgImage != null) ...[
+          // ── ECG Image(s) Thumbnail ─────────────────────────────
+          if (node.ecgImages != null && node.ecgImages!.isNotEmpty) ...[
+            ...node.ecgImages!.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final img = entry.value;
+              return Padding(
+                padding: EdgeInsets.only(bottom: idx < node.ecgImages!.length - 1 ? 8 : 16),
+                child: GestureDetector(
+                  onTap: () => _showEcgFullscreen(context, img),
+                  child: Container(
+                    width: double.infinity,
+                    height: 86,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(11),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.asset(img, fit: BoxFit.cover, alignment: Alignment.center),
+                          Positioned(
+                            right: 8,
+                            bottom: 8,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.zoom_in, color: Colors.white, size: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ).animate().fadeIn(delay: Duration(milliseconds: 200 + idx * 80), duration: 400.ms),
+                ),
+              );
+            }),
+          ] else if (node.ecgImage != null) ...[
             GestureDetector(
               onTap: () => _showEcgFullscreen(context, node.ecgImage!),
               child: Container(
