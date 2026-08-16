@@ -1243,7 +1243,6 @@ final tachycardiaAlgorithm = Algorithm(
       id: 'tachy_post_cardioversion',
       type: NodeType.info,
       title: 'Converteu — Ritmo Sinusal',
-      ecgImage: 'assets/ecg/trnav.png',
       alertLevel: 'success',
       bullets: [
         'MONITORIZAÇÃO PÓS-CARDIOVERSÃO:',
