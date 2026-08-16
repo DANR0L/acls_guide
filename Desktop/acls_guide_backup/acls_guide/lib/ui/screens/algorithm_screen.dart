@@ -69,7 +69,12 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
     }
   }
 
+  static const Map<String, String> _ecgDescriptions = {
+    'assets/ecg/fa.png': '• Atividade Atrial: Ondulação caótica da linha de base (ondas "f" fibrilatórias).\n• Resposta Ventricular: Intervalos R-R "irregularmente irregulares".\n• Complexo QRS: Estreito, exceto se aberrância.',
+  };
+
   void _showEcgFullscreen(BuildContext context, String assetPath) {
+    final description = _ecgDescriptions[assetPath];
     showDialog(
       context: context,
       barrierColor: Colors.black87,
@@ -91,6 +96,24 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
                 ),
               ),
             ),
+            if (description != null)
+              Positioned(
+                bottom: 24,
+                left: 12,
+                right: 12,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Text(
+                    description,
+                    style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
+                  ),
+                ),
+              ),
             Positioned(
               top: 0,
               right: 0,
