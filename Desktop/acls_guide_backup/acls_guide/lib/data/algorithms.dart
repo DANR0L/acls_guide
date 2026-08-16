@@ -1380,7 +1380,7 @@ final tachycardiaAlgorithm = Algorithm(
       options: [
         AlgorithmOption(
           label: '🔵 TSV — Taquicardia Supraventricular (TRNAV/TRNA)',
-          sublabel: 'Reentrada nodal (TRNAV) ou via acessória (TRNA) — onset/offset súbito, sem onda P visível ou onda P retrógrada',
+          sublabel: 'Reentrada nodal (TRNAV) ou via acessória (TRNA) — onset/offset súbito, sem onda P visível (~60%) ou onda P retrógrada (~30%)',
           nextNodeId: 'tsv_strategy',
         ),
         AlgorithmOption(
