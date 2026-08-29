@@ -2543,572 +2543,316 @@ final scaAlgorithm = Algorithm(
 final strokeAlgorithm = Algorithm(
   id: 'stroke',
   title: 'AVC — Acidente Vascular Cerebral',
-  subtitle: 'Isquêmico · Hemorrágico · NIHSS',
+  subtitle: 'Algoritmo de AVC Agudo — AHA 2025',
   iconEmoji: '🧠',
   color: '#8B5CF6',
-  startNodeId: 'stroke_start',
+  startNodeId: 'suspect_stroke',
   nodes: {
-
-    // ── RECONHECIMENTO ───────────────────────────────────────
-    'stroke_start': const AlgorithmNode(
-      id: 'stroke_start',
-      type: NodeType.question,
-      title: 'Suspeita de AVC — Reconhecimento FAST',
-      subtitle: 'Aplique os 4 critérios FAST imediatamente',
-      bullets: [
-        '🗣️ Face: desvio facial — peça para sorrir (assimétrico?)',
-        '💪 Arms: fraqueza de braço — elevar ambos por 10 seg (queda?)',
-        '🗨️ Speech: fala arrastada ou incompreensível?',
-        '⏰ Time: anotar HORA EXATA do início dos sintomas',
-        '',
-        '⚠️ AVC POSTERIOR pode ter FAST NORMAL — suspeitar em:',
-        '   • Vertigem súbita intensa + vômitos',
-        '   • Diplopia (visão dupla)',
-        '   • Disfagia ou disartria isolada',
-        '   • Ataxia de marcha / instabilidade súbita',
-        '   • Drop attack (queda súbita sem perda de consciência)',
-        '   ⚠️ FAST normal NÃO exclui AVC posterior — acionar protocolo se clínica sugestiva',
-      ],
-      options: [
-        AlgorithmOption(
-          label: '🧠 AVC suspeito — prosseguir protocolo',
-          nextNodeId: 'stroke_activate_team',
-        ),
-        AlgorithmOption(
-          label: '❌ Diagnóstico improvável — outro quadro',
-          nextNodeId: 'stroke_not_avc',
-        ),
-      ],
-    ),
-
-    'stroke_not_avc': const AlgorithmNode(
-      id: 'stroke_not_avc',
-      type: NodeType.end,
-      title: 'AVC Descartado',
-      body: 'Considere diagnósticos diferenciais: hipoglicemia, epilepsia (paralisia de Todd), enxaqueca hemiplégica, encefalopatia metabólica, intoxicação.',
-      alertLevel: 'info',
-    ),
-
-    // ── ATIVAR EQUIPE ─────────────────────────────────────────
-    'stroke_activate_team': const AlgorithmNode(
-      id: 'stroke_activate_team',
+    // PRE-HOSPITAL
+    'suspect_stroke': const AlgorithmNode(
+      id: 'suspect_stroke',
       type: NodeType.action,
-      title: 'Ativar Código AVC',
+      title: 'Suspeita de AVC (FAST)',
+      bullets: [
+        'Reconhecer sinais e sintomas de AVC',
+        'Acionar EMS conforme protocolo regional',
+      ],
+      didacticCards: {
+        'FAST': 'F — Face: queda facial (peça para sorrir)\nA — Arm: desvio de braço (peça levantar os 2 braços)\nS — Speech: fala anormal (peça repetir uma frase)\nT — Time: registrar o horário de início dos sintomas (LKW) e acionar o EMS imediatamente\n\nQualquer item alterado = suspeita de AVC.',
+        'AVC posterior — FAST pode ser normal!': 'Vertigem súbita, diplopia, disfagia, ataxia e drop attack sugerem AVC de circulação posterior.\nFAST NORMAL NÃO EXCLUI AVC POSTERIOR.',
+        'Os 8 Ds do AVC': '1. Detecção — reconhecer sinais\n2. Despacho — ativar EMS\n3. Delivery — avaliação e transporte\n4. Door — chegada ao hospital\n5. Data — imagem e labs\n6. Decision — elegibilidade\n7. Drug/Device — trombolítico e/ou trombectomia\n8. Disposition — UTI ou unidade de AVC\n\n"Tempo é cérebro" — atraso em qualquer D piora o prognóstico.',
+      },
+      nextNodeId: 'scene_eval',
+    ),
+    'scene_eval': const AlgorithmNode(
+      id: 'scene_eval',
+      type: NodeType.action,
+      title: 'Avaliação na Cena (EMS)',
+      bullets: [
+        'ABC — sinais vitais e intervenções iniciais',
+        'Entrevistar testemunhas e obter telefone',
+        'Triagem pré-hospitalar validada (CPSS)',
+        'Glicemia capilar (POC) — corrigir hipoglicemia',
+      ],
+      didacticCards: {
+        'CPSS (Cincinnati Prehospital Stroke Scale)': '3 itens: (1) queda facial, (2) desvio de braço, (3) fala anormal.\nQualquer item alterado = suspeita de AVC.',
+        'Glicemia capilar (POC)': 'Hipoglicemia (< 60 mg/dL) pode mimetizar AVC.\nCorrigir ANTES de confirmar o diagnóstico.\nSe sintomas persistirem após correção → manter suspeita de AVC e seguir o protocolo.',
+      },
+      nextNodeId: 'stroke_q',
+    ),
+    'stroke_q': const AlgorithmNode(
+      id: 'stroke_q',
+      type: NodeType.question,
+      title: 'Há suspeita de AVC?',
+      options: [
+        AlgorithmOption(label: 'NÃO', nextNodeId: 'no_stroke'),
+        AlgorithmOption(label: 'SIM', nextNodeId: 'get_lkw'),
+      ],
+    ),
+    'no_stroke': const AlgorithmNode(
+      id: 'no_stroke',
+      type: NodeType.end,
+      title: 'Sem Suspeita de AVC',
+      bullets: [
+        'Tratar e transportar conforme a apresentação clínica',
+      ],
+    ),
+    'get_lkw': const AlgorithmNode(
+      id: 'get_lkw',
+      type: NodeType.action,
+      title: 'Determinar LKW',
+      bullets: [
+        'Registrar Last Known Well (LKW) e horário de descoberta',
+      ],
+      didacticCards: {
+        'LKW (Last Known Well)': 'Último momento em que o paciente estava em seu estado neurológico NORMAL.\n\nSe acordou com déficit → LKW = última vez visto bem ANTES de dormir.\nO LKW define a janela para trombólise (≤ 4,5h) e trombectomia (≤ 24h).',
+      },
+      nextNodeId: 'lkw_q',
+    ),
+    'lkw_q': const AlgorithmNode(
+      id: 'lkw_q',
+      type: NodeType.question,
+      title: 'LKW < 24 horas?',
+      options: [
+        AlgorithmOption(label: 'NÃO', nextNodeId: 'late_presentation'),
+        AlgorithmOption(label: 'SIM', nextNodeId: 'assess_lvo'),
+      ],
+    ),
+    'late_presentation': const AlgorithmNode(
+      id: 'late_presentation',
+      type: NodeType.action,
+      title: 'Apresentação Tardia (> 24h)',
+      bullets: [
+        'Fora da janela terapêutica de reperfusão aguda',
+        'NÃO ativar Código AVC agudo',
+        'Admitir para investigação e prevenção secundária'
+      ],
+      didacticCards: {
+        'Conduta fora da janela': 'Pacientes com LKW > 24h não se beneficiam de terapias de reperfusão aguda.\nFoco:\n• Imagem de crânio e vascular (não urgente)\n• Investigação etiológica (ECG, Holter, Ecocardiograma)\n• Prevenção secundária (AAS, Estatina)\n• Controle de fatores de risco',
+      },
+      nextNodeId: 'stroke_unit',
+    ),
+    'assess_lvo': const AlgorithmNode(
+      id: 'assess_lvo',
+      type: NodeType.action,
+      title: 'Avaliar LVO (FAST-ED)',
+      bullets: [
+        'Aplicar escala de severidade para triagem de LVO',
+        'FAST-ED ≥ 4 → alta probabilidade de LVO',
+      ],
+      didacticCards: {
+        'FAST-ED — Como Aplicar': 'F — Face (0-1)\nPeça para sorrir.\n• 0 = simétrico\n• 1 = queda facial unilateral\n\nA — Arm (0-2)\nBraços estendidos por 10 seg.\n• 0 = normal\n• 1 = desvio ou fraqueza leve\n• 2 = queda total do braço\n\nS — Speech (0-2)\nPeça repetir frase simples.\n• 0 = normal\n• 1 = fala arrastada ou troca de palavras\n• 2 = não fala ou não compreende\n\nE — Eye deviation (0-2)\nObservar olhos em repouso.\n• 0 = normal\n• 1 = preferência do olhar (reversível)\n• 2 = desvio conjugado fixo\n\nD — Denial/Neglect (0-2)\nAvalia NEGLECT e ANOSOGNOSIA:\n\nNeglect tátil: toque ambas as mãos simultaneamente — percebe os dois lados?\nNeglect visual: mostre dedos nos dois campos visuais simultaneamente — vê ambos?\nAnosognosia: pergunte se tem fraqueza — nega o déficit óbvio?\n\n• 0 = percebe tudo, sem negação\n• 1 = ignora 1 modalidade (visual OU tátil) OU nega 1 déficit\n• 2 = ignora 2 modalidades OU nega completamente todos os déficits\n\nTotal: 0-9 pontos\n≥ 4 → alta probabilidade de LVO → rotear para TSC/CSC',
+        'Alternativas: CPSSS, LAMS, RACE': 'CPSSS: olhar conjugado + pergunta + comando. ≥ 2 sugere LVO.\nLAMS: Los Angeles Motor Scale.\nRACE: Rapid Arterial oCclusion Evaluation.\n\nTodas identificam LVO para encaminhar à trombectomia.',
+        'O que é LVO?': 'Oclusão de artéria cerebral proximal (carótida interna, M1, basilar).\nPacientes com LVO se beneficiam de trombectomia endovascular (EVT) além da trombólise IV.\nO FAST identifica o AVC. O FAST-ED tria o LVO — são etapas distintas.',
+      },
+      nextNodeId: 'lvo_q',
+    ),
+    'lvo_q': const AlgorithmNode(
+      id: 'lvo_q',
+      type: NodeType.question,
+      title: 'Há suspeita de LVO?',
+      options: [
+        AlgorithmOption(label: 'NÃO', nextNodeId: 'route_nearest'),
+        AlgorithmOption(label: 'SIM', nextNodeId: 'transport_q'),
+      ],
+    ),
+    'route_nearest': const AlgorithmNode(
+      id: 'route_nearest',
+      type: NodeType.action,
+      title: 'Centro de AVC Mais Próximo',
+      bullets: [
+        'Transportar para o centro certificado mais próximo (ASRH, PSC, TSC ou CSC)',
+        'Fazer notificação pré-hospitalar',
+      ],
+      didacticCards: {
+        'Classificação dos Centros de AVC': 'ASRH — Acute Stroke Ready Hospital:\n• Estabilização inicial e avaliação\n• Pode administrar trombolítico IV\n• Transfere para PSC/TSC/CSC se necessário\n\nPSC — Primary Stroke Center:\n• Trombólise IV 24/7\n• TC disponível 24h\n• Equipe de AVC treinada\n• Protocolos de transferência para EVT\n\nTSC — Thrombectomy-Capable Stroke Center:\n• Tudo do PSC + trombectomia mecânica 24/7\n• Neurorradiologia intervencionista\n\nCSC — Comprehensive Stroke Center:\n• Tudo do TSC + neurocirurgia\n• UTI neurológica dedicada\n• Capacidade de tratar AVCh e HSA\n• Pesquisa e ensino\n\nQuanto mais grave o AVC, mais alto o nível do centro necessário.',
+      },
+      nextNodeId: 'code_stroke',
+    ),
+    'transport_q': const AlgorithmNode(
+      id: 'transport_q',
+      type: NodeType.question,
+      title: 'Centro com trombectomia (TSC/CSC) a < 30 min adicionais?',
+      options: [
+        AlgorithmOption(label: 'SIM — Levar direto ao TSC/CSC', nextNodeId: 'code_stroke'),
+        AlgorithmOption(label: 'NÃO — Levar ao mais próximo (trombólise + transferir)', nextNodeId: 'route_nearest'),
+      ],
+    ),
+    // ═══════════════════════════════════════════════
+    // HOSPITAL
+    // ═══════════════════════════════════════════════
+    'code_stroke': const AlgorithmNode(
+      id: 'code_stroke',
+      type: NodeType.action,
+      title: 'Código AVC — Chegada ao Hospital',
       alertLevel: 'danger',
       bullets: [
-        '📞 Acionar neurologista de plantão IMEDIATAMENTE',
-        '🖥️ Notificar TC: porta-TC ≤ 20 minutos',
-        '⏰ Anotar hora de chegada (Door Time)',
-        '⏱️ Registrar LKW (último momento sem sintomas) — determinante da conduta terapêutica',
-        '🩺 Meta porta-agulha (Trombolítico): ≤ 60 minutos (ideal ≤ 30 minutos)',
-        '💉 Acesso venoso periférico (2 vias calibrosas)',
-        '📊 Monitorização: SpO₂, PA, temperatura',
-        '❤️ ECG de 12 derivações imediato (FA = causa cardioembólica em 25% dos AVC)',
-        '🧪 Coletas: glicemia capilar, hemograma, coagulação, função renal',
+        'Ativar equipe de AVC imediatamente',
+        'Avaliação geral: ≤ 10 min',
+        'NIHSS + Imagem (TC/RM): ≤ 20 min',
+        'Acesso IV, ECG, labs (glicemia, coagulograma)',
       ],
-      nextNodeId: 'stroke_glucose',
+      didacticCards: {
+        'Metas de Tempo (AHA 2025)': 'Avaliação geral imediata: ≤ 10 min\nAvaliação neurológica (NIHSS): ≤ 20 min\nAquisição de TC/RM de crânio: ≤ 20 min\nInterpretação da imagem: ≤ 45 min\nAdministração de trombolítico (porta-agulha): ≤ 60 min (ideal ≤ 30 min)\n\nIVT deve ser iniciado o mais rápido possível — cada minuto conta.',
+        'Coletas e Exames': 'Glicemia capilar (IMEDIATA — não atrasar imagem)\nHemograma + plaquetas\nTP/INR e TTPa\nFunção renal (creatinina)\nTroponina\nECG 12 derivações (FA = causa cardioembólica em 25%)\n\n⚠️ Apenas a GLICEMIA deve ser obtida ANTES da trombólise. Os demais exames NÃO devem atrasar o tratamento (exceto se suspeita de coagulopatia).',
+      },
+      nextNodeId: 'ct_scan',
     ),
-
-    // ── GLICEMIA ──────────────────────────────────────────────
-    'stroke_glucose': const AlgorithmNode(
-      id: 'stroke_glucose',
-      type: NodeType.question,
-      title: 'Glicemia Capilar Imediata',
-      subtitle: 'Hipoglicemia pode mimetizar AVC com fidelidade total',
-      options: [
-        AlgorithmOption(
-          label: '✅ Normal (≥ 70 mg/dL) — prosseguir',
-          nextNodeId: 'stroke_time_onset',
-        ),
-        AlgorithmOption(
-          label: '🔴 Hipoglicemia (< 70 mg/dL)',
-          sublabel: 'Tratar antes de prosseguir',
-          nextNodeId: 'stroke_hypoglycemia',
-        ),
-      ],
-    ),
-
-    'stroke_hypoglycemia': const AlgorithmNode(
-      id: 'stroke_hypoglycemia',
+    'ct_scan': const AlgorithmNode(
+      id: 'ct_scan',
       type: NodeType.action,
-      title: 'Tratar Hipoglicemia',
-      alertLevel: 'warning',
+      title: 'Imagem de Crânio (TC + Angio-TC)',
       bullets: [
-        'Glicose 50% — 25–50 mL IV push',
-        'Se sem acesso: Glucagon 1 mg IM',
-        'Reavalie sintomas após 10–15 minutos',
-        'Glicemia normal + sintomas resolvidos = AVC descartado',
-        'Glicemia normal + sintomas persistentes = prosseguir AVC',
+        'TC sem contraste (NCCT) — descartar hemorragia',
+        'Angio-TC — recomendada para TODO AVC isquêmico agudo',
+        'Interpretação: ≤ 45 min da chegada',
       ],
-      nextNodeId: 'stroke_hypoglycemia_reassess',
+      didacticCards: {
+        'O que avaliar na TC?': '1. Hemorragia intracraniana (exclui trombólise)\n2. Sinais precoces de isquemia (hipodensidade, apagamento de sulcos)\n3. ASPECTS — Alberta Stroke Program Early CT Score (0-10)\n   • ASPECTS ≥ 6 = território isquêmico limitado (favorável)\n   • ASPECTS < 6 = área extensa (avaliar individualmente)\n4. Sinal da artéria hiperdensa (trombo proximal → sugere LVO)',
+        'Por que Angio-TC para TODOS?': 'A triagem pré-hospitalar (FAST-ED) tem sensibilidade de 60-80%.\nIsso significa que 20-40% das LVOs NÃO são detectadas no campo.\n\nA Angio-TC no hospital é o exame DEFINITIVO para:\n• Confirmar ou descobrir LVO (ACI, M1, M2, basilar)\n• Definir anatomia vascular e planejamento de EVT\n• Identificar estenoses, dissecções e variantes\n\n⚠️ A Angio-TC NÃO deve atrasar a trombólise IV.\nSe o paciente é elegível para trombólise → administrar PRIMEIRO, Angio-TC pode ser feita durante ou logo após.\n\nSe a Angio-TC revelar LVO em paciente que veio para centro SEM trombectomia → iniciar transferência IMEDIATA (drip-and-ship).',
+      },
+      nextNodeId: 'hemorrhage_q',
     ),
-
-    'stroke_hypoglycemia_reassess': const AlgorithmNode(
-      id: 'stroke_hypoglycemia_reassess',
+    'hemorrhage_q': const AlgorithmNode(
+      id: 'hemorrhage_q',
       type: NodeType.question,
-      title: 'Reavaliação Pós-Correção da Glicemia',
+      title: 'Há hemorragia na imagem?',
       options: [
-        AlgorithmOption(
-          label: '✅ Sintomas resolvidos — hipoglicemia era a causa',
-          nextNodeId: 'stroke_hypoglycemia_resolved',
-        ),
-        AlgorithmOption(
-          label: '⚠️ Sintomas persistem — prosseguir protocolo AVC',
-          nextNodeId: 'stroke_time_onset',
-        ),
+        AlgorithmOption(label: 'SIM — Hemorrágico', nextNodeId: 'hemorrhagic_stroke'),
+        AlgorithmOption(label: 'NÃO — Isquêmico', nextNodeId: 'ischemic_eval'),
       ],
     ),
-
-    'stroke_hypoglycemia_resolved': const AlgorithmNode(
-      id: 'stroke_hypoglycemia_resolved',
-      type: NodeType.end,
-      title: 'Hipoglicemia Resolvida — AVC Descartado',
-      body: 'Monitorar glicemia seriada. Investigar causa da hipoglicemia (insulina, sulfonilureia, jejum prolongado). Acompanhamento ambulatorial.',
-      alertLevel: 'info',
-    ),
-
-    // ── TEMPO DE INÍCIO ───────────────────────────────────────
-    'stroke_time_onset': const AlgorithmNode(
-      id: 'stroke_time_onset',
-      type: NodeType.question,
-      title: 'Tempo desde o Início dos Sintomas',
-      subtitle: 'Use o ÚLTIMO momento em que o paciente estava sem sintomas',
-      bullets: [
-        '⚠️ Acordou com sintomas: use a hora que dormiu',
-        '👁️ Última vez visto bem = hora de início para fins de protocolo',
-        '📱 Câmeras, celulares e testemunhas ajudam a precisar o horário',
-      ],
-      options: [
-        AlgorithmOption(
-          label: '⏰ ≤ 4,5 horas',
-          sublabel: 'Janela para trombolítico IV — avaliar NIHSS',
-          nextNodeId: 'nihss_score',
-        ),
-        AlgorithmOption(
-          label: '⏰ 4,5h a 9h ou onset desconhecido',
-          sublabel: 'Janela estendida — seleção por imagem (DWI-FLAIR mismatch OU perfusão/CTP)',
-          nextNodeId: 'stroke_extended_thrombolysis',
-        ),
-        AlgorithmOption(
-          label: '⏰ 9h a 24h',
-          sublabel: 'Avaliar trombectomia (DAWN/DEFUSE)',
-          nextNodeId: 'stroke_thrombectomy_window',
-        ),
-        AlgorithmOption(
-          label: '⏰ > 24 horas',
-          sublabel: 'Fora de todas as janelas terapêuticas',
-          nextNodeId: 'stroke_out_of_window',
-        ),
-      ],
-    ),
-
-    // ════════════════════════════════════════════════════════════
-    //  NIHSS — ESCALA NEUROLÓGICA (Interativa)
-    // ════════════════════════════════════════════════════════════
-    'nihss_score': const AlgorithmNode(
-      id: 'nihss_score',
-      type: NodeType.nihss,
-      title: 'Avaliação NIHSS',
-      subtitle: 'O NIHSS não define sozinho a reperfusão. O que importa: (1) déficit é incapacitante? (2) há janela? (3) há LVO? Score alto nunca contraindica; score 0 sem déficit não justifica trombolítico.',
-      nextNodeId: 'stroke_deficit_check',
-    ),
-
-    'stroke_deficit_check': const AlgorithmNode(
-      id: 'stroke_deficit_check',
-      type: NodeType.question,
-      title: 'Déficit incapacitante?',
-      subtitle: 'Compromete fala, força, visão ou marcha de forma independente?',
-      options: [
-        AlgorithmOption(
-          label: '✅ SIM — Déficit incapacitante',
-          sublabel: 'Reperfusão indicada em qualquer NIHSS (1 a 42)',
-          nextNodeId: 'stroke_ct_scan',
-        ),
-        AlgorithmOption(
-          label: '❌ NÃO — Déficit leve ou ausente',
-          sublabel: 'NIHSS 0 ou 1-4 não incapacitante',
-          nextNodeId: 'stroke_mild_or_zero',
-        ),
-      ],
-    ),
-
-    'stroke_mild_or_zero': const AlgorithmNode(
-      id: 'stroke_mild_or_zero',
-      type: NodeType.question,
-      title: 'Avaliação — NIHSS 0 ou Leve Não Incapacitante',
-      options: [
-        AlgorithmOption(
-          label: 'NIHSS 0 (Sem déficit a recuperar)',
-          nextNodeId: 'stroke_zero_deficit',
-        ),
-        AlgorithmOption(
-          label: 'NIHSS 1–4 (Leve não incapacitante)',
-          nextNodeId: 'stroke_mild_non_disabling',
-        ),
-      ],
-    ),
-
-    'stroke_zero_deficit': const AlgorithmNode(
-      id: 'stroke_zero_deficit',
-      type: NodeType.info,
-      title: 'NIHSS 0 — Sem Déficit Atual',
-      alertLevel: 'warning',
-      bullets: [
-        '🚫 NÃO indicar trombólise (risco de HIC sem benefício).',
-        'Reavaliar diagnóstico: TIA (sintomas resolvidos) ou miméticos (Todd, enxaqueca, sepse).',
-        'Iniciar prevenção secundária aguda (antiagregação, estatina).',
-        'Investigação etiológica: imagem vascular, Holter, ECO.',
-        '⚠️ TIA de alto risco (ABCD2 ≥ 4 ou estenose ipsilateral ≥ 50%) também inicia DAPT precoce e exige imagem vascular urgente.',
-      ],
-      nextNodeId: 'stroke_post_care',
-    ),
-
-    'stroke_mild_non_disabling': const AlgorithmNode(
-      id: 'stroke_mild_non_disabling',
-      type: NodeType.info,
-      title: 'NIHSS 1–4 — Leve Não Incapacitante',
-      alertLevel: 'warning',
-      bullets: [
-        'Trombólise NÃO recomendada rotineiramente (PRISMS).',
-        'Decisão individualizada (Classe IIb).',
-        'Se não trombolisar, iniciar Dupla Antiagregação:',
-        '   • AAS + Clopidogrel × 21 dias (NIHSS ≤ 3)',
-        '   • AAS + Ticagrelor × 30 dias (NIHSS ≤ 5)',
-        '⚠️ Considerar imagem vascular (CTA) mesmo no leve: NIHSS < 6 com LVO pode se beneficiar de trombectomia (Classe IIb).',
-      ],
-      nextNodeId: 'stroke_ct_scan', // Usually proceeds to CT anyway to rule out bleed before antiplatelets, but conceptually leads to post care/non-lysis. Will route to CT for safety.
-    ),
-
-
-    // ── TC DE CRÂNIO ──────────────────────────────────────────
-    'stroke_ct_scan': const AlgorithmNode(
-      id: 'stroke_ct_scan',
+    'hemorrhagic_stroke': const AlgorithmNode(
+      id: 'hemorrhagic_stroke',
       type: NodeType.action,
-      title: 'TC de Crânio Sem Contraste — URGENTE',
+      title: 'AVC Hemorrágico',
       alertLevel: 'danger',
       bullets: [
-        '🎯 Meta porta-TC: ≤ 20 minutos (AHA/ASA)',
-        '🖥️ TC sem contraste é suficiente para excluir hemorragia',
-        '🔬 Se candidato a trombectomia: adicionar angiotomografia',
-        '⚡ NÃO atrasar TC para aguardar exames laboratoriais',
-        '📋 Resultado interpretado em < 45 min do início',
+        'NÃO usar trombolíticos ou antitrombóticos',
+        'PA: redução RÁPIDA para < 140 mmHg (INTERACT-3)',
+        'Consultar neurocirurgia imediatamente',
+        'Reverter anticoagulantes se em uso',
       ],
-      nextNodeId: 'stroke_ct_result',
+      didacticCards: {
+        'Reversão de Anticoagulantes': 'Varfarina (INR elevado):\n• Vitamina K 10 mg IV + CCP 4 fatores (25-50 UI/kg)\n\nDabigatrana:\n• Idarucizumab 5 g IV (antídoto específico)\n\nRivaroxabana / Apixabana / Edoxabana (anti-Xa):\n• Andexanet alfa (se disponível)\n• CCP 4 fatores 50 UI/kg (alternativa)\n\nHeparina:\n• Protamina 1 mg para cada 100 UI de HNF',
+        'PA no AVCh': 'Meta: PAS < 140 mmHg o mais rápido possível (INTERACT-3)\n\nDrogas:\n• Nicardipina 5-15 mg/h\n• Labetalol 10-20 mg IV a cada 10-20 min\n• Nitroprussiato (se refratário)\n\n⚠️ A regra de "reduzir até 15% em 24h" é do AVC ISQUÊMICO sem reperfusão — NÃO se aplica ao hemorrágico!',
+      },
+      nextNodeId: 'stroke_unit',
     ),
-
-    'stroke_ct_result': const AlgorithmNode(
-      id: 'stroke_ct_result',
+    // ═══════════════════════════════════════════════
+    // TROMBÓLISE IV
+    // ═══════════════════════════════════════════════
+    'ischemic_eval': const AlgorithmNode(
+      id: 'ischemic_eval',
       type: NodeType.question,
-      title: 'Resultado da TC de Crânio',
-      options: [
-        AlgorithmOption(
-          label: '✅ Sem hemorragia — provável isquêmico',
-          sublabel: 'TC normal ou hipodensidade precoce',
-          nextNodeId: 'stroke_alteplase_criteria',
-        ),
-        AlgorithmOption(
-          label: '🔴 Hemorragia intracraniana',
-          sublabel: 'AVC hemorrágico confirmado',
-          nextNodeId: 'stroke_hemorrhagic',
-        ),
-      ],
-    ),
-
-    // ── HEMORRÁGICO — NÓ DE ENCERRAMENTO ─────────────────────
-    'stroke_hemorrhagic': const AlgorithmNode(
-      id: 'stroke_hemorrhagic',
-      type: NodeType.end,
-      title: 'AVC Hemorrágico — Acionar Neurocirurgia',
-      alertLevel: 'danger',
+      title: 'Elegível para Trombólise IV?',
       bullets: [
-        '🚫 CONTRAINDICADO: Alteplase/TNK, anticoagulantes, antiagregantes',
-        '📞 Acionar Neurocirurgia IMEDIATAMENTE',
-        '💉 Reversão de anticoagulação se em uso:',
-        '   • Heparina → Protamina',
-        '   • Warfarina → Vitamina K + CCP 4 fatores (Octaplex)',
-        '   • Dabigatran → Idarucizumabe (Praxbind) 5g IV',
-        '   • Rivaroxaban/Apixaban/Edoxaban → Andexanet alfa ou CCP 4 fatores 50 UI/kg',
-        '📈 PA: redução RÁPIDA e agressiva para sistólica < 140 mmHg (INTERACT-3 — AHA/ASA 2026)',
-        '⚠️ Diferente do isquêmico: no hemorrágico a redução precoce e agressiva é benéfica — NÃO aplicar a regra de reduzir < 15%/h do AVC isquêmico',
-        '🛏️ UTI ou unidade de AVC imediatamente',
-        '🧠 Critérios cirúrgicos: hematoma > 30 mL, deterioração, hidrocefalia',
-        '🌡️ Controle de temperatura, glicemia e convulsões',
+        'Avaliar janela terapêutica, contraindicações e NIHSS',
       ],
-    ),
-
-    // ── CRITÉRIOS ALTEPLASE ───────────────────────────────────
-    'stroke_alteplase_criteria': const AlgorithmNode(
-      id: 'stroke_alteplase_criteria',
-      type: NodeType.info,
-      title: 'Critérios de Elegibilidade — Trombolítico (Alteplase / TNK)',
-      alertLevel: 'warning',
-      bullets: [
-        '✅ INCLUSÃO:',
-        '  • AVC isquêmico com déficit neurológico mensurável',
-        '  • Início dos sintomas ≤ 4,5 horas',
-        '  • Idade ≥ 18 anos',
-        '',
-        '🚫 EXCLUSÃO ABSOLUTA:',
-        '  • TC com hemorragia intracraniana',
-        '  • PA > 185/110 mmHg não controlada',
-        '  ⚠️ Glicemia extrema (hipo ou hiperglicemia grave): CORRIGIR e reavaliar elegibilidade — não é exclusão absoluta (AHA/ASA 2026)',
-        '  • AVC isquêmico ou TCE grave < 3 meses',
-        '  • Sangramento interno ativo',
-        '  • Plaquetas < 100.000 | INR > 1,7 | TTPA > 40 s',
-        '  • Anticoagulante oral sem reversão confirmada',
-        '',
-        '⚠️ EXCLUSÃO RELATIVA (risco/benefício individual):',
-        '  • Cirurgia de grande porte < 14 dias',
-        '  • Melhora rápida espontânea',
-        '  • Convulsão no início (se déficit residual: tratar)',
-        '  • Gravidez (risco/benefício materno-fetal)',
-      ],
-      nextNodeId: 'stroke_alteplase_eligible',
-    ),
-
-    'stroke_alteplase_eligible': const AlgorithmNode(
-      id: 'stroke_alteplase_eligible',
-      type: NodeType.question,
-      title: 'Paciente Elegível para Trombolítico?',
+      didacticCards: {
+        'Critérios de Elegibilidade': 'INCLUSÃO:\n• AVC isquêmico com déficit neurológico mensurável\n• LKW ≤ 4,5 horas (janela padrão)\n• Idade ≥ 18 anos\n• TC sem hemorragia\n\nJANELA ESTENDIDA 4,5-9h:\n• Se DWI-FLAIR mismatch na RM OU\n• CTP (perfusão por TC) mostrando penumbra salvável\n• Considerar em wake-up strokes\n\n⚠️ NIHSS 0 (sem déficit): NÃO trombólise\n⚠️ NIHSS 1-4 não incapacitante: NÃO rotineiramente (PRISMS)\n⚠️ Qualquer NIHSS com déficit incapacitante: TRATAR',
+        'Contraindicações ABSOLUTAS': '• AVC hemorrágico prévio (qualquer época)\n• AVC isquêmico < 3 meses\n• Neoplasia intracraniana, MAV ou aneurisma\n• TCE grave < 3 meses\n• Cirurgia intracraniana ou espinhal < 3 meses\n• Sangramento interno ativo (exceto menstruação)\n• Dissecção aórtica conhecida\n• Diátese hemorrágica:\n  - Plaquetas < 100.000\n  - INR > 1,7 ou TP > 15 seg\n  - Uso de DOAC nas últimas 48h (com função renal normal)\n• PA > 185/110 mmHg refratária ao tratamento\n• Endocardite infecciosa\n• Glicemia < 50 mg/dL (corrigir e reavaliar)',
+        'Contraindicações RELATIVAS': '• Sintomas menores ou em resolução rápida (avaliar incapacidade)\n• Gravidez\n• Cirurgia maior < 14 dias\n• Sangramento TGI ou TGU < 21 dias\n• IAM recente < 3 meses\n• Punção arterial em sítio não compressível < 7 dias\n• Convulsão no início dos sintomas (se déficit residual = tratar)\n• Glicemia extrema: CORRIGIR e reavaliar — não é exclusão absoluta (AHA/ASA 2026)',
+        'PA pré-trombólise': 'ANTES de administrar o trombolítico:\n• PA deve estar < 185/110 mmHg\n\nDrogas para controle:\n• Labetalol 10-20 mg IV em 1-2 min (pode repetir 1x)\n• Nicardipina 5 mg/h IV (titular até 15 mg/h)\n• Clevidipina 1-2 mg/h IV\n\nSe PA não controlar abaixo de 185/110 → NÃO administrar trombolítico.',
+      },
       options: [
-        AlgorithmOption(
-          label: '✅ Elegível — sem contraindicações',
-          nextNodeId: 'stroke_bp_control',
-        ),
-        AlgorithmOption(
-          label: '🚫 Contraindicado — não administrar',
-          nextNodeId: 'stroke_no_alteplase',
-        ),
+        AlgorithmOption(label: 'SIM — Elegível', nextNodeId: 'thrombolysis_drug'),
+        AlgorithmOption(label: 'NÃO — Contraindicado', nextNodeId: 'evt_eval'),
       ],
     ),
-
-    // Controle de PA pré-alteplase
-    'stroke_bp_control': const AlgorithmNode(
-      id: 'stroke_bp_control',
-      type: NodeType.question,
-      title: 'Pressão Arterial Pré-Trombolítico',
-      subtitle: 'Deve estar ≤ 185/110 mmHg para iniciar o trombolítico',
-      options: [
-        AlgorithmOption(
-          label: '✅ PA ≤ 185/110 mmHg — pronto para trombolítico',
-          nextNodeId: 'stroke_give_alteplase',
-        ),
-        AlgorithmOption(
-          label: '⚠️ PA > 185/110 mmHg — controlar primeiro',
-          nextNodeId: 'stroke_bp_treatment',
-        ),
-      ],
-    ),
-
-    'stroke_bp_treatment': const AlgorithmNode(
-      id: 'stroke_bp_treatment',
-      type: NodeType.action,
-      title: 'Controle de PA Pré-Trombolítico',
-      alertLevel: 'warning',
-      bullets: [
-        'Labetalol 10–20 mg IV em 1–2 min (repetir 1x se necessário)',
-        'Nicardipina 5 mg/h IV — titular 2,5 mg/h a cada 5 min (máx 15 mg/h)',
-        'Clevidipina 1,25 mg/h IV — titular (máx 21 mg/h)',
-        'Meta: PA ≤ 185/110 mmHg antes de iniciar',
-        '⚠️ Se PA não controlável: NÃO administrar trombolítico',
-      ],
-      nextNodeId: 'stroke_bp_achieved',
-    ),
-
-    'stroke_bp_achieved': const AlgorithmNode(
-      id: 'stroke_bp_achieved',
-      type: NodeType.question,
-      title: 'PA Controlada?',
-      options: [
-        AlgorithmOption(
-          label: '✅ PA ≤ 185/110 mmHg atingida',
-          nextNodeId: 'stroke_give_alteplase',
-        ),
-        AlgorithmOption(
-          label: '🚫 PA não controlável — trombolítico contraindicado',
-          nextNodeId: 'stroke_no_alteplase',
-        ),
-      ],
-    ),
-
-    // ── ADMINISTRAR ALTEPLASE ─────────────────────────────────
-    'stroke_give_alteplase': const AlgorithmNode(
-      id: 'stroke_give_alteplase',
+    'thrombolysis_drug': const AlgorithmNode(
+      id: 'thrombolysis_drug',
       type: NodeType.drug,
-      title: 'Administrar Trombolítico IV — AGORA',
+      title: 'Trombólise IV — Administrar Trombolítico',
       alertLevel: 'danger',
       drug: DrugInfo(
-        name: 'Tenecteplase (TNK) OU Alteplase (rt-PA)',
-        dose: 'TNK: 0,25 mg/kg IV (máx 25 mg) bolus único\nOU\nAlteplase: 0,9 mg/kg (máx 90 mg) → 10% bolus + 90% infusão em 60 min',
-        route: 'IV (bolus único para TNK, infusão para rt-PA)',
-        notes: '🚨 ATENÇÃO: TNK 0,4 mg/kg é a dose do IAM — NÃO usar no AVC. No AVC: TNK 0,25 mg/kg (máx 25 mg).\n\nTNK e Alteplase têm mesma eficácia (AHA/ASA 2026). TNK preferível: bolus único, logística mais simples, ideal se trombectomia subsequente. Meta porta-agulha: ≤ 60 min (ideal ≤ 30 min). PA < 180/105 mmHg durante e 24h após. NÃO usar antiagregantes/anticoagulantes nas primeiras 24h.',
+        name: 'Trombolítico IV para AVC',
+        dose: 'TENECTEPLASE (TNK) — preferencial AHA 2025:\n• 0,25 mg/kg IV bolus único (máx 25 mg)\n⚠️ DOSE DO AVC ≠ DOSE DO IAM (0,4 mg/kg)\n\nALTEPLASE (rt-PA) — alternativa:\n• 0,9 mg/kg IV (máx 90 mg total)\n• 10% em bolus IV em 1 min\n• 90% restante em infusão IV em 60 min',
+        route: 'Intravenoso',
+        notes: 'Meta porta-agulha: ≤ 60 min (ideal ≤ 30 min)\n\nJANELAS DE TEMPO:\n• ≤ 4,5h do LKW: janela padrão (Classe I)\n• 4,5-9h: se DWI-FLAIR mismatch ou CTP com penumbra\n\n⚠️ NUNCA usar a dose do IAM (0,4-0,5 mg/kg) no AVC — risco de transformação hemorrágica FATAL',
         color: '#F97316',
       ),
-      nextNodeId: 'stroke_post_alteplase',
+      nextNodeId: 'post_thrombolysis_stroke',
     ),
-
-    'stroke_post_alteplase': const AlgorithmNode(
-      id: 'stroke_post_alteplase',
+    'post_thrombolysis_stroke': const AlgorithmNode(
+      id: 'post_thrombolysis_stroke',
       type: NodeType.action,
-      title: 'Monitorização Pós-Trombolítico',
+      title: 'Pós-Trombólise — Monitorização Intensiva',
       alertLevel: 'warning',
       bullets: [
-        '🧠 Neurológico: a cada 15 min nas primeiras 2h, a cada 30 min × 6h',
-        '📊 PA: a cada 15 min × 2h → a cada 30 min × 6h → a cada 60 min × 16h',
-        '🎯 Meta de PA pós-trombolítico: < 180/105 mmHg',
-        '🚫 NÃO iniciar anticoagulantes ou antiagregantes nas primeiras 24h',
-        '🚫 NÃO inserir cateter urinário, SNG ou acesso arterial por ≥ 30 min',
-        '⚠️ Piora neurológica severa = reverter trombolítico + TC urgente',
+        'PA < 180/105 mmHg nas primeiras 24h',
+        'NIHSS seriado: a cada 15 min por 2h, depois a cada hora por 6h',
+        'TC de controle em 24h (antes de iniciar antiagregação)',
+        'NÃO usar antitrombóticos nas primeiras 24h pós-trombólise',
       ],
-      nextNodeId: 'stroke_thrombectomy_check',
+      didacticCards: {
+        'Controle de PA pós-trombólise': 'Alvo: PA < 180/105 mmHg por 24h\n\nMonitorizar PA:\n• A cada 15 min por 2h\n• A cada 30 min por 6h\n• A cada 1h por 16h\n\nDrogas:\n• Labetalol 10 mg IV → titular\n• Nicardipina 5-15 mg/h IV\n\nSe PA > 180/105 persistente → ajustar infusão',
+        'Complicações a monitorizar': 'TRANSFORMAÇÃO HEMORRÁGICA:\n• Piora súbita do NIHSS (≥ 4 pontos)\n• Cefaleia intensa / vômitos / rebaixamento\n→ PARAR infusão de alteplase (se em curso)\n→ TC de crânio URGENTE\n→ Hemograma + coagulograma + fibrinogênio\n→ Crioprecipitado 10 UI se fibrinogênio < 200\n→ Ácido tranexâmico 1 g IV em 10 min\n\nANGIOEDEMA OROLINGUAL:\n• 2-5% dos casos (mais comum com IECA)\n→ Suspender infusão, manter via aérea\n→ Adrenalina IM + anti-histamínico + corticóide',
+        'Quando iniciar antiagregação?': 'AAS 160-300 mg VO:\n• Após 24h da trombólise\n• SOMENTE após TC de controle sem hemorragia\n• Se recebeu TNK ou rt-PA: esperar 24h\n\n⚠️ Anticoagulação plena: NÃO nas primeiras 24h',
+      },
+      nextNodeId: 'evt_eval',
     ),
-
-    // Sem alteplase
-    'stroke_no_alteplase': const AlgorithmNode(
-      id: 'stroke_no_alteplase',
-      type: NodeType.info,
-      title: 'Trombolítico Contraindicado — Manejo Alternativo',
-      alertLevel: 'warning',
-      bullets: [
-        'AAS 300 mg VO — iniciar em 24–48h (se não trombólise)',
-        'Avaliar trombectomia mecânica se oclusão de grande vaso',
-        'Suporte clínico: hidratação SF 0,9%, controle glicêmico, temperatura',
-        'Monitorização: ECG contínuo (rastrear FA)',
-        'Internação em unidade de AVC',
-      ],
-      nextNodeId: 'stroke_thrombectomy_check',
-    ),
-
-    // ── TROMBECTOMIA ──────────────────────────────────────────
-    'stroke_thrombectomy_check': const AlgorithmNode(
-      id: 'stroke_thrombectomy_check',
+    // ═══════════════════════════════════════════════
+    // TROMBECTOMIA (EVT)
+    // ═══════════════════════════════════════════════
+    'evt_eval': const AlgorithmNode(
+      id: 'evt_eval',
       type: NodeType.question,
-      title: 'Indicação de Trombectomia Mecânica?',
-      subtitle: 'Avalie oclusão de grande vaso (OGV) por imagem',
+      title: 'LVO confirmada na Angio-TC? Elegível para EVT?',
       bullets: [
-        'Angiotomografia ou RM-angio para identificar OGV',
-        'NIHSS ≥ 6 com OGV confirmada = candidato preferencial',
-        'Circulação anterior: janela ≤ 6h (padrão) ou 6–24h (DAWN/DEFUSE)',
-        'Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10 (AHA/ASA 2026)',
-        'Critérios de trombectomia:',
-        '   • ASPECTS ≥ 6 (janela 0–6h: Classe I) · core < 50–70 mL (janela 6–24h: DAWN/DEFUSE-3)',
-        '   • ⚠️ Core grande (ASPECTS 3–5 ou core ≥ 50 mL) NÃO é exclusão automática. Recomendada (Classe I) em selecionados: < 80 anos, NIHSS ≥ 6, mRS pré 0–1, LVO proximal, 6–24h.',
-        '✅ Trombólise IV + trombectomia NÃO são mutuamente exclusivos',
-        '⚠️ Paciente elegível para ambos: administrar trombólise IMEDIATAMENTE e acionar trombectomia em paralelo — NÃO aguardar o efeito da trombólise para decidir a trombectomia',
+        'Angio-TC revelou LVO? → Avaliar critérios para trombectomia',
+        'Mesmo sem suspeita pré-hospitalar, a Angio-TC pode confirmar LVO',
       ],
+      didacticCards: {
+        'LVO descoberta no hospital': 'Mesmo que o FAST-ED pré-hospitalar tenha sido < 4 (sem suspeita de LVO), a Angio-TC hospitalar é DEFINITIVA.\n\nSe a Angio-TC confirmar LVO:\n• Paciente em centro COM trombectomia (TSC/CSC) → EVT no local\n• Paciente em centro SEM trombectomia (ASRH/PSC) → TRANSFERÊNCIA IMEDIATA\n\nEstratégia Drip-and-Ship:\n1. Iniciar trombólise IV no centro atual (drip)\n2. Transferir para TSC/CSC durante ou após a infusão (ship)\n3. NÃO esperar efeito da trombólise para decidir transferir\n4. Notificar centro receptor com dados de imagem\n\n⚠️ A descoberta de LVO na imagem hospitalar MUDA toda a conduta — mesmo em pacientes inicialmente encaminhados ao centro mais próximo.',
+        'Critérios para EVT (AHA 2025)': 'CRITÉRIOS PADRÃO (Classe I, 0-6h):\n• LVO de circulação anterior (ACI, M1)\n• Idade ≥ 18 anos\n• NIHSS ≥ 6\n• ASPECTS ≥ 6\n• mRS pré-AVC 0-1 (funcionalidade prévia boa)\n• Pode ser feita COM ou SEM trombólise IV prévia\n\nJANELA ESTENDIDA (6-24h — DAWN/DEFUSE 3):\n• LVO confirmada por Angio-TC/RM\n• Mismatch clínico-radiológico (NIHSS alto vs core pequeno)\n• Core isquêmico < 70 mL (por CTP ou DWI)\n• Ou: idade ≥ 80 + NIHSS ≥ 10 + core < 21 mL\n\nTROMBECTOMIA BASILAR (AHA/ASA 2026):\n• Oclusão de artéria basilar\n• LKW ≤ 24h\n• NIHSS ≥ 10\n• Classe I (recomendação recente)',
+        'ASPECTS — O que é?' : 'Alberta Stroke Program Early CT Score\nEscala de 0-10 na TC sem contraste\n\nAvalia 10 regiões do território da ACM:\n• C = Caudado\n• L = Lentiforme\n• IC = Cápsula interna\n• I = Ínsula\n• M1-M6 = Regiões corticais da ACM\n\nCada região com isquemia precoce = -1 ponto\n• 10 = TC normal\n• ≥ 6 = favorável para trombectomia\n• < 6 = área extensa (avaliar individualmente)\n\n⚠️ Core grande (ASPECTS 3-5 ou core ≥ 50 mL) NÃO é exclusão automática.\nRecomendada (Classe I) em selecionados: < 80 anos, NIHSS ≥ 6, mRS pré 0-1, LVO proximal, 6-24h.',
+        'Janelas de Tempo para EVT': '0-6 horas do LKW:\n• Critérios padrão (ASPECTS ≥ 6, NIHSS ≥ 6)\n• Maior evidência de benefício\n\n6-24 horas (DAWN / DEFUSE 3):\n• Necessita imagem avançada (CTP ou DWI-perfusão)\n• Mismatch clínico-radiológico obrigatório\n• Core isquêmico limitado\n\nBasilar ≤ 24h (AHA/ASA 2026):\n• NIHSS ≥ 10\n• Oclusão confirmada\n\n⚠️ Trombólise e trombectomia são PARALELAS, não sequenciais.\nNÃO esperar efeito da trombólise para indicar EVT.\nSe elegível para ambas → iniciar trombólise E preparar EVT simultaneamente.',
+      },
       options: [
-        AlgorithmOption(
-          label: '✅ Indicada — OGV confirmada, janela adequada',
-          nextNodeId: 'stroke_thrombectomy_info',
-        ),
-        AlgorithmOption(
-          label: '❌ Não indicada ou fora da janela',
-          nextNodeId: 'stroke_post_care',
-        ),
+        AlgorithmOption(label: 'SIM — LVO confirmada, elegível', nextNodeId: 'evt_action'),
+        AlgorithmOption(label: 'NÃO — Sem LVO ou fora dos critérios', nextNodeId: 'stroke_unit'),
       ],
     ),
-
-    'stroke_thrombectomy_info': const AlgorithmNode(
-      id: 'stroke_thrombectomy_info',
+    'evt_action': const AlgorithmNode(
+      id: 'evt_action',
       type: NodeType.action,
-      title: 'Trombectomia Mecânica — Acionar Hemodinâmica',
+      title: 'Trombectomia Endovascular (EVT)',
       alertLevel: 'danger',
       bullets: [
-        '📞 Ativar neurorradiologia intervencionista IMEDIATAMENTE',
-        '🎯 Meta porta-punção: ≤ 90 min (idealmente < 60 min)',
-        '🖼️ Angiotomografia crânio + pescoço se não realizada',
-        '📊 Core isquêmico < 70 mL = critério favorável',
-        '🔬 Critérios DAWN/DEFUSE para janela 6–24h',
-        '💉 TNK/Alteplase + trombectomia: fazer os dois se elegível',
+        'Se em centro COM EVT → ativar neurorradiologia intervencionista',
+        'Se em centro SEM EVT → transferência IMEDIATA (drip-and-ship)',
+        'Meta porta-punção: ≤ 90 min (ideal ≤ 60 min)',
+        'Anestesia: sedação consciente preferível (vs geral)',
+        
       ],
-      nextNodeId: 'stroke_post_care',
+      didacticCards: {
+        'Drip-and-Ship (Transferência)': 'Quando o paciente está em centro SEM trombectomia (ASRH ou PSC):\n\n1. DRIP — Iniciar trombólise IV no centro atual\n   • NÃO atrasar a trombólise esperando transferência\n   • TNK (bolus único) é ideal para drip-and-ship\n\n2. SHIP — Transferir DURANTE ou APÓS o bolus\n   • Contatar centro receptor (TSC/CSC) com imagens\n   • Enviar dados: NIHSS, LKW, hora da trombólise, Angio-TC\n   • Acompanhamento médico durante transporte\n   • Monitorizar PA < 180/105 durante transferência\n\n⚠️ NÃO esperar efeito da trombólise para decidir transferir.\nA decisão de transferir é tomada NO MOMENTO da descoberta da LVO.\n\nMotherShip (alternativa):\nSe o paciente já está em centro COM trombectomia → EVT direta.',
+        'Pós-Trombectomia': 'Monitorização:\n• NIHSS seriado pós-procedimento\n• TC de controle em 24h\n• PA < 180/105 mmHg (se reperfusão TICI ≥ 2b)\n• Se TICI < 2b (reperfusão incompleta): individualizar PA\n\nAntiagregação:\n• AAS 160-300 mg após 24h (se sem hemorragia na TC)\n• Se stent intracraniano: DAPT por 90 dias\n\nComplicações:\n• Transformação hemorrágica (5-7%)\n• Perfuração arterial\n• Dissecção\n• Embolização para novo território',
+      },
+      nextNodeId: 'stroke_unit',
     ),
-
-    // ── JANELA ESTENDIDA TROMBÓLISE (4,5–9h) ───────────────────────
-    'stroke_extended_thrombolysis': const AlgorithmNode(
-      id: 'stroke_extended_thrombolysis',
-      type: NodeType.action,
-      title: 'Janela Estendida (4,5–9h) — Trombólise por Imagem',
-      alertLevel: 'warning',
-      bullets: [
-        '💡 Indicada para onset desconhecido ou wake-up stroke',
-        '🖥️ Solicitar RM: DWI-FLAIR mismatch',
-        '   • DWI positivo (lesão aguda) + FLAIR negativo = lesão < 4,5h',
-        '💊 TNK 0,25 mg/kg (máx 25 mg) IV bolus único (AHA/ASA 2026)',
-        '   ou Alteplase 0,9 mg/kg (máx 90 mg) — 10% bolus + 90% em 1h',
-        '⚠️ Mesmas contraindicações do trombolítico padrão',
-        '🔬 Se OGV presente: avaliar trombectomia associada',
-        '🛏️ Internação em unidade de AVC',
-      ],
-      nextNodeId: 'stroke_thrombectomy_check',
-    ),
-
-    // ── JANELA TROMBECTOMIA (9–24h) ─────────────────────────────
-    'stroke_thrombectomy_window': const AlgorithmNode(
-      id: 'stroke_thrombectomy_window',
-      type: NodeType.action,
-      title: 'Janela Trombectomia (9–24h) — Avaliação por Imagem',
-      alertLevel: 'warning',
-      bullets: [
-        '🖥️ Solicitar TC + Angiotomografia ou RM de perfusão',
-        '🔬 Critérios DAWN (6–24h):',
-        '   • NIHSS ≥ 10 + OGV em circulação anterior',
-        '   • Idade ≥ 80: core < 21 mL',
-        '   • Idade < 80: core < 31 mL (NIHSS ≥ 10) ou core < 51 mL (NIHSS ≥ 20)',
-        '🔬 Critérios DEFUSE 3 (6–16h):',
-        '   • NIHSS ≥ 6 + OGV em circulação anterior',
-        '   • Core < 70 mL, mismatch ratio ≥ 1.8, penumbra ≥ 15 mL',
-        '🧠 Oclusão basilar: janela ≤ 24h com NIHSS ≥ 10 (AHA/ASA 2026)',
-        '💊 Trombólise prévia NÃO contraindica trombectomia',
-        '🛏️ Internação em unidade de AVC',
-      ],
-      nextNodeId: 'stroke_thrombectomy_check',
-    ),
-
-    'stroke_out_of_window': const AlgorithmNode(
-      id: 'stroke_out_of_window',
-      type: NodeType.info,
-      title: 'Fora das Janelas Terapêuticas (> 24h)',
-      alertLevel: 'info',
-      bullets: [
-        '🚫 Trombolítico e trombectomia não indicados de rotina',
-        '💊 Antiagregação: AAS 300 mg VO (iniciar nas primeiras 24–48h)',
-        '💊 AVC leve/TIA: dupla antiagregação AAS + Clopidogrel × 21 dias',
-        '📈 PA inicial: não tratar se < 220/120 mmHg (manter perfusão)',
-        '🧪 Investigação etiológica: ECG, Holter, ecocardiograma',
-        '🛏️ Internação em unidade de AVC ou UTI',
-      ],
-      nextNodeId: 'stroke_post_care',
-    ),
-
-    // ── CUIDADOS PÓS-AVC ──────────────────────────────────────
-    'stroke_post_care': const AlgorithmNode(
-      id: 'stroke_post_care',
+    // ═══════════════════════════════════════════════
+    // UNIDADE DE AVC
+    // ═══════════════════════════════════════════════
+    'stroke_unit': const AlgorithmNode(
+      id: 'stroke_unit',
       type: NodeType.end,
-      title: 'Cuidados Pós-AVC — Unidade de AVC / UTI',
-      alertLevel: 'info',
+      title: 'Unidade de AVC / UTI',
       bullets: [
-        '📊 Monitorização contínua: ECG, SpO₂, PA, temperatura',
-        '🌡️ Temperatura: tratar febre (meta < 37,5°C)',
-        '🍬 Glicemia: manter 140–180 mg/dL (evitar hipoglicemia)',
-        '📈 PA pós-reperfusão (trombólise/trombectomia): < 180/105 mmHg',
-        '📈 PA sem reperfusão: NÃO tratar se < 220/120 mmHg nas primeiras 24h (preservar perfusão da penumbra)',
-        '   ⚠️ Se PA ≥ 220/120 OU complicação (dissecção, IAM, encefalopatia hipertensiva, IC aguda): tratar com redução de ATÉ 15% nas primeiras 24h — NUNCA redução agressiva (estende o infarto)',
-        '🛏️ Cabeceira elevada 30° (reduzir PIC — HeadPoST: posição plana sem benefício)',
-        '💧 Hidratação: SF 0,9% (evitar SG — piora edema cerebral)',
-        '🗣️ Fonoaudiologia: avaliar deglutição antes de qualquer via oral',
-        '🧠 RM de difusão: confirmar topografia e extensão do infarto',
-        '❤️ Holter 24h: rastrear FA paroxística (causa em 25% dos AVC)',
-        '💊 Estatina de alta intensidade: iniciar precocemente',
-        '🩺 Investigação etiológica TOAST completa',
+        'Monitorização neurológica e hemodinâmica contínua',
+        'Cabeceira a 30° (HeadPoST)',
+        'Investigação etiológica e prevenção secundária',
       ],
+      didacticCards: {
+        'PA no AVC isquêmico (sem reperfusão)': 'Se NÃO recebeu trombólise/EVT:\n• PA < 220/120 → NÃO tratar (preservar perfusão da penumbra)\n• PA ≥ 220/120 ou complicação (IC, dissecção, IAM) → reduzir ATÉ 15% nas primeiras 24h\n\n⚠️ NUNCA redução agressiva no isquêmico sem reperfusão!\n\nSe RECEBEU trombólise/EVT:\n• PA < 180/105 mmHg por 24h',
+        'Investigação Etiológica': 'ECG contínuo (mínimo 24h) → detecção de FA\nEcocardiograma TT (ou TE se suspeita cardioembólica)\nDoppler de carótidas e vertebrais\nHolter 24-72h (se ECG sem FA e suspeita)\nPerfil lipídico e HbA1c\nCoagulograma expandido (se < 55 anos ou sem fator de risco)\nVasculite / trombofilias (jovens)',
+        'Prevenção Secundária': 'Antiagregação:\n• AAS 160-300 mg/dia (monoterapia crônica: 75-100 mg)\n• DAPT (AAS + Clopidogrel 75 mg) por 21-90 dias se AVC menor ou TIA (CHANCE/POINT)\n\nAnticoagulação (se FA):\n• Iniciar DOAC em 4-14 dias (regra 1-3-6-12 conforme NIHSS)\n\nEstatina de alta intensidade:\n• Atorvastatina 80 mg ou Rosuvastatina 40 mg\n\nControle de PA crônico:\n• Meta < 130/80 mmHg (após fase aguda)\n\nMudanças de estilo de vida:\n• Cessar tabagismo, atividade física, dieta, controle glicêmico',
+      },
     ),
   },
 );
 
-// ═══════════════════════════════════════════════════════════════
-//  REGISTRO DE TODOS OS ALGORITMOS
-// ═══════════════════════════════════════════════════════════════
 
 final allAlgorithms = <String, Algorithm>{
   cardiacArrestAlgorithm.id: cardiacArrestAlgorithm,

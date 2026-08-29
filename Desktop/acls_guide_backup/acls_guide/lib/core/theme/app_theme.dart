@@ -17,7 +17,7 @@ class AppColors {
   // States
   static const danger = Color(0xFFEF4444);       // Vermelho instável/chocável
   static const dangerDark = Color(0xFFB91C1C);
-  static const shock = Color(0xFFFF3B30);        // Vermelho elétrico claro e chamativo
+  static const shock = Color(0xFFFF3300);        // Laranja-avermelhado neon hiper chamativo
   static const warning = Color(0xFFEAB308);      // Amarelo atenção
   static const info = Color(0xFF3B82F6);         // Azul informação
   static const infoDark = Color(0xFF1D4ED8);

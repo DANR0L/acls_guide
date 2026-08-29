@@ -422,6 +422,51 @@ class _AlgorithmScreenState extends ConsumerState<AlgorithmScreen> {
 
           const SizedBox(height: 24),
 
+          // ── Didactic Cards (Apoio) ───────────────────────────
+          if (node.didacticCards != null && node.didacticCards!.isNotEmpty) ...[
+            ...node.didacticCards!.entries.map((entry) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 0,
+                  color: AppColors.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: AppColors.border),
+                  ),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      iconColor: AppColors.primary,
+                      collapsedIconColor: AppColors.textSecondary,
+                      title: Text(
+                        entry.key,
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      children: [
+                        Text(
+                          entry.value,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
+            }),
+            const SizedBox(height: 24),
+          ],
+
           // ── NIHSS interativo ──────────────────────────────────
           if (node.type == NodeType.nihss && node.nextNodeId != null)
             NihssCard(

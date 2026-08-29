@@ -40,6 +40,7 @@ class AlgorithmNode {
   final String? ecgImage;         // Imagem única de ECG
   final List<String>? ecgImages;  // Múltiplas imagens de ECG (exibidas em coluna)
   final double ecgImageHeight;    // Altura do thumbnail de ECG (padrão 86px)
+  final Map<String, String>? didacticCards; // Cards educativos colapsáveis
 
   const AlgorithmNode({
     required this.id,
@@ -57,6 +58,7 @@ class AlgorithmNode {
     this.ecgImage,
     this.ecgImages,
     this.ecgImageHeight = 86,
+    this.didacticCards,
   });
 }
 

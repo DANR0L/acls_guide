@@ -179,3 +179,18 @@
 2. **[ALTA] Trombectomia em Core Grande**: Removida a exclusão automática para pacientes com grande área isquêmica. Inserido: `"⚠️ Core grande (ASPECTS 3–5 ou core ≥ 50 mL) NÃO é exclusão automática. Recomendada (Classe I) em selecionados: < 80 anos, NIHSS ≥ 6, mRS pré 0–1, LVO proximal, 6–24h."`
 3. **Apoio de Tela (NIHSS)**: Adicionada a instrução de que `"O NIHSS não define sozinho a reperfusão. O que importa: (1) déficit é incapacitante? (2) há janela? (3) há LVO? Score alto nunca contraindica; score 0 sem déficit não justifica trombolítico."`
 
+
+---
+
+## MÓDULO AVC — VERSÃO 6 (FLUIDA/PRÁTICA) — CORREÇÕES APLICADAS E VALIDADAS
+### Validado pelo Dr. Daniel em 23/Ago/2026 — Baseado em AHA/ASA 2025/2026
+
+### algorithms.dart (strokeAlgorithm) — Reformulação Completa:
+
+1. **[CRÍTICA] Fluxo Orientado à Ação**: O algoritmo foi reescrito para uso rápido em Código AVC. Títulos acadêmicos ("1º D — Detecção") foram trocados por ações diretas ("Suspeita de AVC (FAST)", "Código AVC — Chegada").
+2. **Bullets Enxutos**: Máximo de 4 bullets por nó. Textos densos movidos para Cards Didáticos sob demanda.
+3. **FAST e FAST-ED**:
+   - FAST: Incluído no card o duplo significado do 'T' (Time de início / LKW E Time de ligar pro EMS).
+   - FAST-ED: Adicionada a tradução clínica dos itens (Face — queda facial, Arm — fraqueza no braço, Speech — alteração da fala, Eye deviation — desvio do olhar, Denial/neglect — negação/negligência).
+4. **Os 8 Ds reunidos**: O conceito dos 8 Ds foi condensado em um único card didático no nó inicial para consulta, limpando o fluxo principal.
+5. **Elegibilidade Direta**: O nó de trombólise tornou-se uma pergunta direta ("Elegível para Trombólise?") com cards de janela, contraindicações e alvos de PA anexados à pergunta.
